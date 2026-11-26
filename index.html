@@ -173,66 +173,6 @@
         max-width: 380px;
       }
       #menuOverlay .big-btn { font-size: 24px; min-height: 68px; }
-      #menuOverlay .ghost-btn { width: 100%; max-width: 380px; }
-      .menu-panel {
-        text-align: left;
-        font-size: 15px; line-height: 1.6;
-        background: rgba(255, 244, 214, .10);
-        border: 1px solid rgba(255, 224, 160, .35);
-        border-radius: 10px;
-        padding: 12px 16px;
-        margin: 2px 0 12px;
-        max-width: 440px;
-        width: 100%;
-      }
-      .menu-panel p { margin: 0 0 8px; }
-      .menu-panel p:last-child { margin-bottom: 0; }
-      .menu-level-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        width: 100%;
-      }
-      .menu-level-btn {
-        display: block;
-        text-align: left;
-        font-family: inherit;
-        font-size: 13.5px; line-height: 1.35;
-        color: #ffe9c2;
-        background: rgba(255, 244, 214, .08);
-        border: 1px solid rgba(255, 224, 160, .35);
-        border-radius: 10px;
-        padding: 9px 10px;
-        cursor: pointer;
-        touch-action: manipulation;
-      }
-      .menu-level-btn b { display: block; font-size: 14px; }
-      .menu-level-btn span { display: block; opacity: .85; font-size: 12.5px; }
-      .menu-level-btn.locked { opacity: .45; cursor: not-allowed; }
-      .board-panel h3 { font-size: 19px; margin: 0 0 4px; font-family: Georgia, serif; }
-      .board-best { font-size: 14px; font-weight: 700; color: #ffd98a; }
-      .board-row { display: flex; gap: 8px; align-items: baseline; font-size: 14.5px; padding: 3px 0; }
-      .board-row .rank { width: 22px; font-weight: 800; color: #ffd98a; }
-      .board-row .nm { font-weight: 700; letter-spacing: .08em; }
-      .board-row .lv { opacity: .8; font-size: 13px; }
-      .board-row .sc { margin-left: auto; font-weight: 700; }
-      .board-empty { opacity: .85; font-size: 14px; }
-      .board-note { font-size: 12.5px; opacity: .75; }
-      .score-entry {
-        margin: 10px 0 0; text-align: left;
-        background: rgba(255, 244, 214, .10);
-        border: 1px solid rgba(255, 224, 160, .35);
-        border-radius: 10px; padding: 10px 12px;
-      }
-      .score-entry label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #ffd98a; }
-      .score-entry-row { display: flex; gap: 10px; align-items: center; }
-      .score-entry input {
-        width: 84px; font-size: 20px; font-weight: 800; letter-spacing: .25em;
-        text-transform: uppercase; text-align: center; padding: 6px 8px;
-        border-radius: 8px; border: 2px solid #ffd98a; background: #fff8e6; color: #5d3a1a;
-        font-family: inherit;
-      }
-      .score-entry .ghost-btn { margin-top: 0; }
       .big-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #7e2418; }
       .ghost-btn {
         min-height: 46px;
@@ -248,6 +188,15 @@
         touch-action: manipulation;
       }
       .overlay .final-score { font-size: 21px; font-weight: 700; color: #ffd98a; margin: 4px 0 12px; }
+      /* Boss-clear victory screen: elements rise in staggered, numbers count up */
+      #msgOverlay.stagger > * { animation: msgRise .45s ease both; }
+      #msgOverlay.stagger #msgSub { animation-delay: .14s; }
+      #msgOverlay.stagger #msgBody { animation-delay: .3s; }
+      #msgOverlay.stagger #msgScore { animation-delay: .42s; }
+      #msgOverlay.stagger #msgBtn { animation-delay: .55s; }
+      #msgOverlay.stagger #msgBtn2 { animation-delay: .65s; }
+      @keyframes msgRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+      @media (prefers-reduced-motion: reduce) { #msgOverlay.stagger > * { animation: none; } }
 
       /* ---------- Touch controls ---------- */
       .controls {
@@ -393,6 +342,68 @@
         color: var(--ink-soft); background: transparent;
         border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer;
       }
+
+      /* ---------- Main menu (Luna's build): nav, panels, level select, leaderboard ---------- */
+      .save-summary {
+        background: rgba(255, 244, 214, .12);
+        border: 1px solid rgba(255, 224, 160, .4);
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-size: 14px; line-height: 1.5;
+        color: #ffe9c2;
+        margin: 0 0 14px;
+        max-width: 440px;
+      }
+      .menu-nav {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 9px;
+        width: 100%; max-width: 380px; margin-top: 12px;
+      }
+      .menu-nav .ghost-btn { margin-top: 0; min-height: 50px; font-size: 15.5px; }
+      .menu-nav .wide { grid-column: 1 / -1; }
+      .menu-panel { width: 100%; max-width: 440px; margin-top: 16px; text-align: left; }
+      .menu-panel[hidden] { display: none; }
+      .menu-panel h3 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 21px; margin: 0 0 10px; color: #ffd98a; text-align: center;
+      }
+      .menu-panel .panel-note { font-size: 13.5px; color: #f3cf96; text-align: center; margin: 8px 0 0; }
+      .lvl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      @media (max-width: 380px) { .lvl-grid { grid-template-columns: repeat(2, 1fr); } }
+      .lvl-btn {
+        min-height: 62px; padding: 8px 6px;
+        font-family: inherit; cursor: pointer; touch-action: manipulation;
+        background: rgba(255, 244, 214, .10);
+        border: 1.5px solid rgba(255, 224, 160, .45);
+        border-radius: 10px; color: #fbeed3;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+      }
+      .lvl-btn b { font-size: 16px; }
+      .lvl-btn span { font-size: 11px; line-height: 1.25; color: #f3cf96; text-align: center; }
+      .lvl-btn:active { transform: scale(.96); }
+      .lvl-btn:disabled { opacity: .38; cursor: default; }
+      .lvl-btn.unlocked { border-color: #ffd98a; background: rgba(255, 217, 138, .16); }
+      .lb-list { display: flex; flex-direction: column; gap: 6px; }
+      .lb-row {
+        display: flex; align-items: baseline; gap: 10px;
+        border: 1px solid rgba(150, 120, 70, .4);
+        border-radius: 9px; padding: 7px 12px;
+        font-size: 14.5px; line-height: 1.4;
+      }
+      .lb-row .rank { font-weight: 800; min-width: 26px; }
+      .lb-row .lb-score { font-weight: 800; font-variant-numeric: tabular-nums; }
+      .lb-row .lb-meta { margin-left: auto; text-align: right; font-size: 12.5px; opacity: .85; }
+      .lb-empty { text-align: center; font-size: 14.5px; opacity: .85; padding: 10px 0 4px; }
+      .menu-panel .howto { margin-bottom: 0; }
+      .credits-box {
+        background: rgba(255, 244, 214, .10);
+        border: 1px solid rgba(255, 224, 160, .35);
+        border-radius: 10px; padding: 14px 16px;
+        font-size: 15px; line-height: 1.7; color: #fbeed3;
+      }
+      .credits-box b { color: #ffd98a; }
+      .danger-btn { color: #ffb4a2; border-color: rgba(255, 180, 162, .55); }
+      .lobby-board { margin-top: 20px; }
+      .lobby-board .lb-row { background: var(--btn); }
     </style>
   </head>
   <body>
@@ -416,34 +427,53 @@
         <div class="overlay" id="menuOverlay">
           <h2>Invasion of the Turkeys</h2>
           <p class="sub">Thanksgiving will never be the same.</p>
+          <div class="save-summary" id="menuSaveSummary">💾 New save — progress, coins &amp; upgrades save automatically on this device as you play.</div>
           <p>The turkeys have had enough. This year, <b>they're</b> coming for <b>us</b> — wave after wave across <b>12 levels</b>, from the barnyard to the Final Feast. Every level brings a different flock: pumpkin-orange, forest, night, frosty white, even burnt extra-crispy turkeys — and deeper in, strange <b>mutated</b> birds with extra heads, third eyes and glowing green spots. You're Earth's last line of defense. Man the cranberry cannon!</p>
-          <button class="big-btn" id="btnStart" type="button">Defend Earth!</button>
-          <button class="big-btn" id="btnContinue" type="button" hidden>Continue</button>
-          <button class="ghost-btn menu-toggle" id="btnMenuLevels" type="button" aria-expanded="false">Level Select</button>
-          <div class="menu-panel" id="menuLevelPanel" hidden>
-            <div class="menu-level-grid" id="menuLevelGrid"></div>
-          </div>
-          <button class="ghost-btn menu-toggle" id="btnHowTo" type="button" aria-expanded="false">How to Play</button>
-          <div class="howto" id="menuHowTo" hidden>
+          <div class="menu-panel" id="panelHow" hidden>
+          <h3>How to Play</h3>
+          <div class="howto">
             <div>🖐️ <b>Drag</b> on the field (or hold ◀ ▶) to move</div>
             <div>💨 <b>Double-tap</b> ◀ ▶, flick sideways, or tap <b>Dodge</b> to dash — nothing can hit you mid-dash</div>
             <div>🔴 Your cranberry cannon <b>fires on its own</b> — fast, snappy shots; just aim by moving</div>
             <div>💣 <b>Gravy Bomb</b> button blasts everything on screen</div>
-            <div>🌽 Grab corn for points and coins, cranberries for triple-shot, pie for an extra life</div>
+            <div>🌽 Grab corn for points and coins, cranberries for triple-shot, and pie heals a flat +1 ♥ — a missed pie lands and waits on the ground for you (max 2 at once, and no pie drops during a boss fight)</div>
             <div>🧬 <b>Mutated turkeys</b> creep in from Level 4, more every level — extra heads, extra tough, bonus coins. Every turkey bursts into feathers, potatoes &amp; gravy</div>
             <div>🪙 Turkeys drop <b>coins</b> — after each run you return to the <b>Lobby</b> to upgrade your cannon</div>
             <div>🦃 Clear every wave, then beat the <b>boss turkey</b></div>
           </div>
-          <button class="ghost-btn menu-toggle" id="btnCredits" type="button" aria-expanded="false">Credits</button>
-          <div class="menu-panel credits-panel" id="menuCredits" hidden>
-            <p><b>Created by WarKing (Phaqvon), built with Jasmine and Luna.</b></p>
-            <p>Invasion of the Turkeys — a Thanksgiving wave shooter. 12 levels, 64 waves, 12 boss turkeys.</p>
           </div>
-          <div class="menu-panel board-panel" id="menuBoard">
-            <h3>Leaderboard</h3>
-            <p class="board-best" id="menuBestScore">Best score: 0</p>
-            <div id="menuBoardList"></div>
-            <p class="board-note">Scores are saved on this device only.</p>
+          <button class="big-btn" id="btnStart" type="button">Defend Earth!</button>
+          <div class="menu-nav">
+            <button class="ghost-btn" id="btnMenuLevels" type="button">🗺️ Level Select</button>
+            <button class="ghost-btn" id="btnMenuHow" type="button">❓ How to Play</button>
+            <button class="ghost-btn" id="btnMenuBoard" type="button">🏆 Leaderboard</button>
+            <button class="ghost-btn" id="btnMenuCredits" type="button">🎬 Credits</button>
+            <button class="ghost-btn wide" id="btnMenuLobby" type="button">🏠 Lobby &amp; Weapon Workshop</button>
+          </div>
+
+          <div class="menu-panel" id="panelLevels" hidden>
+            <h3>Level Select</h3>
+            <div class="lvl-grid" id="menuLevelGrid"></div>
+            <p class="panel-note">Beat a level to unlock the next. Replay any unlocked level to farm coins for the Workshop.</p>
+          </div>
+
+          <div class="menu-panel" id="panelBoard" hidden>
+            <h3>🏆 Leaderboard</h3>
+            <div class="lb-list" id="leaderboardList"></div>
+            <p class="panel-note">Your best finished runs, saved on this device. A run joins the board when it ends — game over or total victory.</p>
+            <button class="ghost-btn danger-btn" id="btnClearBoard" type="button">Clear leaderboard</button>
+          </div>
+
+          <div class="menu-panel" id="panelCredits" hidden>
+            <h3>Credits</h3>
+            <div class="credits-box">
+              <div>🦃 <b>Invasion of the Turkeys</b> — a Thanksgiving wave shooter</div>
+              <div><b>Game design &amp; direction:</b> Q</div>
+              <div><b>Main menu, level select, saving, leaderboard, dodge &amp; cranberry-shot tuning:</b> Luna</div>
+              <div><b>12 levels, 12 bosses, mutated turkeys &amp; the Lobby / Weapon Workshop:</b> Q &amp; Luna's shared build</div>
+              <div><b>Death burst:</b> feathers, potatoes &amp; gravy — accept no substitutes</div>
+            </div>
+            <button class="ghost-btn danger-btn" id="btnResetSave" type="button">Reset save (coins, upgrades &amp; progress)</button>
           </div>
         </div>
 
@@ -454,13 +484,6 @@
           <p class="sub" id="msgSub"></p>
           <p id="msgBody"></p>
           <div class="final-score" id="msgScore" hidden></div>
-          <div class="score-entry" id="scoreEntry" hidden>
-            <label for="initialsInput">🏆 New top score! Enter your initials:</label>
-            <div class="score-entry-row">
-              <input id="initialsInput" type="text" maxlength="3" autocomplete="off" placeholder="YOU" aria-label="Your initials">
-              <button class="ghost-btn" id="btnSaveScore" type="button">Save Score</button>
-            </div>
-          </div>
           <button class="big-btn" id="msgBtn" type="button">Go!</button>
           <button class="ghost-btn" id="msgBtn2" type="button" hidden>Restart game</button>
         </div>
@@ -486,6 +509,12 @@
         <p class="shop-sub">Upgrades are permanent and stack with pickups. Stronger shots get bigger and change color, extra barrels really appear on the cannon, and piercing rounds fly straight through a turkey. Short on coins? Replay an earlier level to earn more.</p>
         <div class="upgrade-grid" id="upgradeGrid"></div>
 
+        <div class="lobby-board">
+          <h3>🏆 Leaderboard</h3>
+          <p class="shop-sub">Your best finished runs — saved on this device along with your coins, upgrades and unlocked levels.</p>
+          <div class="lb-list" id="lobbyLeaderboard"></div>
+        </div>
+
         <div class="next-card">
           <h4 id="lobbyNextTitle">Next: Level 1</h4>
           <p id="lobbyNextBody"></p>
@@ -493,7 +522,7 @@
           <div class="level-chips" id="levelChips" aria-label="Replay an unlocked level"></div>
         </div>
         <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
-        <button class="ghost-dark" id="btnLobbyMenu" type="button">Back to Main Menu</button>
+        <button class="ghost-dark" id="btnLobbyMenu" type="button">🎬 Back to Main Menu</button>
       </section>
 
       <!-- Touch controls -->
@@ -504,7 +533,7 @@
         <button class="ctl-btn" id="btnRight" type="button" aria-label="Move right, double-tap to dodge right">▶<small>Move · 2×tap = dodge</small></button>
       </div>
 
-      <p class="hint" id="hintText">Dodge: double-tap ◀ or ▶, flick sideways on the field, or tap Dodge — you're untouchable mid-dash. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries.</p>
+      <p class="hint" id="hintText">Dodge: double-tap ◀ or ▶, flick sideways on the field, or tap Dodge — you're untouchable mid-dash. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries. Your progress, coins and upgrades save automatically on this device — and your best finished runs land on the Leaderboard in the main menu.</p>
     </main>
 
     <script>
@@ -625,6 +654,15 @@
       var shake = 0;
       var flash = 0;
       var time = 0;
+      /* Boss death ceremony (#4): hit-stop → slow-mo → fade → count-up.
+         `ceremony` runs on real time while `timeScale` slows the world;
+         `countUp` animates the victory screen numbers once it appears. */
+      var ceremony = null;
+      var ceremonyFlash = 0;
+      var timeScale = 1;
+      var countUp = null;
+      var reducedMotion = false;
+      try { reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { reducedMotion = false; }
 
       /* ---------------- Coins & weapon upgrades (the Lobby) ----------------
          Coins and upgrades live in these variables for the whole session:
@@ -673,93 +711,6 @@
       ];
       function fireRateFor(lv) { return [0.12, 0.105, 0.092, 0.08, 0.069, 0.059][lv]; }
       function dodgeCdFor(lv) { return [0.50, 0.44, 0.38, 0.32][lv]; }
-
-      /* ---------------- Save game & local leaderboard (device only) ----------------
-         Progress and best runs live in localStorage on this device only.
-         A missing or corrupt save falls back to fresh defaults, never a crash. */
-      var SAVE_KEY = "invasion-turkeys-save-v1";
-      var SCORES_KEY = "invasion-turkeys-scores-v1";
-      var bestScore = 0;
-      var topScores = [];
-
-      function saveGame() {
-        try {
-          bestScore = Math.max(bestScore, score);
-          localStorage.setItem(SAVE_KEY, JSON.stringify({
-            coins: coins,
-            totalCoinsEarned: totalCoinsEarned,
-            upgrades: upgrades,
-            highestUnlocked: highestUnlocked,
-            bestScore: bestScore
-          }));
-        } catch (e) { /* storage unavailable: keep playing, progress just won't persist */ }
-      }
-
-      function loadGame() {
-        try {
-          var raw = localStorage.getItem(SAVE_KEY);
-          if (!raw) return;
-          var d = JSON.parse(raw);
-          if (!d || typeof d !== "object") return;
-          if (isFinite(d.coins) && d.coins >= 0) coins = Math.floor(d.coins);
-          if (isFinite(d.totalCoinsEarned) && d.totalCoinsEarned >= 0) totalCoinsEarned = Math.floor(d.totalCoinsEarned);
-          if (isFinite(d.highestUnlocked)) highestUnlocked = Math.max(0, Math.min(LEVELS.length - 1, Math.floor(d.highestUnlocked)));
-          if (isFinite(d.bestScore) && d.bestScore >= 0) bestScore = Math.floor(d.bestScore);
-          if (d.upgrades && typeof d.upgrades === "object") {
-            for (var i = 0; i < UPGRADES.length; i++) {
-              var v = d.upgrades[UPGRADES[i].id];
-              if (isFinite(v)) upgrades[UPGRADES[i].id] = Math.max(0, Math.min(UPGRADES[i].max, Math.floor(v)));
-            }
-          }
-        } catch (e) { /* corrupt save: keep fresh defaults */ }
-      }
-
-      function saveScores() {
-        try { localStorage.setItem(SCORES_KEY, JSON.stringify(topScores)); } catch (e) {}
-      }
-
-      function loadScores() {
-        try {
-          var raw = localStorage.getItem(SCORES_KEY);
-          if (!raw) return;
-          var arr = JSON.parse(raw);
-          if (!arr || !arr.length) return;
-          topScores = arr.filter(function (s) {
-            return s && typeof s === "object" && isFinite(s.score) && typeof s.name === "string";
-          }).sort(function (a, b) { return b.score - a.score; }).slice(0, 8);
-        } catch (e) { topScores = []; }
-      }
-
-      var scoreEntry = document.getElementById("scoreEntry");
-      var initialsInput = document.getElementById("initialsInput");
-      var scoreEntrySaved = false;
-
-      function qualifiesForBoard() {
-        return score > 0 && (topScores.length < 8 || score > topScores[topScores.length - 1].score);
-      }
-
-      function maybeShowScoreEntry() {
-        scoreEntrySaved = false;
-        if (qualifiesForBoard()) {
-          initialsInput.value = "";
-          scoreEntry.hidden = false;
-        } else {
-          scoreEntry.hidden = true;
-        }
-      }
-
-      function saveScoreEntry() {
-        if (scoreEntrySaved || scoreEntry.hidden) return;
-        scoreEntrySaved = true;
-        var name = (initialsInput.value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 3) || "YOU";
-        topScores.push({ name: name, score: score, level: levelIdx + 1, date: new Date().toISOString().slice(0, 10) });
-        topScores.sort(function (a, b) { return b.score - a.score; });
-        topScores = topScores.slice(0, 8);
-        saveScores();
-        scoreEntry.hidden = true;
-        msgScore.textContent += " · Saved to the leaderboard!";
-        renderBoard();
-      }
       function getDamage() { return 1 + upgrades.damage; }
       function getFireRate() { return fireRateFor(upgrades.rapid); }
       function getBulletR() { return 5.5 + upgrades.big * 1.6; }
@@ -768,10 +719,62 @@
       function getBombDamage() { return 3 + upgrades.bomb * 2; }
       function getBossBombDamage() { return 10 + upgrades.bomb * 6; }
       var BULLET_COLORS = ["#b23a2e", "#c22f3d", "#d93a2e", "#e85d2a", "#f28c28", "#ffb52e"];
+
+      /* ---------------- Saving & leaderboard (Luna's build) ----------------
+         Progress, coins, upgrades, best score and the leaderboard are
+         saved on this device and restored on load, so the grind survives
+         closing the game. */
+      var SAVE_KEY = "invasionOfTheTurkeysSaveV1";
+      var leaderboard = []; // [{score, level, result, date}] best first, top 10
+      var bestScore = 0;
+      var runRecorded = false; // one leaderboard entry per finished run
+      function saveGame() {
+        try {
+          localStorage.setItem(SAVE_KEY, JSON.stringify({
+            coins: coins, totalCoinsEarned: totalCoinsEarned,
+            highestUnlocked: highestUnlocked, upgrades: upgrades,
+            bestScore: bestScore, leaderboard: leaderboard, muted: muted
+          }));
+        } catch (e) { /* storage unavailable — the session still plays normally */ }
+      }
+      function loadSave() {
+        var data = null;
+        try { data = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); } catch (e) { data = null; }
+        if (!data) return;
+        if (typeof data.coins === "number") coins = Math.max(0, Math.floor(data.coins));
+        if (typeof data.totalCoinsEarned === "number") totalCoinsEarned = Math.max(0, Math.floor(data.totalCoinsEarned));
+        if (typeof data.highestUnlocked === "number") highestUnlocked = clamp(Math.floor(data.highestUnlocked), 0, LEVELS.length - 1);
+        if (data.upgrades) {
+          for (var k in upgrades) {
+            if (typeof data.upgrades[k] === "number") upgrades[k] = Math.max(0, Math.floor(data.upgrades[k]));
+          }
+        }
+        if (typeof data.bestScore === "number") bestScore = Math.max(0, Math.floor(data.bestScore));
+        if (Object.prototype.toString.call(data.leaderboard) === "[object Array]") {
+          leaderboard = data.leaderboard.filter(function (en) { return en && typeof en.score === "number"; }).slice(0, 10);
+        }
+        if (typeof data.muted === "boolean") muted = data.muted;
+      }
+      loadSave();
+      function recordScore(resultLabel) {
+        if (runRecorded || score <= 0) return;
+        runRecorded = true;
+        bestScore = Math.max(bestScore, score);
+        leaderboard.push({
+          score: score, level: levelIdx + 1, result: resultLabel,
+          date: new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })
+        });
+        leaderboard.sort(function (a, b) { return b.score - a.score; });
+        leaderboard = leaderboard.slice(0, 10);
+        saveGame();
+        renderBoard();
+        renderMenu();
+      }
       function earnCoins(n, x, y) {
         coins += n; coinsThisRun += n; totalCoinsEarned += n;
         if (x !== undefined) floaters.push({ x: x, y: y, text: "+" + n + " 🪙", t: 1.1 });
         updateHUD();
+        saveGame();
       }
 
       var player = null;
@@ -792,7 +795,8 @@
       resetPlayer();
 
       /* ---------------- Audio (tiny synth) ---------------- */
-      var audioCtx = null, muted = false;
+      var audioCtx = null;
+      var muted = !!muted; // a saved mute choice from loadSave() survives; otherwise sound on
       function ac() {
         if (!audioCtx) {
           try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { audioCtx = null; }
@@ -850,7 +854,7 @@
 
       function addParticles(x, y, colors, n, spd) {
         for (var i = 0; i < n; i++) {
-          if (particles.length > 260) break;
+          if (particles.length > 720) break; // headroom for the 3× boss-death burst
           var ang = Math.random() * Math.PI * 2, v = rand(spd * 0.3, spd);
           particles.push({
             x: x, y: y, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v - 30,
@@ -865,36 +869,50 @@
       var GRAVY_COLS = ["#8a5a2b", "#6e4520", "#a87f3e", "#5d3a1a"];
 
       /* The kill burst: feathers flying, plus chunks of potato and
-         droplets of gravy — the full Thanksgiving kaboom. */
-      function addDeathBurst(x, y, big) {
-        addParticles(x, y, FEATHERS, big ? 30 : 12, big ? 230 : 140);
-        var pots = big ? 12 : 5, gravy = big ? 14 : 6, i, ang, v;
+         droplets of gravy — the full Thanksgiving kaboom. `mult` scales
+         the count, speed and size (the boss ceremony fires it at 3×). */
+      function addDeathBurst(x, y, big, mult) {
+        mult = mult || 1;
+        var spdMul = 1 + (mult - 1) * 0.22, sizeMul = 1 + (mult - 1) * 0.18;
+        addParticles(x, y, FEATHERS, Math.round((big ? 30 : 12) * mult), (big ? 230 : 140) * spdMul);
+        var pots = Math.round((big ? 12 : 5) * mult), gravy = Math.round((big ? 14 : 6) * mult), i, ang, v;
         for (i = 0; i < pots; i++) {
-          if (particles.length > 300) break;
-          ang = Math.random() * Math.PI * 2; v = rand(50, big ? 215 : 155);
+          if (particles.length > 720) break;
+          ang = Math.random() * Math.PI * 2; v = rand(50, (big ? 215 : 155) * spdMul);
           particles.push({
             x: x, y: y, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v - 60,
             life: rand(0.5, 0.95), maxLife: 0.95, rot: rand(0, 6.28), vr: rand(-7, 7),
             color: POTATO_COLS[Math.floor(Math.random() * POTATO_COLS.length)],
-            size: rand(4.5, 7.5), potato: true
+            size: rand(4.5, 7.5) * sizeMul, potato: true
           });
         }
         for (i = 0; i < gravy; i++) {
-          if (particles.length > 300) break;
-          ang = Math.random() * Math.PI * 2; v = rand(40, big ? 195 : 145);
+          if (particles.length > 720) break;
+          ang = Math.random() * Math.PI * 2; v = rand(40, (big ? 195 : 145) * spdMul);
           particles.push({
             x: x, y: y, vx: Math.cos(ang) * v, vy: Math.sin(ang) * v - 40,
             life: rand(0.4, 0.8), maxLife: 0.8, rot: rand(0, 6.28), vr: rand(-4, 4),
             color: GRAVY_COLS[Math.floor(Math.random() * GRAVY_COLS.length)],
-            size: rand(3.5, 6.5), gravy: true
+            size: rand(3.5, 6.5) * sizeMul, gravy: true
           });
         }
+      }
+
+      /* The boss-death explosion: the big feather/potato/gravy burst at
+         3× — more of everything, thrown wider, with a golden flash ring. */
+      function addBossExplosion(x, y, scale) {
+        scale = scale || 1;
+        addDeathBurst(x, y, true, 3 * scale);
+        addParticles(x, y, FEATHERS.concat(["#ffd98a"]), Math.round(42 * scale), 250);
+        addParticles(x, y, ["#ffd98a", "#fff2cf"], Math.round(20 * scale), 175);
       }
 
       /* ---------------- Waves & enemies ---------------- */
       function startLevel(idx) {
         levelIdx = idx;
         coinsThisRun = 0;
+        runRecorded = false;
+        ceremony = null; ceremonyFlash = 0; timeScale = 1; countUp = null;
         player.speed = 345 + upgrades.boots * 28;
         scoreAtLevelStart = score;
         waveIdx = 0;
@@ -910,6 +928,8 @@
       function showIntro() {
         var L = LEVELS[levelIdx];
         state = "intro";
+        msgOverlay.classList.remove("stagger");
+        countUp = null;
         msgTag.hidden = false;
         msgTag.textContent = "LEVEL " + (levelIdx + 1) + " OF " + LEVELS.length;
         msgTitle.textContent = L.name;
@@ -918,7 +938,6 @@
           " of invading turkeys — then face " + L.boss.name + "." +
           (levelIdx >= 3 ? " Mutated turkeys stalk this level — extra heads, glowing spots, extra tough, bonus coins." : "");
         msgScore.hidden = true;
-        scoreEntry.hidden = true;
         msgBtn.textContent = "Start Level " + (levelIdx + 1);
         msgBtn2.hidden = true;
         msgOverlay.hidden = false;
@@ -1041,9 +1060,17 @@
       function dropPickup(x, y) {
         var roll = Math.random();
         var type = null;
+        /* Food balance (#2): pie is the heal and there was too much of it.
+           Its window is halved (was 0.245–0.265, now 0.245–0.255), it
+           never drops during a boss wave, and at most 2 pies may sit on
+           screen at once — a roll that lands in the pie window while pie
+           is blocked simply drops nothing. */
+        var piesOnScreen = 0;
+        for (var pi2 = 0; pi2 < pickups.length; pi2++) if (pickups[pi2].type === "pie") piesOnScreen++;
+        var inBossWave = state === "boss" || !!boss;
         if (roll < 0.16) type = "corn";
         else if (roll < 0.245) type = "cranberry";
-        else if (roll < 0.265 && lives < 5) type = "pie";
+        else if (roll < 0.255) { if (lives < 5 && !inBossWave && piesOnScreen < 2) type = "pie"; }
         else if (roll < 0.30 && !player.shield) type = "shield";
         if (!type) return;
         pickups.push({ x: x, y: y, vy: 95, r: 11, type: type, phase: rand(0, 6.28) });
@@ -1100,21 +1127,73 @@
         updateHUD();
       }
 
+      /* ---- Boss death ceremony (#4) ----
+         A boss death must linger (~2s): 250ms hit-stop with a flash,
+         the 3× feather/potato/gravy explosion, 0.5s of slow-mo with
+         follow-up bursts, a short fade, then the victory screen whose
+         numbers count up in stages. Tapping skips straight to it. */
       function bossDown() {
-        if (!boss) return;
-        addParticles(boss.x, boss.y, FEATHERS.concat(["#ffd98a"]), 42, 230);
-        addParticles(boss.x, boss.y, ["#ffd98a", "#fff2cf"], 20, 160);
-        addDeathBurst(boss.x, boss.y, true); // the big one: potatoes & gravy everywhere
+        if (!boss || ceremony) return;
+        var bx = boss.x, by = boss.y;
+        var scoreBefore = score, coinsBefore = coins;
+        addBossExplosion(bx, by, reducedMotion ? 0.4 : 1); // the big one, 3×: potatoes & gravy everywhere
         score += 1000 + levelIdx * 250;
-        earnCoins(40 + levelIdx * 10, boss.x, boss.y);
+        earnCoins(40 + levelIdx * 10, bx, by);
         SFX.boom(); SFX.gobble();
         boss = null;
         enemyBombs = [];
-        shake = 0.6;
-        levelClear();
+        bullets = [];
+        shake = reducedMotion ? 0.25 : 0.6;
+        flash = 0.3;
+        ceremonyFlash = 1;
+        ceremony = {
+          t: 0, duration: reducedMotion ? 0.8 : 2.0,
+          x: bx, y: by, scoreBefore: scoreBefore, coinsBefore: coinsBefore,
+          burst2: false, burst3: false
+        };
+        state = "ceremony";
+        updateHUD();
       }
 
-      function levelClear() {
+      function finishCeremony() {
+        if (!ceremony) return;
+        var c = ceremony;
+        ceremony = null;
+        timeScale = 1;
+        ceremonyFlash = 0;
+        levelClear(c);
+      }
+
+      function skipCeremonyOrCountUp() {
+        if (ceremony) { finishCeremony(); return true; }
+        if (countUp) { countUp.t = countUp.dur; renderCountUp(); countUp = null; return true; }
+        return false;
+      }
+
+      /* Staggered count-up on the victory screen: the score climbs
+         first, the survival bonus lands next, then the coins bank. */
+      function startVictoryCountUp(fromScore, fromCoins, bonus) {
+        countUp = {
+          t: 0, dur: reducedMotion ? 0.3 : 1.5,
+          fromScore: fromScore, fromCoins: fromCoins,
+          toScore: score, toCoins: coins, bonus: bonus
+        };
+        renderCountUp();
+      }
+      function renderCountUp() {
+        if (!countUp) return;
+        var t = countUp.t;
+        var sProg = clamp(t / 0.9, 0, 1);
+        sProg = 1 - Math.pow(1 - sProg, 3);
+        var dispScore = Math.round(countUp.fromScore + (countUp.toScore - countUp.fromScore) * sProg);
+        var cProg = clamp((t - 0.65) / 0.7, 0, 1);
+        cProg = 1 - Math.pow(1 - cProg, 3);
+        var dispCoins = Math.round(countUp.fromCoins + (countUp.toCoins - countUp.fromCoins) * cProg);
+        msgScore.textContent = "Score: " + dispScore.toLocaleString() +
+          (t >= 0.65 ? " · 🪙 " + dispCoins.toLocaleString() + " coins banked" : "");
+      }
+
+      function levelClear(fromCeremony) {
         var bonus = lives * 100 + bombs * 50;
         score += bonus;
         bombs += 1; // a spare Gravy Bomb for clearing the level
@@ -1123,6 +1202,9 @@
         SFX.clear();
         var last = levelIdx >= LEVELS.length - 1;
         if (!last) highestUnlocked = Math.max(highestUnlocked, levelIdx + 1);
+        bestScore = Math.max(bestScore, score);
+        if (last) recordScore("🏆 Beat the Final Feast!");
+        saveGame();
         lobbyTarget = last ? 0 : levelIdx + 1;
         msgTag.hidden = false;
         msgTag.textContent = "LEVEL " + (levelIdx + 1) + " CLEARED";
@@ -1132,19 +1214,26 @@
           : LEVELS[levelIdx].boss.name + " has been plucked and stuffed.";
         msgBody.textContent = "Survival bonus: +" + bonus + " points. This run banked 🪙 " + coinsThisRun + " coins — spend them in the Lobby before the next level.";
         msgScore.hidden = false;
-        msgScore.textContent = "Score: " + score.toLocaleString() + " · 🪙 " + coins.toLocaleString() + " coins banked";
+        if (fromCeremony) {
+          // victory screen rises in staggered, score & coins count up
+          msgOverlay.classList.add("stagger");
+          startVictoryCountUp(fromCeremony.scoreBefore, fromCeremony.coinsBefore, bonus);
+        } else {
+          msgOverlay.classList.remove("stagger");
+          msgScore.textContent = "Score: " + score.toLocaleString() + " · 🪙 " + coins.toLocaleString() + " coins banked";
+        }
         if (last) state = "victory";
         msgBtn.textContent = "🏠 Return to Lobby";
         msgBtn2.hidden = false;
         msgBtn2.textContent = last ? "Play Again" : "Skip Lobby — Level " + (levelIdx + 2);
         msgOverlay.hidden = false;
-        saveGame();
-        if (last) maybeShowScoreEntry(); else scoreEntry.hidden = true;
         updateHUD();
       }
 
       function gameOver() {
         state = "over";
+        msgOverlay.classList.remove("stagger");
+        countUp = null;
         lobbyTarget = levelIdx;
         msgTag.hidden = false;
         msgTag.textContent = "GAME OVER";
@@ -1158,9 +1247,9 @@
         msgBtn.textContent = "🏠 Return to Lobby";
         msgBtn2.hidden = false;
         msgBtn2.textContent = "Retry Level " + (levelIdx + 1) + " now";
-        msgOverlay.hidden = false;
+        recordScore("Fell on Level " + (levelIdx + 1) + " — " + LEVELS[levelIdx].name);
         saveGame();
-        maybeShowScoreEntry();
+        msgOverlay.hidden = false;
         updateHUD();
       }
 
@@ -1173,7 +1262,38 @@
 
       /* ---------------- Update ---------------- */
       function update(dt) {
-        time += dt;
+        var rawDt = dt;
+        time += rawDt;
+        /* Boss death ceremony runs on real time while the world slows:
+           0–0.25s hit-stop (frozen, flash held), 0.25–0.75s slow-mo,
+           then a ramp back to full speed into the fade. The victory
+           count-up also ticks on real time. */
+        if (countUp) {
+          countUp.t += rawDt;
+          renderCountUp();
+          if (countUp && countUp.t >= countUp.dur) countUp = null;
+        }
+        if (ceremony) {
+          ceremony.t += rawDt;
+          var ct = ceremony.t;
+          if (reducedMotion) {
+            timeScale = 0.55;
+            ceremonyFlash = Math.max(0, 1 - ct * 1.6);
+          } else if (ct < 0.25) {
+            timeScale = 0; // hit-stop
+            ceremonyFlash = 1 - ct * 1.2;
+          } else if (ct < 0.75) {
+            timeScale = 0.18; // slow-mo
+            ceremonyFlash = Math.max(0, 0.7 - (ct - 0.25) * 0.9);
+            if (!ceremony.burst2) { ceremony.burst2 = true; addBossExplosion(ceremony.x, ceremony.y, 0.55); }
+          } else {
+            timeScale = 0.35 + clamp((ct - 0.75) / 0.95, 0, 1) * 0.65;
+            ceremonyFlash = Math.max(0, 0.25 - (ct - 0.75) * 0.3);
+            if (!ceremony.burst3) { ceremony.burst3 = true; addBossExplosion(ceremony.x + rand(-22, 22), ceremony.y + rand(-14, 14), 0.4); }
+          }
+          if (ct >= ceremony.duration) finishCeremony();
+          dt = rawDt * timeScale;
+        }
         if (shake > 0) shake -= dt;
         if (flash > 0) flash -= dt;
         if (player.invuln > 0) player.invuln -= dt;
@@ -1435,7 +1555,15 @@
         /* --- pickups --- */
         for (var ui = pickups.length - 1; ui >= 0; ui--) {
           var u = pickups[ui];
-          u.y += u.vy * dt; u.phase += dt * 4;
+          u.phase += dt * 4;
+          if (u.type === "pie" && u.grounded) {
+            /* Food balance (#2): an unpicked pie stays on the ground as
+               a bank — it waits there until the player walks over it. */
+            u.y = GROUND - 16 + Math.sin(u.phase) * 1.2;
+          } else {
+            u.y += u.vy * dt;
+            if (u.type === "pie" && u.y >= GROUND - 16) { u.y = GROUND - 16; u.grounded = true; u.vy = 0; }
+          }
           if (u.y > H + 16) { pickups.splice(ui, 1); continue; }
           if (dist2(u.x, u.y, player.x, player.y) < Math.pow(u.r + player.r + 6, 2)) {
             pickups.splice(ui, 1);
@@ -1445,7 +1573,7 @@
               player.power = 3; player.powerTimer = 14;
               addParticles(u.x, u.y, ["#b23a2e", "#e35d6a"], 9, 100);
             }
-            if (u.type === "pie") { lives = Math.min(5, lives + 1); addParticles(u.x, u.y, ["#e8873a", "#f4bd76"], 10, 100); }
+            if (u.type === "pie") { lives = Math.min(5, lives + 1); floaters.push({ x: u.x, y: u.y - 16, text: "+1 ♥", t: 1.1 }); addParticles(u.x, u.y, ["#e8873a", "#f4bd76"], 10, 100); } // flat small heal: always exactly +1 ♥, never scaled
             if (u.type === "shield") { player.shield = true; addParticles(u.x, u.y, ["#e8873a", "#fff2cf"], 10, 100); }
             updateHUD();
           }
@@ -1767,8 +1895,17 @@
           ctx.restore();
         }
 
-        // pickups
-        for (var ui = 0; ui < pickups.length; ui++) drawPickup(pickups[ui]);
+        // pickups (a banked pie sits on the ground with a soft shadow)
+        for (var ui = 0; ui < pickups.length; ui++) {
+          var pu = pickups[ui];
+          if (pu.type === "pie" && pu.grounded) {
+            ctx.fillStyle = "rgba(40,22,8,.3)";
+            ctx.beginPath(); ctx.ellipse(pu.x, GROUND - 3, 15, 4, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = "rgba(255,217,138,.75)"; ctx.lineWidth = 1.6;
+            ctx.beginPath(); ctx.arc(pu.x, pu.y, pu.r + 6 + Math.sin(pu.phase) * 1.2, 0, Math.PI * 2); ctx.stroke();
+          }
+          drawPickup(pu);
+        }
 
         // enemies
         for (var ei = 0; ei < enemies.length; ei++) {
@@ -1943,6 +2080,27 @@
           ctx.fillStyle = "rgba(255,214,140," + (flash * 0.9) + ")";
           ctx.fillRect(0, 0, W, H);
         }
+
+        /* Boss death ceremony: the hit-stop flash, the closing fade
+           (last ~0.25s), and a tap-to-skip hint while it lingers. */
+        if (ceremonyFlash > 0) {
+          ctx.fillStyle = "rgba(255,240,210," + (clamp(ceremonyFlash, 0, 1) * 0.8) + ")";
+          ctx.fillRect(0, 0, W, H);
+        }
+        if (ceremony) {
+          var fadeStart = ceremony.duration - 0.27;
+          if (ceremony.t > fadeStart) {
+            ctx.fillStyle = "rgba(24,12,5," + (clamp((ceremony.t - fadeStart) / 0.27, 0, 1) * 0.55) + ")";
+            ctx.fillRect(0, 0, W, H);
+          }
+          ctx.fillStyle = "rgba(253,243,224,.92)";
+          ctx.font = "800 21px Georgia, serif";
+          ctx.textAlign = "center";
+          ctx.fillText("PLUCKED!", W / 2, H * 0.4);
+          ctx.font = "600 13px Trebuchet MS, sans-serif";
+          ctx.fillStyle = "rgba(253,243,224,.75)";
+          ctx.fillText("Tap to skip", W / 2, H * 0.4 + 24);
+        }
       }
 
       /* ---------------- HUD ---------------- */
@@ -1995,6 +2153,7 @@
           lobbyBanner.hidden = true;
         }
         renderLobby();
+        renderBoard();
         updateHUD();
         lobbyPanel.scrollIntoView({ block: "start" });
       }
@@ -2004,69 +2163,6 @@
         stage.style.display = "";
         document.getElementById("controlsRow").style.display = "";
         document.getElementById("hintText").style.display = "";
-      }
-
-      function showMenu() {
-        hideLobby();
-        state = "menu";
-        menuOverlay.hidden = false;
-        refreshMenu();
-      }
-
-      function refreshMenu() {
-        var btnContinue = document.getElementById("btnContinue");
-        if (highestUnlocked > 0) {
-          btnContinue.hidden = false;
-          btnContinue.textContent = "Continue — Level " + (highestUnlocked + 1) + ": " + LEVELS[highestUnlocked].name;
-        } else {
-          btnContinue.hidden = true;
-        }
-        renderMenuLevels();
-        renderBoard();
-      }
-
-      function renderMenuLevels() {
-        var grid = document.getElementById("menuLevelGrid");
-        grid.textContent = "";
-        for (var i = 0; i < LEVELS.length; i++) {
-          (function (idx) {
-            var b = document.createElement("button");
-            b.type = "button";
-            b.className = "menu-level-btn" + (idx > highestUnlocked ? " locked" : "");
-            b.disabled = idx > highestUnlocked;
-            var line = document.createElement("b");
-            line.textContent = "Lv " + (idx + 1) + " — " + LEVELS[idx].name;
-            var boss = document.createElement("span");
-            boss.textContent = "Boss: " + LEVELS[idx].boss.name;
-            b.appendChild(line);
-            b.appendChild(boss);
-            b.addEventListener("click", function () { ac(); lobbyFrom = "menu"; startFromLobby(idx); });
-            grid.appendChild(b);
-          })(i);
-        }
-      }
-
-      function renderBoard() {
-        var list = document.getElementById("menuBoardList");
-        document.getElementById("menuBestScore").textContent = "Best score: " + bestScore.toLocaleString();
-        list.textContent = "";
-        if (!topScores.length) {
-          var empty = document.createElement("p");
-          empty.className = "board-empty";
-          empty.textContent = "No scores yet — be the first to save Earth!";
-          list.appendChild(empty);
-          return;
-        }
-        topScores.forEach(function (s, i) {
-          var row = document.createElement("div");
-          row.className = "board-row";
-          var rank = document.createElement("span"); rank.className = "rank"; rank.textContent = (i + 1) + ".";
-          var nm = document.createElement("span"); nm.className = "nm"; nm.textContent = s.name;
-          var lv = document.createElement("span"); lv.className = "lv"; lv.textContent = "Lv " + s.level + " · " + s.date;
-          var sc = document.createElement("span"); sc.className = "sc"; sc.textContent = s.score.toLocaleString();
-          row.appendChild(rank); row.appendChild(nm); row.appendChild(lv); row.appendChild(sc);
-          list.appendChild(row);
-        });
       }
 
       function startFromLobby(idx) {
@@ -2170,11 +2266,11 @@
         if (coins < cost) return;
         coins -= cost;
         upgrades[id]++;
+        saveGame();
         if (id === "boots") player.speed = 345 + upgrades.boots * 28;
         SFX.pickup(); SFX.clear();
         renderLobby();
         updateHUD();
-        saveGame();
       }
 
       function drawLobbyPreview() {
@@ -2229,6 +2325,115 @@
         g.fillText("Bomb damage " + getBombDamage(), 150, 104);
       }
 
+      /* ---------------- Main menu, level select & leaderboard ---------------- */
+      function fillBoard(el) {
+        if (!el) return;
+        el.textContent = "";
+        if (!leaderboard.length) {
+          var empty = document.createElement("div");
+          empty.className = "lb-empty";
+          empty.textContent = "No scores yet — finish a run to claim the top spot. 🦃";
+          el.appendChild(empty);
+          return;
+        }
+        leaderboard.forEach(function (en, i) {
+          var row = document.createElement("div"); row.className = "lb-row";
+          var rank = document.createElement("span"); rank.className = "rank";
+          rank.textContent = ["🥇", "🥈", "🥉"][i] || (i + 1) + ".";
+          var sc = document.createElement("span"); sc.className = "lb-score";
+          sc.textContent = en.score.toLocaleString();
+          var meta = document.createElement("span"); meta.className = "lb-meta";
+          meta.textContent = en.result + (en.date ? " · " + en.date : "");
+          row.appendChild(rank); row.appendChild(sc); row.appendChild(meta);
+          el.appendChild(row);
+        });
+      }
+      function renderBoard() {
+        fillBoard(document.getElementById("leaderboardList"));
+        fillBoard(document.getElementById("lobbyLeaderboard"));
+      }
+
+      function renderMenu() {
+        var summary = document.getElementById("menuSaveSummary");
+        if (summary) {
+          if (totalCoinsEarned > 0 || highestUnlocked > 0 || bestScore > 0) {
+            summary.textContent = "💾 Welcome back! 🪙 " + coins.toLocaleString() + " coins banked · Level " +
+              (highestUnlocked + 1) + " of " + LEVELS.length + " unlocked" +
+              (bestScore > 0 ? " · Best score " + bestScore.toLocaleString() : "") + " — all saved on this device.";
+          } else {
+            summary.textContent = "💾 New save — progress, coins & upgrades save automatically on this device as you play.";
+          }
+        }
+        var startBtn = document.getElementById("btnStart");
+        if (startBtn) startBtn.textContent = highestUnlocked > 0 ? "▶ Continue — Level " + (highestUnlocked + 1) : "Defend Earth!";
+        var grid = document.getElementById("menuLevelGrid");
+        if (grid) {
+          grid.textContent = "";
+          LEVELS.forEach(function (L, idx) {
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "lvl-btn" + (idx <= highestUnlocked ? " unlocked" : "");
+            b.disabled = idx > highestUnlocked;
+            var top = document.createElement("b");
+            top.textContent = idx > highestUnlocked ? "🔒 Lv " + (idx + 1) : "Lv " + (idx + 1);
+            var nm = document.createElement("span");
+            nm.textContent = idx > highestUnlocked ? "Locked" : L.name;
+            var bs = document.createElement("span");
+            bs.textContent = idx > highestUnlocked ? "" : "Boss: " + L.boss.name;
+            b.appendChild(top); b.appendChild(nm); if (bs.textContent) b.appendChild(bs);
+            b.addEventListener("click", function () { ac(); startFromMenu(idx); });
+            grid.appendChild(b);
+          });
+        }
+      }
+
+      var MENU_PANELS = ["panelLevels", "panelHow", "panelBoard", "panelCredits"];
+      function showMenuPanel(id) {
+        var target = document.getElementById(id);
+        var willShow = target.hidden;
+        MENU_PANELS.forEach(function (pid) { document.getElementById(pid).hidden = true; });
+        if (willShow) {
+          target.hidden = false;
+          if (id === "panelBoard") renderBoard();
+          if (id === "panelLevels") renderMenu();
+          target.scrollIntoView({ block: "nearest" });
+        }
+      }
+
+      function startFromMenu(idx) {
+        menuOverlay.hidden = true;
+        MENU_PANELS.forEach(function (pid) { document.getElementById(pid).hidden = true; });
+        score = 0; lives = 3; bombs = 2;
+        resetPlayer();
+        lobbyTarget = idx;
+        startLevel(idx);
+      }
+
+      function armButton(btn, label, action) {
+        if (btn.dataset.armed === "1") {
+          btn.dataset.armed = "";
+          btn.textContent = label;
+          action();
+        } else {
+          btn.dataset.armed = "1";
+          btn.textContent = "Tap again to confirm";
+          setTimeout(function () {
+            if (btn.dataset.armed === "1") { btn.dataset.armed = ""; btn.textContent = label; }
+          }, 3200);
+        }
+      }
+
+      function resetSaveData() {
+        try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+        coins = 0; coinsThisRun = 0; totalCoinsEarned = 0;
+        highestUnlocked = 0; lobbyTarget = 0; bestScore = 0;
+        leaderboard = [];
+        for (var k in upgrades) upgrades[k] = 0;
+        player.speed = 345;
+        saveGame();
+        renderMenu(); renderBoard(); updateHUD();
+      }
+
       /* ---------------- Main loop ---------------- */
       var lastTs = 0;
       function loop(ts) {
@@ -2250,6 +2455,7 @@
       stage.addEventListener("pointerdown", function (ev) {
         if (ev.target !== canvas) return;
         ac();
+        if (ceremony) { skipCeremonyOrCountUp(); return; } // tap skips the boss death ceremony
         pointerX = canvasX(ev.clientX);
         pDownX = pointerX; pDownT = performance.now();
         // double-tap a side of the field = dodge that way
@@ -2313,6 +2519,7 @@
         else { lastKeyTap.dir = dir; lastKeyTap.t = now; }
       }
       window.addEventListener("keydown", function (ev) {
+        if ((ceremony || countUp) && skipCeremonyOrCountUp()) { ev.preventDefault(); return; } // any key skips the ceremony / count-up
         if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") { keys.left = true; pointerX = null; keyDodgeCheck(-1, ev); ev.preventDefault(); }
         if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { keys.right = true; pointerX = null; keyDodgeCheck(1, ev); ev.preventDefault(); }
         if (ev.key === "b" || ev.key === "B" || ev.key === "Shift") useBomb();
@@ -2330,43 +2537,53 @@
         ac();
         score = 0; lives = 3; bombs = 2;
         resetPlayer();
-        lobbyTarget = 0;
+        lobbyTarget = highestUnlocked;
         showLobby("menu");
       });
-
-      document.getElementById("btnContinue").addEventListener("click", function () {
+      document.getElementById("btnMenuLevels").addEventListener("click", function () { ac(); showMenuPanel("panelLevels"); });
+      document.getElementById("btnMenuHow").addEventListener("click", function () { ac(); showMenuPanel("panelHow"); });
+      document.getElementById("btnMenuBoard").addEventListener("click", function () { ac(); showMenuPanel("panelBoard"); });
+      document.getElementById("btnMenuCredits").addEventListener("click", function () { ac(); showMenuPanel("panelCredits"); });
+      document.getElementById("btnMenuLobby").addEventListener("click", function () {
         ac();
-        lobbyFrom = "menu";
-        startFromLobby(highestUnlocked);
+        lobbyTarget = highestUnlocked;
+        showLobby("menu");
       });
-      document.getElementById("btnMenuLevels").addEventListener("click", function () {
-        var p = document.getElementById("menuLevelPanel");
-        p.hidden = !p.hidden;
-        this.setAttribute("aria-expanded", String(!p.hidden));
-        if (!p.hidden) renderMenuLevels();
+      document.getElementById("btnClearBoard").addEventListener("click", function () {
+        var btn = this;
+        armButton(btn, "Clear leaderboard", function () {
+          leaderboard = [];
+          saveGame(); renderBoard();
+        });
       });
-      document.getElementById("btnHowTo").addEventListener("click", function () {
-        var p = document.getElementById("menuHowTo");
-        p.hidden = !p.hidden;
-        this.setAttribute("aria-expanded", String(!p.hidden));
+      document.getElementById("btnResetSave").addEventListener("click", function () {
+        var btn = this;
+        armButton(btn, "Reset save (coins, upgrades & progress)", function () { resetSaveData(); });
       });
-      document.getElementById("btnCredits").addEventListener("click", function () {
-        var p = document.getElementById("menuCredits");
-        p.hidden = !p.hidden;
-        this.setAttribute("aria-expanded", String(!p.hidden));
+      document.getElementById("btnLobbyMenu").addEventListener("click", function () {
+        ac();
+        hideLobby();
+        state = "menu";
+        msgOverlay.hidden = true;
+        menuOverlay.hidden = false;
+        lobbyTarget = highestUnlocked;
+        renderMenu();
+        updateHUD();
+        window.scrollTo(0, 0);
       });
-      document.getElementById("btnSaveScore").addEventListener("click", function () { ac(); saveScoreEntry(); });
-      document.getElementById("btnLobbyMenu").addEventListener("click", function () { ac(); showMenu(); });
+
+      // tapping the victory screen background (not a button) skips the count-up
+      msgOverlay.addEventListener("pointerdown", function (ev) {
+        if (ev.target === msgOverlay && countUp) skipCeremonyOrCountUp();
+      });
 
       msgBtn.addEventListener("click", function () {
         ac();
-        saveScoreEntry();
         if (state === "intro") { waveIdx = 0; beginWave(); showWaveToast(); }
         else if (state === "clear" || state === "victory" || state === "over") { showLobby(state); }
       });
       msgBtn2.addEventListener("click", function () {
         ac();
-        saveScoreEntry();
         if (state === "clear") { startLevel(levelIdx + 1); }
         else if (state === "victory") { fullRestart(); }
         else if (state === "over") {
@@ -2381,7 +2598,7 @@
       document.getElementById("btnLobbyRestart").addEventListener("click", function () { ac(); lobbyFrom = "menu"; startFromLobby(0); });
       document.getElementById("btnLobby").addEventListener("click", function () {
         ac();
-        if (state === "menu") { lobbyTarget = 0; showLobby("menu"); }
+        if (state === "menu") { lobbyTarget = highestUnlocked; showLobby("menu"); }
         else if (state === "intro") { lobbyTarget = levelIdx; showLobby("intro"); }
         else if (state === "clear" || state === "victory" || state === "over") { showLobby(state); }
       });
@@ -2403,17 +2620,14 @@
       btnSound.addEventListener("click", function () {
         muted = !muted;
         btnSound.textContent = muted ? "🔇" : "🔊";
+        saveGame();
         if (!muted) ac();
       });
+      btnSound.textContent = muted ? "🔇" : "🔊";
 
       updateHUD();
-
-      /* ---------------- Load saved progress & scores ---------------- */
-      loadGame();
-      loadScores();
-      refreshMenu();
-      window.addEventListener("pagehide", saveGame);
-      window.addEventListener("beforeunload", saveGame);
+      renderMenu();
+      renderBoard();
     </script>
   </body>
 </html>
