@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Luckiest+Guy&display=swap" rel="stylesheet" />
     <link rel="icon" href="data:," />
     <title>Invasion of the Turkeys — Thanksgiving Shooter</title>
     <style>
@@ -21,6 +24,8 @@
         --btn: #fff8ec;
         --btn-line: #d9b988;
         --shadow: 0 10px 28px rgba(90, 52, 18, .16);
+        --font-display: "Luckiest Guy", "Baloo 2", ui-rounded, "Trebuchet MS", sans-serif;
+        --font-ui: "Baloo 2", ui-rounded, "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
       }
       @media (prefers-color-scheme: dark) {
         :root {
@@ -44,7 +49,7 @@
       body {
         background: var(--bg);
         color: var(--ink);
-        font-family: ui-rounded, "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+        font-family: var(--font-ui);
         -webkit-tap-highlight-color: transparent;
         overscroll-behavior: none;
       }
@@ -509,21 +514,68 @@
         font-size: 21px; margin: 0 0 10px; color: #ffd98a; text-align: center;
       }
       .menu-panel .panel-note { font-size: 13.5px; color: #f3cf96; text-align: center; margin: 8px 0 0; }
-      .lvl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-      @media (max-width: 380px) { .lvl-grid { grid-template-columns: repeat(2, 1fr); } }
-      .lvl-btn {
-        min-height: 62px; padding: 8px 6px;
-        font-family: inherit; cursor: pointer; touch-action: manipulation;
-        background: rgba(255, 244, 214, .10);
-        border: 1.5px solid rgba(255, 224, 160, .45);
-        border-radius: 10px; color: #fbeed3;
-        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+      /* ---------- Chapter cards: glossy level select ----------
+         Each of the 12 levels is a chapter card: a scene thumbnail
+         drawn at runtime from the game's own shared art (that
+         level's sky, hills, barn and its boss turkey), the boss,
+         the wave count, and a chunky state badge — ✓ CLEARED,
+         ★ NEXT UP, ▶ PLAY or 🔒 LOCKED. */
+      .chapter-select { display: flex; flex-direction: column; gap: 12px; }
+      .chapter-card {
+        display: flex; align-items: center; gap: 12px;
+        width: 100%; padding: 10px;
+        font-family: inherit; text-align: left; color: var(--ink);
+        background: linear-gradient(180deg, var(--panel), var(--gold-soft));
+        border: 3px solid var(--btn-line); border-radius: 18px;
+        box-shadow: 0 5px 0 rgba(90, 52, 18, .28), inset 0 2px 0 rgba(255, 255, 255, .6);
+        cursor: pointer; touch-action: manipulation;
       }
-      .lvl-btn b { font-size: 16px; }
-      .lvl-btn span { font-size: 11px; line-height: 1.25; color: #f3cf96; text-align: center; }
-      .lvl-btn:active { transform: scale(.96); }
-      .lvl-btn:disabled { opacity: .38; cursor: default; }
-      .lvl-btn.unlocked { border-color: #ffd98a; background: rgba(255, 217, 138, .16); }
+      .chapter-card:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(90, 52, 18, .28); }
+      .chapter-card:disabled { cursor: default; }
+      .chapter-card.st-next { border-color: var(--gold); box-shadow: 0 5px 0 rgba(160, 100, 20, .4), 0 0 14px rgba(232, 169, 76, .45), inset 0 2px 0 rgba(255, 255, 255, .6); }
+      .chapter-card.st-cleared { border-color: var(--good); }
+      .chapter-card.target { outline: 3px solid var(--gold); outline-offset: 2px; }
+      .chapter-thumb {
+        position: relative; flex: 0 0 44%;
+        border-radius: 12px; overflow: hidden;
+        border: 2.5px solid rgba(60, 30, 8, .5);
+        background: #eda254;
+        line-height: 0;
+      }
+      .chapter-thumb canvas { width: 100%; height: auto; }
+      .chapter-card.st-locked .chapter-thumb canvas { filter: grayscale(.65) brightness(.72); }
+      .chapter-badge {
+        position: absolute; left: 7px; bottom: 7px;
+        font-size: 11px; font-weight: 800; letter-spacing: .05em; line-height: 1;
+        padding: 5px 9px; border-radius: 999px;
+        color: #fff7e8; background: rgba(38, 20, 8, .85);
+        border: 2px solid rgba(255, 243, 214, .6);
+      }
+      .chapter-card.st-cleared .chapter-badge { background: var(--good); border-color: #33591f; }
+      .chapter-card.st-next .chapter-badge { background: var(--gold); border-color: #8a5a10; color: #3a2404; }
+      .chapter-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+      .chapter-kicker { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+      .chapter-name { font-family: var(--font-display); font-weight: 400; font-size: 19px; line-height: 1.12; letter-spacing: .01em; }
+      .chapter-meta { font-size: 13px; line-height: 1.35; color: var(--ink-soft); font-weight: 600; }
+      .chapter-go {
+        flex: 0 0 auto;
+        width: 42px; height: 42px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 17px; color: #fff7e8;
+        background: linear-gradient(180deg, #e0684f, var(--accent));
+        border: 2.5px solid #7e2418;
+        box-shadow: 0 3px 0 #7e2418, inset 0 2px 0 rgba(255, 255, 255, .35);
+      }
+      .chapter-card.st-locked .chapter-go { background: #8a7a68; border-color: #5d4a34; box-shadow: 0 3px 0 #5d4a34; }
+      .chapter-card.st-cleared .chapter-go { background: linear-gradient(180deg, #6da354, var(--good)); border-color: #33591f; box-shadow: 0 3px 0 #33591f, inset 0 2px 0 rgba(255, 255, 255, .3); }
+      /* Lobby replay chapters: compact two-up grid */
+      .chapter-select.compact { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
+      .chapter-card.compact { flex-direction: column; align-items: stretch; gap: 7px; padding: 8px; border-radius: 14px; }
+      .chapter-card.compact .chapter-thumb { flex: none; }
+      .chapter-card.compact .chapter-name { font-size: 15px; }
+      .chapter-card.compact .chapter-meta { font-size: 11.5px; }
+      .chapter-card.compact .chapter-go { display: none; }
+      @media (max-width: 380px) { .chapter-select.compact { grid-template-columns: 1fr; } }
       .lb-list { display: flex; flex-direction: column; gap: 6px; }
       .lb-row {
         display: flex; align-items: baseline; gap: 10px;
@@ -546,6 +598,177 @@
       .danger-btn { color: #ffb4a2; border-color: rgba(255, 180, 162, .55); }
       .lobby-board { margin-top: 20px; }
       .lobby-board .lb-row { background: var(--btn); }
+
+      /* ============================================================
+         2026 UI OVERHAUL — modern mobile-game presentation in OUR
+         warm sunset-farm palette: chunky display type, glossy pill
+         badges, thick-bordered panels and big pressable buttons.
+         Presentation only — every control keeps its old behaviour,
+         and both colour schemes keep working through the palette
+         variables above.
+         ============================================================ */
+      .overlay h2, .lobby-head h2, .trailer-head h2 {
+        font-family: var(--font-display);
+        font-weight: 400;
+        letter-spacing: .015em;
+      }
+      #menuOverlay h2 {
+        color: #fff3d6;
+        text-shadow: 0 3px 0 #7e2418, 0 6px 0 rgba(43, 16, 8, .35), 0 10px 26px rgba(0, 0, 0, .4);
+      }
+      #msgOverlay h2 { color: #fff3d6; text-shadow: 0 3px 0 rgba(90, 20, 8, .6), 0 6px 18px rgba(0, 0, 0, .35); }
+      /* HUD → chunky pill badges with icons, thick borders, soft shadow */
+      .hud .stat {
+        border: 2.5px solid var(--btn-line);
+        border-radius: 16px;
+        padding: 5px 13px;
+        box-shadow: 0 3px 0 rgba(90, 52, 18, .22), inset 0 2px 0 rgba(255, 255, 255, .55);
+        background: linear-gradient(180deg, var(--panel), var(--gold-soft));
+      }
+      .hud .stat b { font-size: 17px; font-weight: 800; }
+      .hud .stat span { font-weight: 800; }
+      .lives {
+        background: linear-gradient(180deg, var(--panel), var(--gold-soft));
+        border: 2.5px solid var(--btn-line);
+        border-radius: 999px;
+        padding: 0 13px;
+        box-shadow: 0 3px 0 rgba(90, 52, 18, .22), inset 0 2px 0 rgba(255, 255, 255, .55);
+        text-shadow: 0 1px 0 rgba(90, 20, 8, .35);
+      }
+      .icon-btn {
+        border: 2.5px solid var(--btn-line);
+        border-radius: 14px;
+        background: linear-gradient(180deg, var(--panel), var(--gold-soft));
+        box-shadow: 0 3px 0 rgba(90, 52, 18, .28), inset 0 2px 0 rgba(255, 255, 255, .55);
+      }
+      .icon-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(90, 52, 18, .28); }
+      /* Big glossy pressable buttons */
+      .big-btn {
+        font-family: var(--font-display); font-weight: 400; letter-spacing: .03em;
+        background: linear-gradient(180deg, #e0684f 0%, var(--accent) 52%, #93301f 100%);
+        border: 3px solid #7e2418;
+        border-radius: 16px;
+        box-shadow: 0 5px 0 #7e2418, inset 0 2px 0 rgba(255, 255, 255, .4);
+        text-shadow: 0 2px 0 rgba(90, 20, 8, .45);
+      }
+      .big-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #7e2418, inset 0 2px 0 rgba(255, 255, 255, .4); }
+      .ghost-btn {
+        font-weight: 800;
+        border: 2px solid rgba(255, 233, 194, .65);
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(255, 244, 214, .20), rgba(255, 244, 214, .06));
+        box-shadow: 0 3px 0 rgba(20, 6, 2, .4), inset 0 2px 0 rgba(255, 255, 255, .18);
+      }
+      .ghost-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(20, 6, 2, .4); }
+      .trailer-open-btn { font-family: var(--font-display); letter-spacing: .03em; }
+      /* Ribbon banner headings — chunky display type on a cranberry bar */
+      .menu-panel h3, .lobby h3 {
+        font-family: var(--font-display); font-weight: 400; letter-spacing: .04em;
+        background: linear-gradient(180deg, #d95f4b, #b23a2e);
+        color: #fff3d6;
+        border: 2.5px solid #7e2418;
+        border-radius: 12px;
+        padding: 9px 14px;
+        text-shadow: 0 2px 0 rgba(90, 20, 8, .55);
+        box-shadow: 0 4px 0 rgba(90, 20, 8, .4), inset 0 2px 0 rgba(255, 255, 255, .3);
+        text-align: center;
+      }
+      .menu-panel h3 { font-size: 20px; }
+      .lobby h3 { font-size: 19px; margin: 18px 0 10px; }
+      /* Panels: thick borders, soft deep shadows */
+      .overlay .howto, .credits-box, .save-summary {
+        border-width: 2px; border-radius: 14px;
+        box-shadow: inset 0 2px 0 rgba(255, 255, 255, .14), 0 6px 18px rgba(20, 6, 2, .3);
+      }
+      .boss-tag {
+        font-family: var(--font-display); letter-spacing: .05em;
+        border: 2px solid var(--gold); border-radius: 999px;
+        box-shadow: 0 3px 0 rgba(90, 52, 18, .3);
+      }
+      .cover-badge { font-family: var(--font-display); letter-spacing: .1em; border-width: 2px; }
+      /* Touch controls → chunky glossy pads */
+      .ctl-btn {
+        border: 2.5px solid var(--btn-line); border-radius: 16px;
+        background: linear-gradient(180deg, var(--panel), var(--gold-soft));
+        box-shadow: 0 4px 0 rgba(90, 52, 18, .3), inset 0 2px 0 rgba(255, 255, 255, .55);
+        font-weight: 800;
+      }
+      .ctl-btn:active, .ctl-btn.held { transform: translateY(3px); box-shadow: 0 1px 0 rgba(90, 52, 18, .3); background: var(--gold-soft); }
+      .ctl-btn.bomb { background: linear-gradient(180deg, #e0684f, var(--accent) 55%, #93301f); border-color: #7e2418; box-shadow: 0 4px 0 #7e2418, inset 0 2px 0 rgba(255, 255, 255, .35); }
+      .ctl-btn.dodge { background: linear-gradient(180deg, #f7dc7a, var(--gold-soft)); border-color: var(--gold); box-shadow: 0 4px 0 rgba(160, 100, 20, .45), inset 0 2px 0 rgba(255, 255, 255, .6); }
+      /* Lobby: chunky coin bank, hero-stage frame, glossy tiles & cards */
+      .lobby { border: 2.5px solid var(--line); border-radius: 18px; }
+      .coin-bank {
+        background: linear-gradient(180deg, #f7dc7a, var(--gold-soft));
+        border: 3px solid var(--gold); border-radius: 16px;
+        box-shadow: 0 4px 0 rgba(160, 100, 20, .4), inset 0 2px 0 rgba(255, 255, 255, .65);
+      }
+      .coin-bank b { font-weight: 800; }
+      .lobby-banner { border: 2px solid var(--btn-line); border-radius: 12px; box-shadow: inset 0 2px 0 rgba(255, 255, 255, .5); }
+      .preview-card {
+        border: 3px solid var(--gold); border-radius: 18px;
+        background: linear-gradient(180deg, var(--gold-soft), var(--panel) 70%);
+        box-shadow: 0 6px 0 rgba(160, 100, 20, .28), var(--shadow);
+        padding: 12px;
+      }
+      .preview-card canvas { border: 2px solid rgba(122, 77, 0, .4); border-radius: 12px; }
+      .stat-tile {
+        border: 2px solid var(--line); border-radius: 12px;
+        background: linear-gradient(180deg, var(--panel), var(--btn));
+        box-shadow: inset 0 2px 0 rgba(255, 255, 255, .55), 0 2px 0 rgba(90, 52, 18, .14);
+      }
+      .stat-tile b { font-size: 16px; font-weight: 800; }
+      /* Upgrade cards as glossy item cards; the border heats up with
+         the track's level — bronze → gold → cranberry → radiant max. */
+      .upgrade-card {
+        border: 3px solid var(--line); border-radius: 16px;
+        background: linear-gradient(180deg, var(--panel), var(--btn));
+        box-shadow: 0 4px 0 rgba(90, 52, 18, .18), inset 0 2px 0 rgba(255, 255, 255, .5);
+        padding: 14px;
+      }
+      .upgrade-card.rarity-1 { border-color: #c98a3d; }
+      .upgrade-card.rarity-2 { border-color: var(--gold); box-shadow: 0 4px 0 rgba(160, 100, 20, .3), 0 0 0 3px rgba(217, 142, 43, .16); }
+      .upgrade-card.rarity-3 { border-color: var(--accent); box-shadow: 0 4px 0 rgba(126, 36, 24, .3), 0 0 0 3px rgba(178, 58, 46, .14); }
+      .upgrade-card.rarity-4 { border-color: var(--gold); box-shadow: 0 4px 0 rgba(160, 100, 20, .35), 0 0 16px rgba(232, 169, 76, .5); }
+      .upgrade-icon {
+        position: relative;
+        width: 46px; height: 46px; flex-basis: 46px;
+        border: 2.5px solid var(--btn-line); border-radius: 13px;
+        background: linear-gradient(180deg, #fff6df, var(--gold-soft));
+        box-shadow: inset 0 2px 0 rgba(255, 255, 255, .75), 0 2px 0 rgba(90, 52, 18, .2);
+        font-size: 24px;
+      }
+      .lv-badge {
+        position: absolute; top: -8px; right: -9px;
+        background: var(--accent); color: #fff;
+        border: 2px solid #7e2418; border-radius: 999px;
+        font-size: 10.5px; font-weight: 800; line-height: 1;
+        padding: 3px 6px;
+      }
+      .pips { font-size: 15px; letter-spacing: 3px; text-shadow: 0 1px 0 rgba(90, 52, 18, .3); }
+      .buy-btn {
+        font-weight: 800; letter-spacing: .01em;
+        background: linear-gradient(180deg, #e0684f, var(--accent) 55%, #93301f);
+        border: 2.5px solid #7e2418; border-radius: 13px;
+        box-shadow: 0 4px 0 #7e2418, inset 0 2px 0 rgba(255, 255, 255, .35);
+        text-shadow: 0 1px 0 rgba(90, 20, 8, .4);
+      }
+      .buy-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #7e2418; }
+      .buy-btn:disabled { background: var(--btn); box-shadow: none; text-shadow: none; }
+      .buy-btn.maxed-btn { background: linear-gradient(180deg, #6da354, var(--good) 55%, #33591f); border-color: #33591f; box-shadow: 0 4px 0 #33591f, inset 0 2px 0 rgba(255, 255, 255, .3); }
+      .next-card {
+        border: 3px solid var(--gold); border-radius: 16px;
+        background: linear-gradient(180deg, #f7dc7a, var(--gold-soft));
+        box-shadow: 0 5px 0 rgba(160, 100, 20, .35), inset 0 2px 0 rgba(255, 255, 255, .6);
+      }
+      .next-card h4 { font-family: var(--font-display); font-weight: 400; letter-spacing: .02em; font-size: 20px; }
+      .lobby .ghost-dark {
+        border: 2px solid var(--line); border-radius: 12px; font-weight: 800;
+        background: linear-gradient(180deg, var(--panel), var(--btn));
+        box-shadow: 0 3px 0 rgba(90, 52, 18, .2);
+      }
+      .lobby .ghost-dark:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(90, 52, 18, .2); }
+      .lb-row { border-width: 2px; border-radius: 12px; font-weight: 600; }
 
       /* ---------- Issue #5: phone main menu ----------
          On a phone the menu used to be trapped inside the game field,
@@ -668,8 +891,8 @@
           </div>
 
           <div class="menu-panel" id="panelLevels" hidden>
-            <h3>Level Select</h3>
-            <div class="lvl-grid" id="menuLevelGrid"></div>
+            <h3>Choose Your Chapter</h3>
+            <div class="chapter-select" id="menuLevelGrid"></div>
             <p class="panel-note">Beat a level to unlock the next. Replay any unlocked level to farm coins for the Workshop.</p>
           </div>
 
@@ -740,7 +963,7 @@
           <h4 id="lobbyNextTitle">Next: Level 1</h4>
           <p id="lobbyNextBody"></p>
           <button class="big-btn" id="btnLobbyGo" type="button">Start Level 1</button>
-          <div class="level-chips" id="levelChips" aria-label="Replay an unlocked level"></div>
+          <div class="chapter-select compact" id="levelChips" aria-label="Replay an unlocked level"></div>
         </div>
         <div class="lobby-actions">
           <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
@@ -986,13 +1209,14 @@
          closing the game. */
       var SAVE_KEY = "invasionOfTheTurkeysSaveV1";
       var leaderboard = []; // [{score, level, result, date}] best first, top 10
+      var clearedLevels = LEVELS.map(function () { return false; }); // chapters beaten — drives the ✓ CLEARED chapter badges
       var bestScore = 0;
       var runRecorded = false; // one leaderboard entry per finished run
       function saveGame() {
         try {
           localStorage.setItem(SAVE_KEY, JSON.stringify({
             coins: coins, totalCoinsEarned: totalCoinsEarned,
-            highestUnlocked: highestUnlocked, upgrades: upgrades,
+            highestUnlocked: highestUnlocked, clearedLevels: clearedLevels, upgrades: upgrades,
             bestScore: bestScore, leaderboard: leaderboard, muted: muted
           }));
         } catch (e) { /* storage unavailable — the session still plays normally */ }
@@ -1004,6 +1228,11 @@
         if (typeof data.coins === "number") coins = Math.max(0, Math.floor(data.coins));
         if (typeof data.totalCoinsEarned === "number") totalCoinsEarned = Math.max(0, Math.floor(data.totalCoinsEarned));
         if (typeof data.highestUnlocked === "number") highestUnlocked = clamp(Math.floor(data.highestUnlocked), 0, LEVELS.length - 1);
+        if (Object.prototype.toString.call(data.clearedLevels) === "[object Array]") {
+          for (var cli = 0; cli < LEVELS.length; cli++) clearedLevels[cli] = !!data.clearedLevels[cli];
+        }
+        // any chapter below the frontier was beaten to get there (older saves)
+        for (var clm = 0; clm < highestUnlocked; clm++) clearedLevels[clm] = true;
         if (data.upgrades) {
           for (var k in upgrades) {
             if (typeof data.upgrades[k] === "number") upgrades[k] = Math.max(0, Math.floor(data.upgrades[k]));
@@ -1531,6 +1760,7 @@
         SFX.clear();
         var last = levelIdx >= LEVELS.length - 1;
         if (!last) highestUnlocked = Math.max(highestUnlocked, levelIdx + 1);
+        clearedLevels[levelIdx] = true;
         bestScore = Math.max(bestScore, score);
         if (last) recordScore("🏆 Beat the Final Feast!");
         saveGame();
@@ -2369,6 +2599,20 @@
 
       function drawTurkey(x, y, s, flap, opts) { drawTurkeyOn(ctx, x, y, s, flap, opts); }
 
+      /* The one boss look-up: which accessories each level's boss wears.
+         Gameplay, the chapter-card thumbnails and every other screen
+         read it from here, so a boss looks identical everywhere. */
+      function bossOptsFor(idx) {
+        return {
+          variant: LEVELS[idx].variant,
+          golden: idx === 6 || idx === 11,
+          crown: idx === 11 || idx === 10 || idx === 6,
+          helmet: idx === 1,
+          chefHat: idx === 3 || idx === 4,
+          mutated: idx >= 9
+        };
+      }
+
       function drawPlayer() {
         var p = player;
         if (!(p.invuln > 0 && p.dodgeTime <= 0 && Math.floor(time * 14) % 2 === 0 && state !== "over")) {
@@ -2548,7 +2792,7 @@
 
         // boss
         if (boss && state === "boss") {
-          var bopts = { variant: LEVELS[boss.idx].variant, golden: boss.idx === 6 || boss.idx === 11, crown: boss.idx === 11 || boss.idx === 10 || boss.idx === 6, helmet: boss.idx === 1, chefHat: boss.idx === 3 || boss.idx === 4, mutated: boss.idx >= 9 };
+          var bopts = bossOptsFor(boss.idx);
           // trailer boss presence: looming scale, pulsing ember aura + ground shadow
           ctx.fillStyle = "rgba(30,16,6,.4)";
           ctx.beginPath(); ctx.ellipse(boss.x, GROUND - 4, 52, 9, 0, 0, Math.PI * 2); ctx.fill();
@@ -2869,9 +3113,12 @@
           var maxed = lv >= u.max;
           var cost = maxed ? null : u.costs[lv];
           var card = document.createElement("div");
-          card.className = "upgrade-card" + (maxed ? " maxed" : "");
+          var tier = maxed ? 4 : (lv === 0 ? 0 : Math.ceil(lv / u.max * 3));
+          card.className = "upgrade-card rarity-" + tier + (maxed ? " maxed" : "");
           var top = document.createElement("div"); top.className = "upgrade-top";
           var icon = document.createElement("div"); icon.className = "upgrade-icon"; icon.textContent = u.icon;
+          var lvBadge = document.createElement("span"); lvBadge.className = "lv-badge"; lvBadge.textContent = "Lv " + lv;
+          icon.appendChild(lvBadge);
           var nameWrap = document.createElement("div");
           var h4 = document.createElement("h4"); h4.textContent = u.name;
           var pips = document.createElement("div"); pips.className = "pips";
@@ -2907,18 +3154,11 @@
         document.getElementById("btnLobbyGo").textContent =
           (lobbyFrom === "over" ? "Retry Level " : "Start Level ") + (lobbyTarget + 1);
         levelChips.textContent = "";
-        for (var ci = 0; ci < LEVELS.length; ci++) {
-          (function (idx) {
-            var chip = document.createElement("button");
-            chip.type = "button";
-            chip.className = "chip" + (idx === lobbyTarget ? " current" : "");
-            chip.textContent = "Lv " + (idx + 1);
-            chip.disabled = idx > highestUnlocked;
-            chip.title = LEVELS[idx].name;
-            chip.addEventListener("click", function () { ac(); startFromLobby(idx); });
-            levelChips.appendChild(chip);
-          })(ci);
-        }
+        LEVELS.forEach(function (L2, idx) {
+          var card = buildChapterCard(idx, true, startFromLobby);
+          if (idx === lobbyTarget) card.classList.add("target");
+          levelChips.appendChild(card);
+        });
       }
 
       function buyUpgrade(id) {
@@ -2938,19 +3178,22 @@
         updateHUD();
       }
 
-      /* Lobby preview: the cannon in its barnyard — drawn ENTIRELY by
-         the canonical shared art (drawCannonOn, drawTurkeyOn,
-         drawBarnShape, drawWindmillShape), so the Lobby cannon and
-         turkeys are pixel-for-pixel the same design as in gameplay
-         and in the trailer. NO stat text in here: the numbers live
-         once, in the stat tiles under the picture. Upgrades show on
-         the cannon exactly as in-game: wider barrel with damage,
-         gold bands with Rapid Fire, real side barrels with Extra
-         Barrels, bigger glowing berries with Big Berries. */
-      function drawLobbyPreview() {
+      /* Lobby preview — the equip-screen hero stage: the cannon BIG
+         and centre on a glowing golden pedestal in its barnyard,
+         drawn ENTIRELY by the canonical shared art (drawCannonOn,
+         drawTurkeyOn, drawBarnShape, drawWindmillShape), so the
+         Lobby cannon is pixel-for-pixel the same design as in
+         gameplay and in the trailer. NO stat text in here: the
+         numbers live once, in the stat tiles under the picture.
+         Upgrades show on the cannon exactly as in-game: wider
+         barrel with damage, gold bands with Rapid Fire, real side
+         barrels with Extra Barrels. `t` animates the stage glow
+         while the Lobby is open (redrawn from the main loop). */
+      function drawLobbyPreview(t) {
         var c = document.getElementById("lobbyCanvas");
         var g = c.getContext("2d");
         var PW = c.width, PH = c.height, GY = PH - 38; // ground line
+        t = t || 0;
         g.clearRect(0, 0, PW, PH);
         // harvest sky
         var grad = g.createLinearGradient(0, 0, 0, PH);
@@ -3002,35 +3245,40 @@
         g.beginPath(); g.moveTo(PW - 126, GY - 16); g.quadraticCurveTo(PW - 132, GY - 2, PW - 126, GY); g.stroke();
         g.fillStyle = "#4d7c3a"; g.fillRect(PW - 134, GY - 21, 4, 6);
 
-        /* ---- THE cannon — the canonical drawCannonOn, the exact
-           function gameplay uses, aimed up-right at a target drawn by
-           the canonical drawTurkeyOn (Level 1's classic turkey, same
-           colours as in-game). One cannon, one turkey, everywhere. */
-        var col = BULLET_COLORS[upgrades.damage];
-        var targetX = 414, targetY = 58;
-        drawTurkeyOn(g, targetX, targetY, 20, 1.1, { variant: "classic" });
-        drawTurkeyOn(g, 486, 96, 15, 2.2, { variant: "classic" });
-        var mz = drawCannonOn(g, 196, GY - 13, 1.55, 0.62, { flash: true });
-        /* Berries in flight: each stream starts AT that same muzzle
-           and flies toward the target turkey — nothing floats. */
-        var streams = getBaseShots();
-        for (var s2 = 0; s2 < streams; s2++) {
-          var spreadOff = (s2 - (streams - 1) / 2) * 13;
-          for (var k = 0; k < 3; k++) {
-            var tt = 0.18 + k * 0.28;
-            var bx3 = mz.x + (targetX - mz.x) * tt;
-            var by3 = mz.y + (targetY - mz.y) * tt - Math.sin(tt * Math.PI) * 16 + spreadOff * tt;
-            var br = getBulletR() * 1.45;
-            g.strokeStyle = "rgba(178,58,46,.4)"; g.lineWidth = 3; g.lineCap = "round";
-            g.beginPath(); g.moveTo(bx3 - 13, by3 + 5); g.lineTo(bx3 - 3, by3 + 1); g.stroke();
-            if (upgrades.big >= 2) { g.fillStyle = "rgba(255,190,60,.35)"; g.beginPath(); g.arc(bx3, by3, br + 4.5, 0, Math.PI * 2); g.fill(); }
-            g.fillStyle = col;
-            g.beginPath(); g.arc(bx3, by3, br, 0, Math.PI * 2); g.fill();
-            g.fillStyle = "rgba(255,255,255,.65)";
-            g.beginPath(); g.arc(bx3 - br * 0.3, by3 - br * 0.3, Math.max(1.8, br * 0.3), 0, Math.PI * 2); g.fill();
-            if (upgrades.pierce > 0) { g.strokeStyle = "rgba(120,70,0,.85)"; g.lineWidth = 1.4; g.beginPath(); g.arc(bx3, by3, br + 2.2, 0, Math.PI * 2); g.stroke(); }
-          }
+        /* ---- THE HERO STAGE — the canonical drawCannonOn, the
+           exact function gameplay uses, presented big and centre
+           on a glowing golden pedestal, equip-screen style: this
+           is YOUR cannon, shown off. Two of Level 1's classic
+           turkeys — the same canonical drawTurkeyOn — drift in at
+           the edges of the yard it defends. */
+        var pcx = PW / 2, pgy = GY + 10;
+        var pulse = 0.72 + Math.sin(t * 2.3) * 0.16;
+        var glow2 = g.createRadialGradient(pcx, pgy - 16, 12, pcx, pgy - 16, 168);
+        glow2.addColorStop(0, "rgba(255,205,90," + (0.5 * pulse) + ")"); glow2.addColorStop(1, "rgba(255,205,90,0)");
+        g.fillStyle = glow2; g.fillRect(pcx - 180, pgy - 190, 360, 210);
+        // the pedestal: a golden display disc with a bright rim
+        var pg = g.createLinearGradient(0, pgy - 12, 0, pgy + 14);
+        pg.addColorStop(0, "#f7dc7a"); pg.addColorStop(0.55, "#e8a94c"); pg.addColorStop(1, "#c97b24");
+        g.fillStyle = pg;
+        g.beginPath(); g.ellipse(pcx, pgy, 128, 17, 0, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = "#8a5a10"; g.lineWidth = 3;
+        g.beginPath(); g.ellipse(pcx, pgy, 128, 17, 0, 0, Math.PI * 2); g.stroke();
+        g.strokeStyle = "rgba(255,246,214,.85)"; g.lineWidth = 2;
+        g.beginPath(); g.ellipse(pcx, pgy - 2, 108, 12.5, 0, 0, Math.PI * 2); g.stroke();
+        // rising sparkles around the stage
+        g.fillStyle = "#fff2cf";
+        for (var sp2 = 0; sp2 < 9; sp2++) {
+          var sxp = pcx + Math.sin(sp2 * 2.39) * (58 + (sp2 % 3) * 26);
+          var syp = pgy - 8 - ((t * 22 + sp2 * 29) % 120);
+          g.save();
+          g.globalAlpha = clamp(1 - (pgy - 8 - syp) / 130, 0, 1) * 0.85;
+          g.beginPath(); g.arc(sxp, syp, 2.1 + (sp2 % 3) * 0.7, 0, Math.PI * 2); g.fill();
+          g.restore();
         }
+        g.globalAlpha = 1;
+        drawTurkeyOn(g, 66, GY - 66 + Math.sin(t * 1.7) * 4, 14, t * 9 + 1, { variant: "classic" });
+        drawTurkeyOn(g, PW - 62, GY - 54 + Math.cos(t * 1.5) * 4, 12, t * 9 + 3, { variant: "classic" });
+        drawCannonOn(g, pcx, GY - 24, 2.05, Math.sin(t * 0.9) * 0.05, { flash: (t % 1.8) < 0.09 });
       }
 
       /* ---------------- Main menu, level select & leaderboard ---------------- */
@@ -3061,6 +3309,84 @@
         fillBoard(document.getElementById("lobbyLeaderboard"));
       }
 
+      /* ---------------- Chapter cards (2026 level select) ----------------
+         A level's state for its card: locked beyond the frontier,
+         cleared once beaten, "next" at the frontier, open for replays. */
+      function chapterState(idx) {
+        if (idx > highestUnlocked) return "locked";
+        if (clearedLevels[idx]) return "cleared";
+        if (idx === highestUnlocked) return "next";
+        return "open";
+      }
+      /* The chapter thumbnail: that level's own farm scene — its sky
+         and hill colours, the shared barn, its flock, and its boss
+         looming at boss scale — painted ONLY with the canonical art
+         (drawBarnShape / drawTurkeyOn / bossOptsFor), so the card is
+         a window into the real level, not a separate illustration. */
+      function drawChapterThumb(cv, idx) {
+        var g = cv.getContext("2d");
+        var L = LEVELS[idx];
+        var cw = cv.width, ch = cv.height, gy = ch - Math.round(ch * 0.15);
+        var sky = g.createLinearGradient(0, 0, 0, gy);
+        sky.addColorStop(0, L.skyTop); sky.addColorStop(1, L.skyBot);
+        g.fillStyle = sky; g.fillRect(0, 0, cw, ch);
+        g.fillStyle = idx === 3 ? "#f4ecd8" : "rgba(255,236,180,.9)";
+        g.beginPath(); g.arc(cw - ch * 0.22, ch * 0.17, ch * 0.085, 0, Math.PI * 2); g.fill();
+        g.fillStyle = L.hillFar;
+        g.beginPath(); g.moveTo(0, gy);
+        g.quadraticCurveTo(cw * 0.26, gy - ch * 0.3, cw * 0.54, gy - ch * 0.1);
+        g.quadraticCurveTo(cw * 0.8, gy + 2, cw, gy - ch * 0.18);
+        g.lineTo(cw, gy); g.closePath(); g.fill();
+        g.fillStyle = L.hill;
+        g.beginPath(); g.moveTo(0, gy);
+        g.quadraticCurveTo(cw * 0.3, gy - ch * 0.13, cw * 0.62, gy - ch * 0.04);
+        g.quadraticCurveTo(cw * 0.86, gy + 2, cw, gy - ch * 0.07);
+        g.lineTo(cw, gy); g.closePath(); g.fill();
+        drawBarnShape(g, cw * 0.02, gy, ch / 235);
+        g.fillStyle = "#8a6a35"; g.fillRect(0, gy, cw, ch - gy);
+        g.fillStyle = "#75582a"; g.fillRect(0, gy + (ch - gy) * 0.45, cw, 2.5);
+        // the flock, small — then the boss, big, exactly as in its fight
+        drawTurkeyOn(g, cw * 0.30, gy - ch * 0.30, ch * 0.075, 1.2, { variant: L.variant });
+        drawTurkeyOn(g, cw * 0.44, gy - ch * 0.20, ch * 0.058, 2.4, { variant: L.variant });
+        var bs = ch * 0.235;
+        drawTurkeyOn(g, cw * 0.76, gy - bs * 0.92, bs, 0.6, bossOptsFor(idx));
+        var vg = g.createRadialGradient(cw / 2, ch * 0.45, ch * 0.3, cw / 2, ch * 0.5, ch * 1.05);
+        vg.addColorStop(0, "rgba(20,8,2,0)"); vg.addColorStop(1, "rgba(20,8,2,.22)");
+        g.fillStyle = vg; g.fillRect(0, 0, cw, ch);
+      }
+      function buildChapterCard(idx, compact, onPick) {
+        var L = LEVELS[idx];
+        var st = chapterState(idx);
+        var card = document.createElement("button");
+        card.type = "button";
+        card.className = "chapter-card st-" + st + (compact ? " compact" : "");
+        card.disabled = st === "locked";
+        var thumb = document.createElement("span"); thumb.className = "chapter-thumb";
+        var cv = document.createElement("canvas");
+        cv.width = compact ? 300 : 560; cv.height = compact ? 120 : 200;
+        cv.setAttribute("aria-hidden", "true");
+        thumb.appendChild(cv);
+        var badge = document.createElement("span"); badge.className = "chapter-badge";
+        badge.textContent = st === "cleared" ? "✓ CLEARED" : st === "locked" ? "🔒 LOCKED" : st === "next" ? "★ NEXT UP" : "▶ PLAY";
+        thumb.appendChild(badge);
+        var info = document.createElement("span"); info.className = "chapter-info";
+        var kick = document.createElement("span"); kick.className = "chapter-kicker";
+        kick.textContent = "Chapter " + (idx + 1);
+        var nm = document.createElement("span"); nm.className = "chapter-name";
+        nm.textContent = st === "locked" ? "???" : L.name;
+        var meta = document.createElement("span"); meta.className = "chapter-meta";
+        meta.textContent = st === "locked"
+          ? "Beat Chapter " + idx + " to unlock"
+          : "🦃 Boss: " + L.boss.name + (compact ? "" : " · " + L.waves.length + " waves + boss");
+        info.appendChild(kick); info.appendChild(nm); info.appendChild(meta);
+        var go = document.createElement("span"); go.className = "chapter-go";
+        go.textContent = st === "locked" ? "🔒" : st === "cleared" ? "↻" : "▶";
+        card.appendChild(thumb); card.appendChild(info); card.appendChild(go);
+        drawChapterThumb(cv, idx);
+        card.addEventListener("click", function () { ac(); onPick(idx); });
+        return card;
+      }
+
       function renderMenu() {
         var summary = document.getElementById("menuSaveSummary");
         if (summary) {
@@ -3078,19 +3404,7 @@
         if (grid) {
           grid.textContent = "";
           LEVELS.forEach(function (L, idx) {
-            var b = document.createElement("button");
-            b.type = "button";
-            b.className = "lvl-btn" + (idx <= highestUnlocked ? " unlocked" : "");
-            b.disabled = idx > highestUnlocked;
-            var top = document.createElement("b");
-            top.textContent = idx > highestUnlocked ? "🔒 Lv " + (idx + 1) : "Lv " + (idx + 1);
-            var nm = document.createElement("span");
-            nm.textContent = idx > highestUnlocked ? "Locked" : L.name;
-            var bs = document.createElement("span");
-            bs.textContent = idx > highestUnlocked ? "" : "Boss: " + L.boss.name;
-            b.appendChild(top); b.appendChild(nm); if (bs.textContent) b.appendChild(bs);
-            b.addEventListener("click", function () { ac(); startFromMenu(idx); });
-            grid.appendChild(b);
+            grid.appendChild(buildChapterCard(idx, false, startFromMenu));
           });
         }
         drawCoverArt(time); // refresh the cover poster's cannon with current upgrades
@@ -3152,6 +3466,7 @@
         coins = 0; coinsThisRun = 0; totalCoinsEarned = 0;
         highestUnlocked = 0; lobbyTarget = 0; bestScore = 0;
         leaderboard = [];
+        clearedLevels = LEVELS.map(function () { return false; });
         for (var k in upgrades) upgrades[k] = 0;
         player.speed = 345;
         saveGame();
@@ -3462,6 +3777,7 @@
       /* ---------------- Main loop ---------------- */
       var lastTs = 0;
       var coverFrame = 0;
+      var lobbyFrame = 0;
       function loop(ts) {
         /* Schedule the next frame FIRST: if a single frame ever throws,
            the game keeps running instead of freezing solid for good. */
@@ -3475,6 +3791,9 @@
           /* The cover poster stays gently alive while the menu is open
              (bobbing boss, turning windmill) — redrawn at ~30fps. */
           if (!menuOverlay.hidden && (coverFrame++ % 2 === 0)) drawCoverArt(time);
+          /* The Lobby hero stage stays alive too — pulsing pedestal
+             glow, drifting turkeys — while the Lobby is open. */
+          if (!lobbyPanel.hidden && (lobbyFrame++ % 2 === 0)) drawLobbyPreview(time);
         } catch (err) {
           /* Recover instead of staying frozen: clear any boss-ceremony
              timing state, and if the ceremony was mid-flight, finish it
