@@ -214,6 +214,27 @@
       #msgOverlay.stagger #msgBtn2 { animation-delay: .65s; }
       @keyframes msgRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
       @media (prefers-reduced-motion: reduce) { #msgOverlay.stagger > * { animation: none; } }
+      /* Victory / clear / game-over overlay: same overflow trap the menu
+         had — the panel is taller than the field on a phone, so with plain
+         centering the top clips and the second button (Skip Lobby / Next
+         Level) is sliced off the bottom with no way to reach it. The
+         overlay now scrolls inside the field, and the auto margins keep
+         it centred when it fits and let it start at the top when it
+         doesn't, so both buttons are always reachable. */
+      #msgOverlay {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+      }
+      /* Auto margins on the always-visible first and primary elements
+         (the tag and the main button) keep the panel centred when it
+         fits and let it start at the top when it doesn't — scoping to
+         :last-child would break the intro screen, where the second
+         button is hidden and the lone top margin would shove the
+         whole panel to the bottom. */
+      #msgOverlay > :first-child { margin-top: auto; }
+      #msgOverlay #msgBtn { margin-bottom: auto; }
 
       /* ---------- Touch controls ---------- */
       .controls {
@@ -501,6 +522,26 @@
           padding: calc(18px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
         }
         .lobby-scroll { overflow: visible; }
+        /* ---------- Victory / clear / game-over overlay on phones ----------
+           Same fix as the menu and the lobby: the overlay is trapped
+           inside the game field, which is shorter than the victory panel
+           on a phone, so the second button (Skip Lobby / Next Level) was
+           sliced off the bottom and couldn't be reached by scrolling.
+           On small screens the overlay now takes the full viewport and
+           scrolls as one unit, with tighter type and spacing so both
+           buttons usually fit without scrolling at all. */
+        #msgOverlay {
+          position: fixed; inset: 0; z-index: 40;
+          border-radius: 0;
+          padding: 18px 18px calc(24px + env(safe-area-inset-bottom, 0px));
+          touch-action: pan-y;
+        }
+        #msgOverlay h2 { font-size: 30px; margin-bottom: 6px; }
+        #msgOverlay .sub { font-size: 15.5px; margin-bottom: 10px; }
+        #msgOverlay p { font-size: 14.5px; line-height: 1.5; margin-bottom: 10px; }
+        #msgOverlay .final-score { font-size: 18px; margin-bottom: 10px; }
+        #msgOverlay .big-btn { min-height: 58px; font-size: 21px; padding: 13px 24px; }
+        #msgOverlay .ghost-btn { min-height: 46px; }
       }
     </style>
   </head>
