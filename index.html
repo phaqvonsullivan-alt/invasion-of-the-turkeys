@@ -171,7 +171,7 @@
         width: 100%;
       }
       .overlay .howto b { color: #ffd98a; }
-      #menuOverlay { justify-content: flex-start; overflow-y: auto; padding-top: 30px; padding-bottom: 30px; }
+      #menuOverlay { justify-content: flex-start; overflow-y: auto; padding-top: 30px; padding-bottom: 30px; background: #261408; }
       #menuOverlay h2 { font-size: clamp(36px, 10vw, 58px); }
       .big-btn {
         min-height: 64px;
@@ -465,6 +465,8 @@
       @keyframes cueBob { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 4px); } }
       @media (prefers-reduced-motion: reduce) { .menu-scroll-cue { animation: none; } }
       @media (max-width: 700px) {
+        .wrap { padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
+        .hint { display: none; }
         #menuOverlay {
           position: fixed; inset: 0; z-index: 40;
           border-radius: 0;
@@ -1516,7 +1518,7 @@
         }
 
         /* --- boss --- */
-        if (boss) {
+        if (boss && state === "boss") {
           var b = boss;
           b.flap += dt * 7;
           if (b.state === "enter") {
@@ -2008,7 +2010,7 @@
         }
 
         // boss
-        if (boss) {
+        if (boss && state === "boss") {
           var bopts = { variant: LEVELS[boss.idx].variant, golden: boss.idx === 6 || boss.idx === 11, crown: boss.idx === 11 || boss.idx === 10 || boss.idx === 6, helmet: boss.idx === 1, chefHat: boss.idx === 3 || boss.idx === 4, mutated: boss.idx >= 9 };
           drawTurkey(boss.x, boss.y, 47, boss.flap, bopts);
           if (boss.flash > 0) { // cranberry hit flash
