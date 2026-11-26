@@ -75,6 +75,10 @@
         }
         .controls { margin-top: 12px; }
         .lobby { max-height: calc(100vh - 108px); max-height: calc(100dvh - 108px); }
+        #msgOverlay .msg-panel {
+          max-width: min(620px, max(220px, calc((100vh - 184px) * 0.65625)));
+          max-width: min(620px, max(220px, calc((100dvh - 184px) * 0.65625)));
+        }
       }
 
       /* ---------- HUD ---------- */
@@ -206,35 +210,46 @@
       }
       .overlay .final-score { font-size: 21px; font-weight: 700; color: #ffd98a; margin: 4px 0 12px; }
       /* Boss-clear victory screen: elements rise in staggered, numbers count up */
-      #msgOverlay.stagger > * { animation: msgRise .45s ease both; }
+      #msgOverlay.stagger .msg-panel > * { animation: msgRise .45s ease both; }
       #msgOverlay.stagger #msgSub { animation-delay: .14s; }
       #msgOverlay.stagger #msgBody { animation-delay: .3s; }
       #msgOverlay.stagger #msgScore { animation-delay: .42s; }
       #msgOverlay.stagger #msgBtn { animation-delay: .55s; }
       #msgOverlay.stagger #msgBtn2 { animation-delay: .65s; }
       @keyframes msgRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-      @media (prefers-reduced-motion: reduce) { #msgOverlay.stagger > * { animation: none; } }
+      @media (prefers-reduced-motion: reduce) { #msgOverlay.stagger .msg-panel > * { animation: none; } }
       /* Victory / clear / game-over overlay: same overflow trap the menu
          had — the panel is taller than the field on a phone, so with plain
          centering the top clips and the second button (Skip Lobby / Next
          Level) is sliced off the bottom with no way to reach it. The
-         overlay now scrolls inside the field, and the auto margins keep
-         it centred when it fits and let it start at the top when it
-         doesn't, so both buttons are always reachable. */
+         overlay now scrolls inside the field, and the panel is a single
+         flex child with auto margins, so the whole group stays together:
+         centred when it fits, starting at the top when it doesn't, and
+         both buttons are always reachable with normal spacing between
+         them. (The old fix put the auto margins on the first child and
+         the main button, which split the free space and pinned the
+         second button to the bottom of the screen, and sized the
+         buttons against the full viewport instead of the field, so
+         they popped out past the panel edges.)
+         The panel is exactly as wide as the game field — same
+         height-fitted formula as .stage — so the buttons sit inside
+         the panel like the menu and lobby buttons do, on every screen. */
       #msgOverlay {
         overflow-y: auto;
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
         touch-action: pan-y;
       }
-      /* Auto margins on the always-visible first and primary elements
-         (the tag and the main button) keep the panel centred when it
-         fits and let it start at the top when it doesn't — scoping to
-         :last-child would break the intro screen, where the second
-         button is hidden and the lone top margin would shove the
-         whole panel to the bottom. */
-      #msgOverlay > :first-child { margin-top: auto; }
-      #msgOverlay #msgBtn { margin-bottom: auto; }
+      #msgOverlay .msg-panel {
+        margin: auto;
+        width: 100%;
+        max-width: min(620px, max(220px, calc((100vh - 248px) * 0.65625)));
+        max-width: min(620px, max(220px, calc((100dvh - 248px) * 0.65625)));
+        display: flex; flex-direction: column;
+        align-items: center; text-align: center;
+      }
+      /* Second button matches the main one: same width, inside the panel. */
+      #msgOverlay .ghost-btn { width: 100%; max-width: 380px; }
 
       /* ---------- Touch controls ---------- */
       .controls {
@@ -619,6 +634,7 @@
 
         <!-- Generic message overlay (level intro / clear / game over / victory / pause) -->
         <div class="overlay" id="msgOverlay" hidden>
+          <div class="msg-panel">
           <div class="boss-tag" id="msgTag" hidden></div>
           <h2 id="msgTitle">Level 1</h2>
           <p class="sub" id="msgSub"></p>
@@ -626,6 +642,7 @@
           <div class="final-score" id="msgScore" hidden></div>
           <button class="big-btn" id="msgBtn" type="button">Go!</button>
           <button class="ghost-btn" id="msgBtn2" type="button" hidden>Restart game</button>
+          </div>
         </div>
       </div>
 
