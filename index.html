@@ -171,7 +171,40 @@
         width: 100%;
       }
       .overlay .howto b { color: #ffd98a; }
-      #menuOverlay { justify-content: flex-start; overflow-y: auto; padding-top: 30px; padding-bottom: 30px; background: #261408; }
+      #menuOverlay { justify-content: flex-start; overflow-y: auto; padding-top: 30px; padding-bottom: 30px; background: linear-gradient(180deg,#2b1030 0%,#6e2430 34%,#b23a2e 58%,#e8873a 78%,#3a1e0e 100%); }
+      /* ===== TRAILER LOOK — the in-game grade that matches the trailer =====
+         Warm golden-hour grade, vignette and letterbox-ready drama are
+         drawn in-canvas (see draw()); the shell gets the same sunset. */
+      .stage { background: #2b1030; border-color: #6e3a1e; box-shadow: 0 18px 44px rgba(43,16,8,.42), 0 0 0 4px rgba(232,135,58,.14); }
+      .trailer-open-btn { background: #140a06 !important; color: #ffd98a !important; border-color: #ffd98a !important; font-weight: 800; }
+      /* ===== Official Trailer player ===== */
+      .trailer-overlay { position: fixed; inset: 0; z-index: 80; background: rgba(10,4,2,.96); overflow-y: auto; padding: 18px 14px 28px; }
+      .trailer-overlay[hidden] { display: none; }
+      .trailer-shell { max-width: 980px; margin: 0 auto; color: #fdf3e0; }
+      .trailer-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+      .trailer-head h2 { font-family: Georgia, serif; font-size: clamp(26px,5vw,40px); margin: 0; line-height: 1.05; }
+      .trailer-head p { margin: 4px 0 0; color: #f3cf96; font-size: 14.5px; }
+      .trailer-close { min-height: 44px; padding: 9px 18px; border-radius: 10px; border: 1.5px solid rgba(255,217,138,.7); background: transparent; color: #ffe9c2; font: inherit; font-weight: 700; cursor: pointer; }
+      .trailer-screen { position: relative; border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 24px 60px rgba(0,0,0,.6); border: 1px solid rgba(255,217,138,.35); }
+      .trailer-screen canvas { display: block; width: 100%; height: auto; aspect-ratio: 16/9; background: #1c0f0a; }
+      .trailer-letter { position: absolute; left: 0; right: 0; height: 7.5%; background: #000; pointer-events: none; }
+      .trailer-letter.top { top: 0; } .trailer-letter.bottom { bottom: 0; }
+      .trailer-kicker { position: absolute; top: 10.5%; left: 0; right: 0; text-align: center; font-size: clamp(10px,2.2vw,14px); font-weight: 800; letter-spacing: .28em; text-transform: uppercase; color: #ffd98a; text-shadow: 0 2px 10px #000; pointer-events: none; }
+      .trailer-caption { position: absolute; left: 16px; right: 16px; bottom: 10.5%; text-align: center; font-family: Georgia, serif; font-size: clamp(19px,4.6vw,34px); font-weight: 700; line-height: 1.15; color: #fff7e8; text-shadow: 0 3px 16px #000, 0 1px 3px #000; pointer-events: none; }
+      .trailer-caption small { display: block; font-family: inherit; font-size: clamp(12px,2.6vw,16px); font-weight: 600; color: #ffd98a; margin-top: 5px; letter-spacing: .02em; }
+      .trailer-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+      .trailer-controls button { min-height: 46px; padding: 9px 16px; border-radius: 10px; border: 1.5px solid rgba(255,217,138,.55); background: #2a160b; color: #ffe9c2; font: inherit; font-weight: 700; cursor: pointer; }
+      .trailer-controls .trailer-play-game { background: #b23a2e; border-color: #7e2418; color: #fff; box-shadow: 0 3px 0 #7e2418; }
+      .trailer-progress { flex: 1 1 220px; height: 12px; border-radius: 999px; background: rgba(255,255,255,.16); overflow: hidden; cursor: pointer; }
+      .trailer-progress i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg,#e8873a,#ffd98a); }
+      .trailer-time { font-variant-numeric: tabular-nums; font-size: 13.5px; color: #f3cf96; min-width: 86px; text-align: center; }
+      .trailer-shots { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-top: 12px; }
+      @media (max-width: 700px) { .trailer-shots { grid-template-columns: repeat(2,1fr); } .trailer-shots button:last-child { grid-column: 1/-1; } }
+      .trailer-shots button { text-align: left; padding: 10px 11px; border-radius: 10px; border: 1px solid rgba(255,217,138,.35); background: rgba(255,244,214,.08); color: #fbeed3; font: inherit; cursor: pointer; }
+      .trailer-shots b { display: block; font-size: 13px; color: #ffd98a; letter-spacing: .06em; }
+      .trailer-shots span { font-size: 13.5px; line-height: 1.35; }
+      .trailer-shots button.active { border-color: #ffd98a; background: rgba(255,217,138,.2); }
+      .trailer-note { font-size: 13.5px; color: #c9a87f; line-height: 1.55; margin: 12px 2px 0; }
       #menuOverlay h2 { font-size: clamp(36px, 10vw, 58px); }
       .big-btn {
         min-height: 64px;
@@ -585,6 +618,7 @@
           </div>
           </div>
           <button class="big-btn" id="btnStart" type="button">Defend Earth!</button>
+          <button class="ghost-btn trailer-open-btn wide" id="btnTrailer" type="button" style="width:100%;max-width:380px;margin-top:10px;min-height:54px;font-size:17px;">▶ &nbsp;Watch the Official Trailer — 0:32</button>
           <div class="menu-nav">
             <button class="ghost-btn" id="btnMenuLevels" type="button">🗺️ Level Select</button>
             <button class="ghost-btn" id="btnMenuHow" type="button">❓ How to Play</button>
@@ -670,6 +704,7 @@
         </div>
         <div class="lobby-actions">
           <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
+          <button class="ghost-dark" id="btnLobbyTrailer" type="button">▶ Watch Trailer</button>
           <button class="ghost-dark" id="btnLobbyMenu" type="button">🎬 Back to Main Menu</button>
         </div>
       </section>
@@ -680,6 +715,42 @@
         <button class="ctl-btn dodge" id="btnDodge" type="button" aria-label="Dodge dash">💨<small>Dodge</small></button>
         <button class="ctl-btn bomb" id="btnBomb" type="button" aria-label="Use gravy bomb">💣<small>Gravy Bomb · <span id="bombCount">2</span></small></button>
         <button class="ctl-btn" id="btnRight" type="button" aria-label="Move right, double-tap to dodge right">▶<small>Move · 2×tap = dodge</small></button>
+      </div>
+
+      <!-- Official Trailer: a 32-second cinematic cut of the real game —
+           same farm at sunset, same cranberry cannon, same turkeys and
+           same Big Gobbler dive you play against. Every shot below is
+           staged from the game's own art and rules, and the game field
+           now carries this exact look: golden-hour grade, barn &
+           windmill silhouette, god rays, ground shadows and vignette. -->
+      <div class="trailer-overlay" id="trailerOverlay" hidden role="dialog" aria-label="Invasion of the Turkeys official trailer">
+        <div class="trailer-shell">
+          <div class="trailer-head">
+            <div><h2>Invasion of the Turkeys</h2><p>Official Trailer · 0:32 · Gameplay &amp; Boss Fight</p></div>
+            <button class="trailer-close" id="btnTrailerClose" type="button">✕ Close</button>
+          </div>
+          <div class="trailer-screen">
+            <canvas id="trailerCanvas" width="960" height="540" aria-label="Trailer: turkeys invade a farm at sunset, the cranberry cannon fights waves, then battles Big Gobbler"></canvas>
+            <div class="trailer-letter top"></div><div class="trailer-letter bottom"></div>
+            <div class="trailer-kicker" id="trailerKicker">THIS THANKSGIVING</div>
+            <div class="trailer-caption" id="trailerCaption">They're coming for us.<small>Wave after wave — straight for the farm.</small></div>
+          </div>
+          <div class="trailer-controls">
+            <button id="btnTrailerPlay" type="button">⏸ Pause</button>
+            <button id="btnTrailerRestart" type="button">↺ Replay</button>
+            <div class="trailer-progress" id="trailerProgress" role="slider" aria-label="Trailer progress"><i id="trailerProgressBar"></i></div>
+            <div class="trailer-time" id="trailerTime">0:00 / 0:32</div>
+            <button class="trailer-play-game" id="btnTrailerPlayGame" type="button">🦃 Play the Game</button>
+          </div>
+          <div class="trailer-shots" id="trailerShots">
+            <button type="button" data-t="0"><b>00:00 · THE INVASION</b><span>Sunset farm. Feathers on the wind. The flock arrives.</span></button>
+            <button type="button" data-t="5"><b>00:05 · GAMEPLAY</b><span>Cranberry cannon vs. the waves — feathers, potatoes &amp; gravy.</span></button>
+            <button type="button" data-t="12"><b>00:12 · TURN IT UP</b><span>Dodge dash, triple-shot and a screen-clearing Gravy Bomb.</span></button>
+            <button type="button" data-t="18"><b>00:18 · BOSS FIGHT</b><span>Big Gobbler. Full-depth dive — all the way to your row.</span></button>
+            <button type="button" data-t="27"><b>00:27 · FINAL FEAST</b><span>12 levels. 12 bosses. One last stand.</span></button>
+          </div>
+          <p class="trailer-note">What you see is what you play — literally the same drawings: the trailer, the title screen, the Lobby and the game field all draw one cannon (dark-iron barrel, cranberry muzzle ring, gold bands, spoked wheels, pilgrim hat), one turkey design per flock, and one Big Gobbler, from a single shared art source. No screen swaps in a different-looking version.</p>
+        </div>
       </div>
 
       <p class="hint" id="hintText">Dodge: double-tap ◀ or ▶, flick sideways on the field, or tap Dodge — you're untouchable mid-dash. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries. Your progress, coins and upgrades save automatically on this device — and your best finished runs land on the Leaderboard in the main menu.</p>
@@ -1888,188 +1959,237 @@
         prime:     { fan: ["#14100c", "#d98e2b", "#b23a2e", "#f2c53d", "#1c1410"], tip: "#ffd98a", wing: "#1c1410", body: "#2b2018", belly: "#d98e2b", head: "#8a2a20" },
         mutated:   { fan: ["#5a8a3a", "#7a3a8a", "#6e9a2e", "#8a4a9e", "#4d7c3a"], tip: "#c8f26e", wing: "#4a6e2a", body: "#6e8a3a", belly: "#9ab84e", head: "#7a9a5b" }
       };
-      function drawTurkey(x, y, s, flap, opts) {
+      /* ============================================================
+         ONE ART STYLE — CANONICAL ART (Q's consistency rule)
+         Every screen draws the SAME cannon, turkeys, barn and
+         windmill from these single functions — title/menu, Lobby
+         preview, gameplay, boss fights and the trailer all call
+         drawCannonOn / drawTurkeyOn / drawBarnShape /
+         drawWindmillShape. Nothing is redrawn per-screen, so the
+         red-and-brass cranberry cannon and every turkey/boss keep
+         identical design and colours everywhere they appear.
+         Cannon spec (never changes): dark-iron barrel (#3c2c1e)
+         with a cranberry muzzle ring in BULLET_COLORS[damage],
+         gold Rapid-Fire bands, wooden carriage (#5d4632), two
+         spoked wheels, hay-bale base and the crew's pilgrim hat.
+         Upgrades only change the spec's parameters (barrel width,
+         bands, side barrels, berry size) — in every screen alike.
+         ============================================================ */
+      function drawBarnShape(c, x, gy, sc) {
+        c.save(); c.translate(x, gy); c.scale(sc, sc);
+        c.fillStyle = "#9c3a2a"; c.fillRect(0, -62, 64, 62);
+        c.fillStyle = "#7e2a1e";
+        c.beginPath(); c.moveTo(-6, -62); c.lineTo(12, -84); c.lineTo(52, -84); c.lineTo(70, -62); c.closePath(); c.fill();
+        c.strokeStyle = "rgba(253,243,224,.9)"; c.lineWidth = 2.4;
+        c.strokeRect(18, -38, 28, 38);
+        c.beginPath(); c.moveTo(18, -38); c.lineTo(46, 0); c.moveTo(46, -38); c.lineTo(18, 0); c.stroke();
+        c.strokeStyle = "rgba(253,243,224,.75)"; c.lineWidth = 2;
+        c.strokeRect(23, -76, 18, 16);
+        c.beginPath(); c.moveTo(23, -68); c.lineTo(41, -68); c.moveTo(32, -76); c.lineTo(32, -60); c.stroke();
+        c.restore();
+      }
+      function drawWindmillShape(c, x, gy, sc, rot) {
+        c.save(); c.translate(x, gy); c.scale(sc, sc);
+        c.strokeStyle = "rgba(30,18,10,.88)"; c.lineWidth = 3.4;
+        c.beginPath(); c.moveTo(-11, 0); c.lineTo(0, -88); c.lineTo(11, 0); c.stroke();
+        c.save(); c.translate(0, -88); c.rotate(rot || 0);
+        c.strokeStyle = "rgba(30,18,10,.82)"; c.lineWidth = 2.6;
+        for (var b = 0; b < 4; b++) { c.rotate(Math.PI / 2); c.beginPath(); c.moveTo(0, 0); c.lineTo(0, -24); c.lineTo(7, -20); c.stroke(); }
+        c.restore();
+        c.fillStyle = "rgba(20,12,6,.92)"; c.beginPath(); c.arc(0, -88, 3.6, 0, Math.PI * 2); c.fill();
+        c.restore();
+      }
+      /* The one cannon. Local space: origin at carriage centre,
+         barrel points UP; `rot` only aims that same cannon.
+         Returns the muzzle position in the caller's space. */
+      function drawCannonOn(c, x, y, sc, rot, o) {
+        o = o || {};
+        var dmg = (o.damage != null ? o.damage : upgrades.damage);
+        var rap = (o.rapid != null ? o.rapid : upgrades.rapid);
+        var big = (o.big != null ? o.big : upgrades.big);
+        var spr = (o.spread != null ? o.spread : upgrades.spread);
+        var kick = (o.recoil || 0) * 3.4;
+        var bw = 10 + dmg * 1.1 + big * 1.3;
+        c.save(); c.translate(x, y); c.scale(sc, sc); c.rotate(rot || 0);
+        // ground shadow + hay-bale base (same in every screen)
+        c.fillStyle = "rgba(30,16,6,.30)";
+        c.beginPath(); c.ellipse(0, 19, 30, 6, 0, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "#d9a83f";
+        c.beginPath(); c.ellipse(0, 16, 26, 10, 0, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#b4832a"; c.lineWidth = 2;
+        c.beginPath(); c.ellipse(0, 16, 18, 6.5, 0, 0, Math.PI * 2); c.stroke();
+        // spoked wheels — the carriage the Lobby cannon rolls on
+        [[-19, 13, 8], [19, 13, 8]].forEach(function (w) {
+          c.fillStyle = "#6e4520"; c.beginPath(); c.arc(w[0], w[1], w[2], 0, Math.PI * 2); c.fill();
+          c.strokeStyle = "#a5692f"; c.lineWidth = 1.8;
+          for (var sp = 0; sp < 3; sp++) { var sa = sp * Math.PI / 3 + 0.4; c.beginPath(); c.moveTo(w[0] - Math.cos(sa) * (w[2] - 1.5), w[1] - Math.sin(sa) * (w[2] - 1.5)); c.lineTo(w[0] + Math.cos(sa) * (w[2] - 1.5), w[1] + Math.sin(sa) * (w[2] - 1.5)); c.stroke(); }
+          c.fillStyle = "#3c2c1e"; c.beginPath(); c.arc(w[0], w[1], 2.6, 0, Math.PI * 2); c.fill();
+        });
+        // wooden carriage
+        c.fillStyle = "#5d4632";
+        c.beginPath(); c.moveTo(-15, 14); c.lineTo(-10, -8); c.lineTo(10, -8); c.lineTo(15, 14); c.closePath(); c.fill();
+        // side barrels (Extra Barrels upgrade — same barrels everywhere)
+        if (spr >= 1) {
+          c.fillStyle = "#3c2c1e"; c.fillRect(-17, -20 + kick, 7, 15); c.fillRect(10, -20 + kick, 7, 15);
+          c.fillStyle = BULLET_COLORS[dmg]; c.fillRect(-18, -22 + kick, 9, 4); c.fillRect(9, -22 + kick, 9, 4);
+        }
+        // main dark-iron barrel + gold Rapid-Fire bands
+        c.fillStyle = "#3c2c1e"; c.fillRect(-bw / 2, -26 + kick, bw, 20);
+        if (rap > 0) { c.fillStyle = "#d9a83f"; for (var band = 0; band < rap; band++) c.fillRect(-bw / 2 - 1, -22 + kick + band * 4, bw + 2, 1.8); }
+        // cranberry muzzle ring — its colour IS the current berry colour
+        c.fillStyle = BULLET_COLORS[dmg]; c.fillRect(-bw / 2 - 1.5, -28 + kick, bw + 3, 5);
+        c.fillStyle = "#1c1410"; c.fillRect(-bw * 0.22, -28.6 + kick, bw * 0.44, 2.2);
+        // muzzle flash
+        if (o.flash) {
+          c.fillStyle = "rgba(255,190,60,.95)"; c.beginPath(); c.ellipse(0, -36 + kick, 7, 11, 0, 0, Math.PI * 2); c.fill();
+          c.fillStyle = "rgba(255,240,200,.95)"; c.beginPath(); c.ellipse(0, -33 + kick, 3.4, 6, 0, 0, Math.PI * 2); c.fill();
+        }
+        // the crew's pilgrim hat — always on the carriage, same spot
+        c.fillStyle = "#2b2b30"; c.fillRect(-24, -12, 15, 6); c.fillRect(-27, -7, 21, 3);
+        c.fillStyle = "#d9a83f"; c.fillRect(-19.5, -11.5, 5, 5);
+        c.restore();
+        var mr = 30 * sc, rr = rot || 0;
+        return { x: x + Math.sin(rr) * mr, y: y - Math.cos(rr) * mr };
+      }
+
+      function drawTurkeyOn(c, x, y, s, flap, opts) {
         opts = opts || {};
         var pal = TURKEY_PALETTES[opts.variant] || (opts.golden ? TURKEY_PALETTES.golden : TURKEY_PALETTES.classic);
-        ctx.save();
-        ctx.translate(x, y);
+        c.save();
+        c.translate(x, y);
         var i;
         if (opts.mutated) { // sickly green aura — something is wrong with this bird
-          ctx.fillStyle = "rgba(150,230,80,.16)";
-          ctx.beginPath(); ctx.arc(0, 0, s * 1.9, 0, Math.PI * 2); ctx.fill();
+          c.fillStyle = "rgba(150,230,80,.16)";
+          c.beginPath(); c.arc(0, 0, s * 1.9, 0, Math.PI * 2); c.fill();
         }
         // tail fan
         var fanCols = pal.fan;
         for (i = -2; i <= 2; i++) {
-          ctx.save();
-          ctx.rotate(i * 0.34);
-          ctx.fillStyle = fanCols[i + 2];
-          ctx.beginPath();
-          ctx.ellipse(0, -s * 0.95, s * 0.30, s * 0.78, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = pal.tip;
-          ctx.beginPath();
-          ctx.ellipse(0, -s * 1.52, s * 0.13, s * 0.16, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
+          c.save();
+          c.rotate(i * 0.34);
+          c.fillStyle = fanCols[i + 2];
+          c.beginPath();
+          c.ellipse(0, -s * 0.95, s * 0.30, s * 0.78, 0, 0, Math.PI * 2);
+          c.fill();
+          c.fillStyle = pal.tip;
+          c.beginPath();
+          c.ellipse(0, -s * 1.52, s * 0.13, s * 0.16, 0, 0, Math.PI * 2);
+          c.fill();
+          c.restore();
         }
         // wings
         var wob = Math.sin(flap) * 0.35;
-        ctx.fillStyle = pal.wing;
-        ctx.save(); ctx.rotate(-0.5 - wob);
-        ctx.beginPath(); ctx.ellipse(-s * 0.85, 0, s * 0.30, s * 0.62, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-        ctx.save(); ctx.rotate(0.5 + wob);
-        ctx.beginPath(); ctx.ellipse(s * 0.85, 0, s * 0.30, s * 0.62, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        c.fillStyle = pal.wing;
+        c.save(); c.rotate(-0.5 - wob);
+        c.beginPath(); c.ellipse(-s * 0.85, 0, s * 0.30, s * 0.62, 0, 0, Math.PI * 2); c.fill(); c.restore();
+        c.save(); c.rotate(0.5 + wob);
+        c.beginPath(); c.ellipse(s * 0.85, 0, s * 0.30, s * 0.62, 0, 0, Math.PI * 2); c.fill(); c.restore();
         // body
-        ctx.fillStyle = pal.body;
-        ctx.beginPath(); ctx.ellipse(0, 0, s * 0.78, s * 0.88, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = pal.belly;
-        ctx.beginPath(); ctx.ellipse(0, s * 0.18, s * 0.5, s * 0.55, 0, 0, Math.PI * 2); ctx.fill();
+        c.fillStyle = pal.body;
+        c.beginPath(); c.ellipse(0, 0, s * 0.78, s * 0.88, 0, 0, Math.PI * 2); c.fill();
+        c.fillStyle = pal.belly;
+        c.beginPath(); c.ellipse(0, s * 0.18, s * 0.5, s * 0.55, 0, 0, Math.PI * 2); c.fill();
         if (opts.variant === "burnt" || opts.variant === "prime") {
-          ctx.fillStyle = "#e35d2a";
-          ctx.beginPath(); ctx.ellipse(-s * 0.22, -s * 0.1, s * 0.09, s * 0.05, 0.6, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.ellipse(s * 0.18, s * 0.28, s * 0.07, s * 0.04, -0.5, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.ellipse(0, -s * 0.38, s * 0.06, s * 0.04, 0.2, 0, Math.PI * 2); ctx.fill();
+          c.fillStyle = "#e35d2a";
+          c.beginPath(); c.ellipse(-s * 0.22, -s * 0.1, s * 0.09, s * 0.05, 0.6, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.ellipse(s * 0.18, s * 0.28, s * 0.07, s * 0.04, -0.5, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.ellipse(0, -s * 0.38, s * 0.06, s * 0.04, 0.2, 0, Math.PI * 2); c.fill();
         }
         if (opts.variant === "frost") {
-          ctx.fillStyle = "rgba(255,255,255,.9)";
-          ctx.beginPath(); ctx.ellipse(-s * 0.3, -s * 0.45, s * 0.12, s * 0.06, -0.4, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.ellipse(s * 0.28, -s * 0.2, s * 0.1, s * 0.05, 0.4, 0, Math.PI * 2); ctx.fill();
+          c.fillStyle = "rgba(255,255,255,.9)";
+          c.beginPath(); c.ellipse(-s * 0.3, -s * 0.45, s * 0.12, s * 0.06, -0.4, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.ellipse(s * 0.28, -s * 0.2, s * 0.1, s * 0.05, 0.4, 0, Math.PI * 2); c.fill();
         }
         if (opts.mutated) {
           // a third wing sprouting out of its side, flapping off-beat
-          ctx.fillStyle = pal.wing;
-          ctx.save(); ctx.translate(-s * 0.72, s * 0.34); ctx.rotate(-0.9 - Math.sin(flap * 0.6) * 0.3);
-          ctx.beginPath(); ctx.ellipse(0, -s * 0.34, s * 0.17, s * 0.4, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          c.fillStyle = pal.wing;
+          c.save(); c.translate(-s * 0.72, s * 0.34); c.rotate(-0.9 - Math.sin(flap * 0.6) * 0.3);
+          c.beginPath(); c.ellipse(0, -s * 0.34, s * 0.17, s * 0.4, 0, 0, Math.PI * 2); c.fill(); c.restore();
           // glowing green growths bubbling across the body
-          ctx.fillStyle = "rgba(170,240,90,.85)";
-          ctx.beginPath(); ctx.ellipse(-s * 0.3, -s * 0.28, s * 0.11, s * 0.08, 0.4, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.ellipse(s * 0.34, s * 0.05, s * 0.09, s * 0.07, -0.3, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.ellipse(-s * 0.08, s * 0.42, s * 0.08, s * 0.06, 0.1, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "rgba(220,255,170,.9)";
-          ctx.beginPath(); ctx.arc(-s * 0.3, -s * 0.3, s * 0.035, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(s * 0.34, s * 0.03, s * 0.03, 0, Math.PI * 2); ctx.fill();
+          c.fillStyle = "rgba(170,240,90,.85)";
+          c.beginPath(); c.ellipse(-s * 0.3, -s * 0.28, s * 0.11, s * 0.08, 0.4, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.ellipse(s * 0.34, s * 0.05, s * 0.09, s * 0.07, -0.3, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.ellipse(-s * 0.08, s * 0.42, s * 0.08, s * 0.06, 0.1, 0, Math.PI * 2); c.fill();
+          c.fillStyle = "rgba(220,255,170,.9)";
+          c.beginPath(); c.arc(-s * 0.3, -s * 0.3, s * 0.035, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.arc(s * 0.34, s * 0.03, s * 0.03, 0, Math.PI * 2); c.fill();
         }
         // head (faces down toward the player)
-        ctx.fillStyle = pal.head;
-        ctx.beginPath(); ctx.ellipse(0, s * 0.92, s * 0.34, s * 0.38, 0, 0, Math.PI * 2); ctx.fill();
+        c.fillStyle = pal.head;
+        c.beginPath(); c.ellipse(0, s * 0.92, s * 0.34, s * 0.38, 0, 0, Math.PI * 2); c.fill();
         // eyes — angry invader eyes
-        ctx.fillStyle = "#fff";
-        ctx.beginPath(); ctx.ellipse(-s * 0.14, s * 0.86, s * 0.10, s * 0.12, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.ellipse(s * 0.14, s * 0.86, s * 0.10, s * 0.12, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "#1c1410";
-        ctx.beginPath(); ctx.ellipse(-s * 0.14, s * 0.90, s * 0.05, s * 0.06, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.beginPath(); ctx.ellipse(s * 0.14, s * 0.90, s * 0.05, s * 0.06, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = "#1c1410"; ctx.lineWidth = Math.max(1.4, s * 0.07); ctx.lineCap = "round";
-        ctx.beginPath(); ctx.moveTo(-s * 0.26, s * 0.70); ctx.lineTo(-s * 0.05, s * 0.76); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(s * 0.26, s * 0.70); ctx.lineTo(s * 0.05, s * 0.76); ctx.stroke();
+        c.fillStyle = "#fff";
+        c.beginPath(); c.ellipse(-s * 0.14, s * 0.86, s * 0.10, s * 0.12, 0, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.ellipse(s * 0.14, s * 0.86, s * 0.10, s * 0.12, 0, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "#1c1410";
+        c.beginPath(); c.ellipse(-s * 0.14, s * 0.90, s * 0.05, s * 0.06, 0, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.ellipse(s * 0.14, s * 0.90, s * 0.05, s * 0.06, 0, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#1c1410"; c.lineWidth = Math.max(1.4, s * 0.07); c.lineCap = "round";
+        c.beginPath(); c.moveTo(-s * 0.26, s * 0.70); c.lineTo(-s * 0.05, s * 0.76); c.stroke();
+        c.beginPath(); c.moveTo(s * 0.26, s * 0.70); c.lineTo(s * 0.05, s * 0.76); c.stroke();
         // beak
-        ctx.fillStyle = "#e8a020";
-        ctx.beginPath();
-        ctx.moveTo(-s * 0.13, s * 1.06); ctx.lineTo(s * 0.13, s * 1.06); ctx.lineTo(0, s * 1.34);
-        ctx.closePath(); ctx.fill();
+        c.fillStyle = "#e8a020";
+        c.beginPath();
+        c.moveTo(-s * 0.13, s * 1.06); c.lineTo(s * 0.13, s * 1.06); c.lineTo(0, s * 1.34);
+        c.closePath(); c.fill();
         // wattle
-        ctx.fillStyle = "#c22f3d";
-        ctx.beginPath(); ctx.ellipse(s * 0.16, s * 1.16, s * 0.09, s * 0.17, 0.3, 0, Math.PI * 2); ctx.fill();
+        c.fillStyle = "#c22f3d";
+        c.beginPath(); c.ellipse(s * 0.16, s * 1.16, s * 0.09, s * 0.17, 0.3, 0, Math.PI * 2); c.fill();
         if (opts.mutated) {
           // a third eye, glowing green, in the middle of its forehead
-          ctx.fillStyle = "#c8f26e";
-          ctx.beginPath(); ctx.arc(0, s * 0.63, s * 0.075, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "#1c2a10";
-          ctx.beginPath(); ctx.arc(0, s * 0.64, s * 0.034, 0, Math.PI * 2); ctx.fill();
+          c.fillStyle = "#c8f26e";
+          c.beginPath(); c.arc(0, s * 0.63, s * 0.075, 0, Math.PI * 2); c.fill();
+          c.fillStyle = "#1c2a10";
+          c.beginPath(); c.arc(0, s * 0.64, s * 0.034, 0, Math.PI * 2); c.fill();
           // …and a whole second head sprouting from its shoulder
-          ctx.save();
-          ctx.translate(s * 0.68, s * 0.74);
-          ctx.rotate(0.35 + Math.sin(flap * 0.7) * 0.09);
-          ctx.fillStyle = pal.head;
-          ctx.beginPath(); ctx.ellipse(0, 0, s * 0.21, s * 0.24, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "#c8f26e";
-          ctx.beginPath(); ctx.arc(-s * 0.04, -s * 0.03, s * 0.055, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "#1c2a10";
-          ctx.beginPath(); ctx.arc(-s * 0.04, -s * 0.02, s * 0.026, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "#e8a020";
-          ctx.beginPath();
-          ctx.moveTo(-s * 0.08, s * 0.1); ctx.lineTo(s * 0.08, s * 0.1); ctx.lineTo(0, s * 0.26);
-          ctx.closePath(); ctx.fill();
-          ctx.fillStyle = "#8a4a9e";
-          ctx.beginPath(); ctx.ellipse(s * 0.1, s * 0.14, s * 0.05, s * 0.1, 0.3, 0, Math.PI * 2); ctx.fill();
-          ctx.restore();
+          c.save();
+          c.translate(s * 0.68, s * 0.74);
+          c.rotate(0.35 + Math.sin(flap * 0.7) * 0.09);
+          c.fillStyle = pal.head;
+          c.beginPath(); c.ellipse(0, 0, s * 0.21, s * 0.24, 0, 0, Math.PI * 2); c.fill();
+          c.fillStyle = "#c8f26e";
+          c.beginPath(); c.arc(-s * 0.04, -s * 0.03, s * 0.055, 0, Math.PI * 2); c.fill();
+          c.fillStyle = "#1c2a10";
+          c.beginPath(); c.arc(-s * 0.04, -s * 0.02, s * 0.026, 0, Math.PI * 2); c.fill();
+          c.fillStyle = "#e8a020";
+          c.beginPath();
+          c.moveTo(-s * 0.08, s * 0.1); c.lineTo(s * 0.08, s * 0.1); c.lineTo(0, s * 0.26);
+          c.closePath(); c.fill();
+          c.fillStyle = "#8a4a9e";
+          c.beginPath(); c.ellipse(s * 0.1, s * 0.14, s * 0.05, s * 0.1, 0.3, 0, Math.PI * 2); c.fill();
+          c.restore();
         }
         // boss accessories
         if (opts.crown) {
-          ctx.fillStyle = "#f2c53d";
-          ctx.beginPath();
-          ctx.moveTo(-s * 0.4, -s * 1.62); ctx.lineTo(-s * 0.4, -s * 1.95); ctx.lineTo(-s * 0.2, -s * 1.74);
-          ctx.lineTo(0, -s * 2.0); ctx.lineTo(s * 0.2, -s * 1.74); ctx.lineTo(s * 0.4, -s * 1.95); ctx.lineTo(s * 0.4, -s * 1.62);
-          ctx.closePath(); ctx.fill();
+          c.fillStyle = "#f2c53d";
+          c.beginPath();
+          c.moveTo(-s * 0.4, -s * 1.62); c.lineTo(-s * 0.4, -s * 1.95); c.lineTo(-s * 0.2, -s * 1.74);
+          c.lineTo(0, -s * 2.0); c.lineTo(s * 0.2, -s * 1.74); c.lineTo(s * 0.4, -s * 1.95); c.lineTo(s * 0.4, -s * 1.62);
+          c.closePath(); c.fill();
         }
         if (opts.helmet) { // pumpkin helmet
-          ctx.fillStyle = "#e8873a";
-          ctx.beginPath(); ctx.ellipse(0, -s * 1.28, s * 0.46, s * 0.34, 0, Math.PI, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "#4d7c3a";
-          ctx.fillRect(-s * 0.06, -s * 1.78, s * 0.12, s * 0.18);
+          c.fillStyle = "#e8873a";
+          c.beginPath(); c.ellipse(0, -s * 1.28, s * 0.46, s * 0.34, 0, Math.PI, Math.PI * 2); c.fill();
+          c.fillStyle = "#4d7c3a";
+          c.fillRect(-s * 0.06, -s * 1.78, s * 0.12, s * 0.18);
         }
         if (opts.chefHat) {
-          ctx.fillStyle = "#fdfdf8";
-          ctx.beginPath(); ctx.ellipse(0, -s * 1.42, s * 0.5, s * 0.3, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.fillRect(-s * 0.34, -s * 1.62, s * 0.68, s * 0.3);
+          c.fillStyle = "#fdfdf8";
+          c.beginPath(); c.ellipse(0, -s * 1.42, s * 0.5, s * 0.3, 0, 0, Math.PI * 2); c.fill();
+          c.fillRect(-s * 0.34, -s * 1.62, s * 0.68, s * 0.3);
         }
-        ctx.restore();
+        c.restore();
       }
+
+      function drawTurkey(x, y, s, flap, opts) { drawTurkeyOn(ctx, x, y, s, flap, opts); }
 
       function drawPlayer() {
         var p = player;
-        if (p.invuln > 0 && p.dodgeTime <= 0 && Math.floor(time * 14) % 2 === 0 && state !== "over") {
-          // blink while invulnerable
-        } else {
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.tilt * 0.5);
-          // hay bale base
-          ctx.fillStyle = "#d9a83f";
-          ctx.beginPath(); ctx.ellipse(0, 16, 26, 10, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.strokeStyle = "#b4832a"; ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.ellipse(0, 16, 18, 6.5, 0, 0, Math.PI * 2); ctx.stroke();
-          // cannon body
-          ctx.fillStyle = "#5d4632";
-          ctx.beginPath();
-          ctx.moveTo(-15, 14); ctx.lineTo(-10, -8); ctx.lineTo(10, -8); ctx.lineTo(15, 14);
-          ctx.closePath(); ctx.fill();
-          // barrel (kicks down a touch with each shot — the recoil snap)
-          // Lobby upgrades change the cannon itself: wider barrel with more
-          // damage, gold bands with Rapid Fire, side barrels with Extra Barrels.
-          var kick = p.recoil * 3.4;
-          var bw = 10 + upgrades.damage * 1.1 + upgrades.big * 1.3;
-          if (upgrades.spread >= 1) {
-            ctx.fillStyle = "#3c2c1e";
-            ctx.fillRect(-17, -20 + kick, 7, 15);
-            ctx.fillRect(10, -20 + kick, 7, 15);
-            ctx.fillStyle = BULLET_COLORS[upgrades.damage];
-            ctx.fillRect(-18, -22 + kick, 9, 4);
-            ctx.fillRect(9, -22 + kick, 9, 4);
-          }
-          ctx.fillStyle = "#3c2c1e";
-          ctx.fillRect(-bw / 2, -26 + kick, bw, 20);
-          if (upgrades.rapid > 0) {
-            ctx.fillStyle = "#d9a83f";
-            for (var band = 0; band < upgrades.rapid; band++) ctx.fillRect(-bw / 2 - 1, -22 + kick + band * 4, bw + 2, 1.8);
-          }
-          ctx.fillStyle = BULLET_COLORS[upgrades.damage];
-          ctx.fillRect(-bw / 2 - 1.5, -28 + kick, bw + 3, 5);
-          // muzzle flash when firing cycle peaks
-          if (p.fireTimer < 0.05 && (state === "play" || state === "boss")) {
-            ctx.fillStyle = "rgba(255,190,60,.95)";
-            ctx.beginPath(); ctx.ellipse(0, -36 + kick, 7, 11, 0, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = "rgba(255,240,200,.95)";
-            ctx.beginPath(); ctx.ellipse(0, -33 + kick, 3.4, 6, 0, 0, Math.PI * 2); ctx.fill();
-          }
-          // pilgrim hat on the cannon
-          ctx.fillStyle = "#2b2b30";
-          ctx.fillRect(-13, -14, 26, 9);
-          ctx.fillRect(-18, -6, 36, 4);
-          ctx.fillStyle = "#d9a83f";
-          ctx.fillRect(-4, -13, 8, 7);
-          ctx.restore();
+        if (!(p.invuln > 0 && p.dodgeTime <= 0 && Math.floor(time * 14) % 2 === 0 && state !== "over")) {
+          drawCannonOn(ctx, p.x, p.y, 1, p.tilt * 0.5, {
+            recoil: p.recoil,
+            flash: p.fireTimer < 0.05 && (state === "play" || state === "boss")
+          });
         }
         // shield ring
         if (p.shield) {
@@ -2137,6 +2257,30 @@
         // sun / moon disc
         ctx.fillStyle = levelIdx === 3 ? "#f4ecd8" : "rgba(255,236,180,.9)";
         ctx.beginPath(); ctx.arc(W - 66, 62, levelIdx === 3 ? 20 : 26, 0, Math.PI * 2); ctx.fill();
+        /* ===== TRAILER LOOK (in-game): golden-hour glow, god rays,
+           drifting clouds, barn + windmill — the exact farm-at-sunset
+           wide shot that opens the trailer, now the real game field. */
+        (function trailerSky() {
+          var sx = W - 66, sy = 62;
+          var glow = ctx.createRadialGradient(sx, sy, 8, sx, sy, 190);
+          glow.addColorStop(0, "rgba(255,214,120,.55)"); glow.addColorStop(0.35, "rgba(255,160,60,.20)"); glow.addColorStop(1, "rgba(255,160,60,0)");
+          ctx.fillStyle = glow; ctx.fillRect(0, 0, W, GROUND);
+          ctx.save(); ctx.globalAlpha = 0.10; ctx.fillStyle = "#fff2cf";
+          for (var r = 0; r < 5; r++) {
+            var ra = 0.55 + r * 0.28 + Math.sin(time * 0.12 + r) * 0.03;
+            ctx.beginPath(); ctx.moveTo(sx, sy);
+            ctx.lineTo(sx + Math.cos(ra) * 560, sy + Math.sin(ra) * 560);
+            ctx.lineTo(sx + Math.cos(ra + 0.09) * 560, sy + Math.sin(ra + 0.09) * 560);
+            ctx.closePath(); ctx.fill();
+          }
+          ctx.restore();
+          // slow cinematic clouds
+          ctx.fillStyle = "rgba(38,20,20,.20)";
+          for (var ci2 = 0; ci2 < 3; ci2++) {
+            var cx2 = ((ci2 * 190 + time * (6 + ci2 * 3)) % (W + 180)) - 90, cy2 = 34 + ci2 * 30;
+            ctx.beginPath(); ctx.ellipse(cx2, cy2, 52, 11, 0, 0, Math.PI * 2); ctx.ellipse(cx2 + 30, cy2 + 4, 36, 8, 0, 0, Math.PI * 2); ctx.fill();
+          }
+        })();
 
         // far hills
         ctx.fillStyle = L.hillFar;
@@ -2152,6 +2296,12 @@
         ctx.quadraticCurveTo(W * 0.3, GROUND - 52, W * 0.62, GROUND - 16);
         ctx.quadraticCurveTo(W * 0.85, GROUND + 4, W, GROUND - 30);
         ctx.lineTo(W, GROUND); ctx.closePath(); ctx.fill();
+
+        /* Trailer wide-shot landmarks — drawn by the SAME shared
+           functions the Lobby and trailer use, so the barn and
+           windmill are identical on every screen. */
+        drawBarnShape(ctx, 18, GROUND, 1);
+        drawWindmillShape(ctx, W - 42, GROUND, 1, time * 0.7);
 
         // fence posts along the back
         ctx.fillStyle = "rgba(93,58,26,.75)";
@@ -2186,9 +2336,13 @@
           drawPickup(pu);
         }
 
-        // enemies
+        // enemies — each casts a soft ground shadow (trailer depth cue:
+        // the higher the bird, the fainter & smaller its shadow)
         for (var ei = 0; ei < enemies.length; ei++) {
           var e = enemies[ei];
+          var shA = clamp(1 - (e.y / GROUND), 0.12, 0.5);
+          ctx.fillStyle = "rgba(30,16,6," + (shA * 0.45) + ")";
+          ctx.beginPath(); ctx.ellipse(e.x, GROUND - 4, 20 * (1.4 - shA), 5, 0, 0, Math.PI * 2); ctx.fill();
           drawTurkey(e.x, e.y + (e.knock || 0), e.mutated ? 24 : 21, e.flap, { variant: e.mutated ? "mutated" : L.variant, mutated: !!e.mutated });
           if (e.flash > 0) { // cranberry hit flash
             ctx.save();
@@ -2209,7 +2363,13 @@
         // boss
         if (boss && state === "boss") {
           var bopts = { variant: LEVELS[boss.idx].variant, golden: boss.idx === 6 || boss.idx === 11, crown: boss.idx === 11 || boss.idx === 10 || boss.idx === 6, helmet: boss.idx === 1, chefHat: boss.idx === 3 || boss.idx === 4, mutated: boss.idx >= 9 };
-          drawTurkey(boss.x, boss.y, 47, boss.flap, bopts);
+          // trailer boss presence: looming scale, pulsing ember aura + ground shadow
+          ctx.fillStyle = "rgba(30,16,6,.4)";
+          ctx.beginPath(); ctx.ellipse(boss.x, GROUND - 4, 52, 9, 0, 0, Math.PI * 2); ctx.fill();
+          var aura = ctx.createRadialGradient(boss.x, boss.y, 20, boss.x, boss.y, 118 + Math.sin(time * 3) * 8);
+          aura.addColorStop(0, "rgba(255,120,40,.20)"); aura.addColorStop(1, "rgba(255,120,40,0)");
+          ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(boss.x, boss.y, 128, 0, Math.PI * 2); ctx.fill();
+          drawTurkey(boss.x, boss.y, 54, boss.flap, bopts);
           if (boss.flash > 0) { // cranberry hit flash
             ctx.save();
             ctx.globalAlpha = clamp(boss.flash / 0.11, 0, 1) * 0.45;
@@ -2241,12 +2401,12 @@
             ctx.fillStyle = "rgba(178,58,46,.95)";
             ctx.font = "700 15px Trebuchet MS, sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("INCOMING!", boss.x, boss.y - 78);
+            ctx.fillText("INCOMING!", boss.x, boss.y - 116);
             ctx.restore();
           } else if (boss.diving && boss.diveT < 0.25) {
             ctx.fillStyle = "rgba(178,58,46,.9)";
             ctx.font = "700 15px Trebuchet MS, sans-serif";
-            ctx.fillText("INCOMING!", boss.x, boss.y - 78);
+            ctx.fillText("INCOMING!", boss.x, boss.y - 116);
           }
         }
 
@@ -2283,8 +2443,9 @@
           }
         }
 
-        // player
-        if (state !== "menu") drawPlayer();
+        // player — drawn in the menu too, so the title screen shows
+        // the exact same canonical cannon idling on the farm
+        drawPlayer();
 
         // particles
         for (var pi = 0; pi < particles.length; pi++) {
@@ -2376,6 +2537,18 @@
           ctx.font = "15px Trebuchet MS, sans-serif";
           ctx.fillText("Tap ⏸ to keep defending Earth", W / 2, H / 2 + 22);
         }
+
+        /* ===== TRAILER GRADE: warm sunset wash + cinematic vignette,
+           applied to the live game every frame — the trailer and the
+           game now share one look. Boss fights burn hotter. ===== */
+        (function trailerGrade() {
+          ctx.fillStyle = state === "boss" ? "rgba(255,110,30,.07)" : "rgba(255,170,60,.05)";
+          ctx.fillRect(0, 0, W, H);
+          var vg = ctx.createRadialGradient(W / 2, H * 0.46, H * 0.32, W / 2, H * 0.5, H * 0.78);
+          vg.addColorStop(0, "rgba(20,8,2,0)"); vg.addColorStop(1, "rgba(20,8,2,.38)");
+          ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = "rgba(0,0,0,.20)"; ctx.fillRect(0, 0, W, 10); ctx.fillRect(0, H - 10, W, 10);
+        })();
 
         ctx.restore();
 
@@ -2579,14 +2752,15 @@
         updateHUD();
       }
 
-      /* Lobby preview: the cannon in its barnyard — a proper cranberry
-         cannon (angled barrel on a wheeled carriage) on the ground line,
-         barn and fence behind it, and berries that leave the muzzle on a
-         clear arc. NO stat text in here: the numbers live once, in the
-         stat tiles under the picture. Upgrades still show on the cannon:
-         wider barrel with damage, gold bands with Rapid Fire, real side
-         barrels with Extra Barrels, bigger glowing berries with Big
-         Berries, ringed berries with Piercing. */
+      /* Lobby preview: the cannon in its barnyard — drawn ENTIRELY by
+         the canonical shared art (drawCannonOn, drawTurkeyOn,
+         drawBarnShape, drawWindmillShape), so the Lobby cannon and
+         turkeys are pixel-for-pixel the same design as in gameplay
+         and in the trailer. NO stat text in here: the numbers live
+         once, in the stat tiles under the picture. Upgrades show on
+         the cannon exactly as in-game: wider barrel with damage,
+         gold bands with Rapid Fire, real side barrels with Extra
+         Barrels, bigger glowing berries with Big Berries. */
       function drawLobbyPreview() {
         var c = document.getElementById("lobbyCanvas");
         var g = c.getContext("2d");
@@ -2612,22 +2786,9 @@
         g.quadraticCurveTo(PW * 0.32, GY - 30, PW * 0.64, GY - 10);
         g.quadraticCurveTo(PW * 0.86, GY + 2, PW, GY - 16);
         g.lineTo(PW, GY); g.closePath(); g.fill();
-        // the barn, left background: red walls, gambrel roof, white trim
-        g.save();
-        g.globalAlpha = 0.92;
-        g.fillStyle = "#9c3a2a";
-        g.fillRect(26, GY - 74, 92, 74);
-        g.fillStyle = "#7e2a1e";
-        g.beginPath();
-        g.moveTo(18, GY - 74); g.lineTo(40, GY - 102); g.lineTo(104, GY - 102); g.lineTo(126, GY - 74);
-        g.closePath(); g.fill();
-        g.strokeStyle = "rgba(253,243,224,.9)"; g.lineWidth = 3;
-        g.strokeRect(58, GY - 46, 28, 46);
-        g.beginPath(); g.moveTo(58, GY - 46); g.lineTo(86, GY); g.moveTo(86, GY - 46); g.lineTo(58, GY); g.stroke();
-        g.strokeStyle = "rgba(253,243,224,.75)"; g.lineWidth = 2;
-        g.strokeRect(63, GY - 92, 18, 18);
-        g.beginPath(); g.moveTo(63, GY - 83); g.lineTo(81, GY - 83); g.moveTo(72, GY - 92); g.lineTo(72, GY - 74); g.stroke();
-        g.restore();
+        // the barn — the shared shape, identical to gameplay & trailer
+        drawBarnShape(g, 26, GY, 1.18);
+        drawWindmillShape(g, PW - 30, GY, 0.82, 0.7);
         // fence line along the horizon
         g.fillStyle = "rgba(93,58,26,.8)";
         for (var fx = 138; fx < PW - 8; fx += 44) g.fillRect(fx, GY - 17, 5, 17);
@@ -2655,92 +2816,27 @@
         g.beginPath(); g.moveTo(PW - 126, GY - 16); g.quadraticCurveTo(PW - 132, GY - 2, PW - 126, GY); g.stroke();
         g.fillStyle = "#4d7c3a"; g.fillRect(PW - 134, GY - 21, 4, 6);
 
-        /* ---- the cannon: wheeled carriage + barrel angled up ---- */
+        /* ---- THE cannon — the canonical drawCannonOn, the exact
+           function gameplay uses, aimed up-right at a target drawn by
+           the canonical drawTurkeyOn (Level 1's classic turkey, same
+           colours as in-game). One cannon, one turkey, everywhere. */
         var col = BULLET_COLORS[upgrades.damage];
-        var ax = 218, ay = GY - 17; // axle / barrel pivot point
-        var ang = -0.5;             // barrel elevation
-        var bw = 17 + upgrades.damage * 1.6 + upgrades.big * 2.2; // barrel width grows with upgrades
-        var bl = 86;                // barrel length
-        var mx = ax + Math.cos(ang) * bl, my = ay + Math.sin(ang) * bl; // muzzle tip
-        // trail leg running back-down to the ground
-        g.strokeStyle = "#5d4632"; g.lineWidth = 11; g.lineCap = "round";
-        g.beginPath(); g.moveTo(ax - 4, ay + 2); g.lineTo(ax - 52, GY - 3); g.stroke();
-        g.strokeStyle = "#6e5138"; g.lineWidth = 5;
-        g.beginPath(); g.moveTo(ax - 4, ay - 3); g.lineTo(ax - 50, GY - 7); g.stroke();
-        // spoked wheels
-        function wheel(x, y, r) {
-          g.fillStyle = "#6e4520";
-          g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
-          g.strokeStyle = "#4c2c12"; g.lineWidth = 3;
-          g.beginPath(); g.arc(x, y, r - 1.5, 0, Math.PI * 2); g.stroke();
-          g.strokeStyle = "#a5692f"; g.lineWidth = 3.4;
-          for (var sp = 0; sp < 4; sp++) {
-            var sa = sp * Math.PI / 4 + 0.4;
-            g.beginPath(); g.moveTo(x - Math.cos(sa) * (r - 3), y - Math.sin(sa) * (r - 3));
-            g.lineTo(x + Math.cos(sa) * (r - 3), y + Math.sin(sa) * (r - 3)); g.stroke();
-          }
-          g.fillStyle = "#3c2c1e";
-          g.beginPath(); g.arc(x, y, 5.5, 0, Math.PI * 2); g.fill();
-        }
-        wheel(ax - 16, GY - 15, 17);
-        wheel(ax + 24, GY - 12, 13);
-        // side barrels first (Extra Barrels upgrade) so the main barrel sits on top
-        if (upgrades.spread >= 1) {
-          [-1, 1].forEach(function (side) {
-            g.save();
-            g.translate(ax + side * 13, ay + 9);
-            g.rotate(ang);
-            g.fillStyle = "#33261a";
-            g.fillRect(-14, -5.5, bl * 0.78, 11);
-            g.fillStyle = col; g.fillRect(bl * 0.78 - 18, -7, 6, 14);
-            g.restore();
-          });
-        }
-        // main barrel: tapered tube from breech to muzzle
-        g.save();
-        g.translate(ax, ay);
-        g.rotate(ang);
-        g.fillStyle = "#3c2c1e";
-        g.beginPath();
-        g.moveTo(-20, -bw / 2); g.lineTo(bl, -bw * 0.32); g.lineTo(bl, bw * 0.32); g.lineTo(-20, bw / 2);
-        g.closePath(); g.fill();
-        g.fillStyle = "#2c2016";
-        g.beginPath(); g.ellipse(-20, 0, 7, bw / 2, 0, 0, Math.PI * 2); g.fill(); // breech cap
-        if (upgrades.rapid > 0) { // gold speed bands, same as in-game
-          g.fillStyle = "#d9a83f";
-          for (var band = 0; band < upgrades.rapid; band++) {
-            var bx2 = 8 + band * 13;
-            g.fillRect(bx2, -bw * 0.44 + band * 0.4, 4.5, bw * 0.88 - band * 0.8);
-          }
-        }
-        g.fillStyle = col; // cranberry-red muzzle ring — berries come out THIS colour
-        g.fillRect(bl - 9, -bw * 0.36, 9, bw * 0.72);
-        g.fillStyle = "#1c1410"; // the bore the berries leave from
-        g.beginPath(); g.ellipse(bl, 0, 3.2, bw * 0.3, 0, 0, Math.PI * 2); g.fill();
-        g.restore();
-        // muzzle flash at the mouth
-        g.fillStyle = "rgba(255,190,60,.9)";
-        g.beginPath(); g.ellipse(mx + 7, my - 3, 9, 5.5, ang, 0, Math.PI * 2); g.fill();
-        g.fillStyle = "rgba(255,242,207,.95)";
-        g.beginPath(); g.ellipse(mx + 5, my - 2, 4.5, 2.8, ang, 0, Math.PI * 2); g.fill();
-        // the crew's pilgrim hat, parked on the trail — not floating
-        g.fillStyle = "#2b2b30";
-        g.fillRect(ax - 66, GY - 16, 24, 8);
-        g.fillRect(ax - 71, GY - 9, 34, 3.5);
-        g.fillStyle = "#d9a83f"; g.fillRect(ax - 58, GY - 15, 8, 6.5);
-        /* Berries in flight: each stream starts AT the muzzle and follows
-           one clear arc up and away — nothing floats unconnected. */
+        var targetX = 414, targetY = 58;
+        drawTurkeyOn(g, targetX, targetY, 20, 1.1, { variant: "classic" });
+        drawTurkeyOn(g, 486, 96, 15, 2.2, { variant: "classic" });
+        var mz = drawCannonOn(g, 196, GY - 13, 1.55, 0.62, { flash: true });
+        /* Berries in flight: each stream starts AT that same muzzle
+           and flies toward the target turkey — nothing floats. */
         var streams = getBaseShots();
-        for (var s = 0; s < streams; s++) {
-          var spreadOff = (s - (streams - 1) / 2) * 15;
+        for (var s2 = 0; s2 < streams; s2++) {
+          var spreadOff = (s2 - (streams - 1) / 2) * 13;
           for (var k = 0; k < 3; k++) {
-            var tt = 0.16 + k * 0.3;
-            var bx3 = mx + 14 + tt * 235;
-            var by3 = my - Math.sin(tt * Math.PI * 0.92) * 74 + tt * 30 + spreadOff * tt;
-            var br = getBulletR() * 1.5;
-            // short motion streak back toward the muzzle
+            var tt = 0.18 + k * 0.28;
+            var bx3 = mz.x + (targetX - mz.x) * tt;
+            var by3 = mz.y + (targetY - mz.y) * tt - Math.sin(tt * Math.PI) * 16 + spreadOff * tt;
+            var br = getBulletR() * 1.45;
             g.strokeStyle = "rgba(178,58,46,.4)"; g.lineWidth = 3; g.lineCap = "round";
-            g.beginPath(); g.moveTo(bx3 - 15, by3 + 6); g.lineTo(bx3 - 3, by3 + 1.5); g.stroke();
+            g.beginPath(); g.moveTo(bx3 - 13, by3 + 5); g.lineTo(bx3 - 3, by3 + 1); g.stroke();
             if (upgrades.big >= 2) { g.fillStyle = "rgba(255,190,60,.35)"; g.beginPath(); g.arc(bx3, by3, br + 4.5, 0, Math.PI * 2); g.fill(); }
             g.fillStyle = col;
             g.beginPath(); g.arc(bx3, by3, br, 0, Math.PI * 2); g.fill();
@@ -2874,6 +2970,307 @@
         saveGame();
         renderMenu(); renderBoard(); updateHUD();
       }
+
+      /* ============================================================
+         OFFICIAL TRAILER — 32 seconds, cut from the game's OWN art.
+         Every frame is drawn live with the canonical functions
+         (drawTurkeyOn, drawCannonOn, drawBarnShape,
+         drawWindmillShape) and the player's real upgrade colours,
+         so the trailer cannon IS the in-game cannon, the trailer
+         turkeys ARE the in-game turkeys, and Big Gobbler is the
+         Level 1 boss with his exact in-game design. No separate
+         trailer artwork exists — that's the consistency guarantee.
+         ============================================================ */
+      var trailerOverlay = document.getElementById("trailerOverlay");
+      var trailerCanvas = document.getElementById("trailerCanvas");
+      var tg = trailerCanvas.getContext("2d");
+      var TW = 960, TH = 540, TGY = 472, TDUR = 32;
+      var trailerOpen = false, trailerPlaying = false, trailerT = 0, trailerLast = 0, trailerScene = -1;
+      var TRAILER_CAPS = [
+        [0, "THIS THANKSGIVING", "They're coming for us.", "Wave after wave — straight for the farm."],
+        [5, "THE GAMEPLAY", "Man the cranberry cannon!", "Fast fire. Feather bursts. Potatoes & gravy everywhere."],
+        [12, "TURN IT UP", "Dodge. Dash. GRAVY BOMB.", "New flocks, new colours — twelve levels deep."],
+        [18, "THE BOSS FIGHT", "BIG GOBBLER", "He dives all the way down to your row. Move."],
+        [27, "INVASION OF THE TURKEYS", "12 levels. 12 bosses.", "Thanksgiving will never be the same."]
+      ];
+      function thash(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+      function trailerCaptionIdx(t) { var idx = 0; for (var i = 0; i < TRAILER_CAPS.length; i++) if (t >= TRAILER_CAPS[i][0]) idx = i; return idx; }
+      function tFarm(t, skyTop, skyBot, hillFar, hill) {
+        var gr = tg.createLinearGradient(0, 0, 0, TH);
+        gr.addColorStop(0, skyTop); gr.addColorStop(1, skyBot);
+        tg.fillStyle = gr; tg.fillRect(0, 0, TW, TH);
+        var glow = tg.createRadialGradient(TW - 170, 92, 10, TW - 170, 92, 320);
+        glow.addColorStop(0, "rgba(255,214,120,.55)"); glow.addColorStop(1, "rgba(255,160,60,0)");
+        tg.fillStyle = glow; tg.fillRect(0, 0, TW, TGY);
+        tg.fillStyle = "rgba(255,236,180,.95)"; tg.beginPath(); tg.arc(TW - 170, 92, 34, 0, Math.PI * 2); tg.fill();
+        tg.fillStyle = hillFar; tg.beginPath(); tg.moveTo(0, TGY);
+        tg.quadraticCurveTo(TW * 0.28, TGY - 92, TW * 0.55, TGY - 34);
+        tg.quadraticCurveTo(TW * 0.8, TGY + 4, TW, TGY - 58); tg.lineTo(TW, TGY); tg.closePath(); tg.fill();
+        tg.fillStyle = hill; tg.beginPath(); tg.moveTo(0, TGY);
+        tg.quadraticCurveTo(TW * 0.32, TGY - 44, TW * 0.64, TGY - 14);
+        tg.quadraticCurveTo(TW * 0.86, TGY + 4, TW, TGY - 24); tg.lineTo(TW, TGY); tg.closePath(); tg.fill();
+        drawBarnShape(tg, 54, TGY, 1.9);
+        drawWindmillShape(tg, TW - 74, TGY, 1.9, t * 0.7);
+        tg.fillStyle = "rgba(93,58,26,.8)";
+        for (var fx = 230; fx < TW - 130; fx += 52) tg.fillRect(fx, TGY - 20, 6, 20);
+        tg.fillRect(224, TGY - 15, TW - 350, 4);
+        tg.fillStyle = "#8a6a35"; tg.fillRect(0, TGY, TW, TH - TGY);
+        tg.fillStyle = "#75582a"; tg.fillRect(0, TGY + 34, TW, 4);
+        for (var gx = 12; gx < TW; gx += 54) tg.fillRect(gx, TGY + 16, 22, 3.5);
+      }
+      function tFeatherRain(t, n, col) {
+        tg.fillStyle = col;
+        for (var i = 0; i < n; i++) {
+          var fx = thash(i * 3 + 1) * TW;
+          var fy = ((thash(i * 7 + 2) * TH + t * (26 + thash(i) * 30)) % (TH + 30)) - 15;
+          tg.save(); tg.translate(fx, fy); tg.rotate(t * (1 + thash(i * 5)) + i);
+          tg.globalAlpha = 0.5 + thash(i * 11) * 0.5;
+          tg.beginPath(); tg.ellipse(0, 0, 7, 3.6, 0, 0, Math.PI * 2); tg.fill();
+          tg.restore();
+        }
+        tg.globalAlpha = 1;
+      }
+      function tBurst(x, y, age, scale) {
+        if (age < 0 || age > 0.85) return;
+        var cols = FEATHERS.concat(POTATO_COLS, GRAVY_COLS);
+        for (var i = 0; i < 30; i++) {
+          var ang = thash(i * 13 + Math.floor(x)) * Math.PI * 2;
+          var d = age * (90 + thash(i * 17) * 190) * scale;
+          var px = x + Math.cos(ang) * d, py = y + Math.sin(ang) * d + age * age * 130;
+          tg.save(); tg.translate(px, py); tg.rotate(ang + age * 6);
+          tg.globalAlpha = clamp(1 - age / 0.85, 0, 1);
+          tg.fillStyle = cols[i % cols.length];
+          tg.beginPath(); tg.ellipse(0, 0, (4 + thash(i) * 4) * scale, (2.4 + thash(i) * 2.4) * scale, 0, 0, Math.PI * 2); tg.fill();
+          tg.restore();
+        }
+        tg.globalAlpha = 1;
+        tg.strokeStyle = "rgba(255,217,138," + clamp(0.8 - age, 0, 1) + ")";
+        tg.lineWidth = 3; tg.beginPath(); tg.arc(x, y, age * 120 * scale, 0, Math.PI * 2); tg.stroke();
+      }
+      function tBerry(x, y, r) {
+        var col = BULLET_COLORS[upgrades.damage];
+        tg.strokeStyle = col; tg.globalAlpha = 0.45; tg.lineWidth = 3.5; tg.lineCap = "round";
+        tg.beginPath(); tg.moveTo(x, y + 22); tg.lineTo(x, y); tg.stroke(); tg.globalAlpha = 1;
+        tg.fillStyle = col; tg.beginPath(); tg.arc(x, y, r, 0, Math.PI * 2); tg.fill();
+        tg.fillStyle = "rgba(255,255,255,.65)"; tg.beginPath(); tg.arc(x - r * 0.28, y - r * 0.28, Math.max(1.8, r * 0.32), 0, Math.PI * 2); tg.fill();
+      }
+      function tTitle(alpha, y, size) {
+        tg.save(); tg.globalAlpha = clamp(alpha, 0, 1);
+        tg.textAlign = "center";
+        tg.font = "700 " + size + "px Georgia, serif";
+        tg.fillStyle = "rgba(20,8,2,.55)"; tg.fillText("INVASION OF THE TURKEYS", TW / 2 + 3, y + 3);
+        tg.fillStyle = "#fff3d6"; tg.fillText("INVASION OF THE TURKEYS", TW / 2, y);
+        tg.font = "600 " + Math.round(size * 0.34) + "px Trebuchet MS, sans-serif";
+        tg.fillStyle = "#ffd98a"; tg.fillText("T H A N K S G I V I N G   W I L L   N E V E R   B E   T H E   S A M E", TW / 2, y + size * 0.62);
+        tg.restore();
+      }
+      function tSceneFade(t) {
+        var starts = [0, 5, 12, 18, 27];
+        for (var i = 0; i < starts.length; i++) {
+          var d = Math.abs(t - starts[i]);
+          if (starts[i] > 0 && d < 0.28) { tg.fillStyle = "rgba(0,0,0," + (1 - d / 0.28) * 0.85 + ")"; tg.fillRect(0, 0, TW, TH); }
+        }
+        if (t < 0.5) { tg.fillStyle = "rgba(0,0,0," + (0.5 - t) * 1.4 + ")"; tg.fillRect(0, 0, TW, TH); }
+      }
+      function drawTrailerFrame() {
+        var t = trailerT;
+        tg.clearRect(0, 0, TW, TH);
+        if (t < 5) {
+          /* SHOT 1 — THE INVASION: the trailer's opening wide shot,
+             which is Level 1's real farm, sun and landmarks. */
+          var lt = t;
+          tFarm(t, "#5b2a6e", "#eda254", "#a8bf74", "#7d9b4e");
+          tg.save(); tg.translate(TW / 2, TH / 2); tg.scale(1 + lt * 0.012, 1 + lt * 0.012); tg.translate(-TW / 2, -TH / 2);
+          for (var i = 0; i < 7; i++) {
+            var ex = -80 + lt * 62 + i * 118, ey = 92 + (i % 3) * 56 + Math.sin(t * 3 + i) * 6;
+            if (ex < TW + 60) drawTurkeyOn(tg, ex, ey, 21, t * 9 + i, { variant: "classic" });
+          }
+          tg.restore();
+          drawCannonOn(tg, TW / 2, TGY - 16, 1.5, Math.sin(t * 0.8) * 0.1, { flash: lt > 3.4 && lt < 3.55 });
+          if (lt > 3.2) tBerry(TW / 2 + 12, TGY - 90 - (lt - 3.2) * 120, 7);
+          tFeatherRain(t, 16, "#e8e3d8");
+          if (lt > 1.1) tTitle(clamp((lt - 1.1) / 0.9, 0, 1) * (lt > 4.2 ? clamp((5 - lt) / 0.8, 0, 1) : 1), 218, 54);
+        } else if (t < 12) {
+          /* SHOT 2 — GAMEPLAY: formation waves vs. the cannon, exactly
+             as a Level 1 wave plays — same turkeys, same berries. */
+          var lt2 = t - 5;
+          tFarm(t, "#8ec9e8", "#f7dfae", "#a8bf74", "#7d9b4e");
+          var cx = TW / 2 + Math.sin(lt2 * 1.15) * 130;
+          var dead = {};
+          for (var r2 = 0; r2 < 2; r2++) for (var c2 = 0; c2 < 6; c2++) {
+            var idx = r2 * 6 + c2;
+            var tx = 190 + c2 * 118 + Math.sin(t * 1.4 + idx) * 7, ty = 108 + r2 * 92 + Math.sin(t * 2.2 + idx * 2) * 5;
+            var hitAt = 0.9 + (idx % 6) * 0.92 + r2 * 0.45;
+            if (lt2 > hitAt && lt2 < hitAt + 0.8) { tBurst(tx, ty, lt2 - hitAt, 1); dead[idx] = 1; continue; }
+            if (lt2 >= hitAt + 0.8 && lt2 < 6.2) continue;
+            drawTurkeyOn(tg, tx, ty, 21, t * 9 + idx, { variant: "classic" });
+            if (lt2 < hitAt) {
+              var bf = (lt2 * 1.6 + thash(idx * 3)) % 1;
+              tBerry(tx + (cx - tx) * (1 - bf) * 0.25, ty + 46 + (TGY - 90 - ty) * (1 - bf) * 0.55, 6.5);
+            }
+          }
+          drawCannonOn(tg, cx, TGY - 16, 1.5, clamp((cx - TW / 2) / 900, -0.16, 0.16), { recoil: Math.max(0, Math.sin(lt2 * 22)) * 0.7, flash: (lt2 % 0.24) < 0.07 });
+          tg.fillStyle = "#7a4d00"; tg.font = "800 19px Trebuchet MS, sans-serif"; tg.textAlign = "center";
+          tg.fillText("+100", 300 + Math.sin(lt2 * 2) * 8, 250 - (lt2 % 1.4) * 26);
+          tg.fillText("+🪙", 660, 300 - (lt2 % 1.1) * 24);
+        } else if (t < 18) {
+          /* SHOT 3 — TURN IT UP: quick flock variants (the real level
+             palettes), a dodge dash, then a Gravy Bomb wipe. */
+          var lt3 = t - 12;
+          var variants = ["night", "frost", "golden"];
+          var skies = [["#2e3d33", "#77603c"], ["#bfe3f0", "#eef8fb"], ["#93392b", "#eda254"]];
+          var vi = Math.min(2, Math.floor(lt3 / 2));
+          var vv = variants[vi], sk = skies[vi];
+          tFarm(t, sk[0], sk[1], "#8a7a5a", "#5d4a30");
+          var bombAt = 4.6, bombAge = lt3 - bombAt;
+          for (var i3 = 0; i3 < 6; i3++) {
+            var tx3 = 170 + i3 * 128, ty3 = 120 + (i3 % 2) * 86 + Math.sin(t * 2.6 + i3) * 6;
+            if (bombAge > 0) { tBurst(tx3, ty3, bombAge + thash(i3) * 0.15, 1.15); continue; }
+            drawTurkeyOn(tg, tx3, ty3, 21, t * 9 + i3, { variant: vv, mutated: vi === 2 && i3 === 4 });
+          }
+          var dash = (lt3 % 2 < 0.22) ? Math.sin((lt3 % 2) / 0.22 * Math.PI) * 120 : 0;
+          var cx3 = TW / 2 + dash + Math.sin(lt3 * 1.3) * 50;
+          if (Math.abs(dash) > 26) { tg.fillStyle = "rgba(255,217,138,.35)"; tg.beginPath(); tg.ellipse(cx3 - Math.sign(dash) * 44, TGY - 26, 40, 13, 0, 0, Math.PI * 2); tg.fill(); }
+          drawCannonOn(tg, cx3, TGY - 16, 1.5, 0, { flash: (lt3 % 0.3) < 0.07 });
+          if (bombAge > -0.35 && bombAge < 0) {
+            tg.fillStyle = "#ffd98a"; tg.font = "800 25px Georgia, serif"; tg.textAlign = "center";
+            tg.fillText("GRAVY BOMB!", TW / 2, 250);
+          }
+          if (bombAge >= 0 && bombAge < 0.5) { tg.fillStyle = "rgba(255,214,140," + (0.55 - bombAge) + ")"; tg.fillRect(0, 0, TW, TH); }
+        } else if (t < 27) {
+          /* SHOT 4 — BOSS FIGHT: Big Gobbler, Level 1's boss, in his
+             exact in-game design — warn lane, full-depth dive to the
+             player's row, dodge, Gravy Bomb finish. */
+          var lt4 = t - 18;
+          tFarm(t, "#93392b", "#eda254", "#6e422a", "#4c2c1c");
+          var bossY = lt4 < 2 ? 60 + lt4 * 42 : 144 + Math.sin(lt4 * 1.2) * 12;
+          var bossX = TW / 2 + Math.sin(lt4 * 0.9) * 90;
+          var diving = lt4 >= 4.2 && lt4 < 5.6;
+          if (lt4 >= 3.4 && lt4 < 4.2) {
+            tg.save(); tg.strokeStyle = "rgba(178,58,46,.8)"; tg.lineWidth = 4; tg.setLineDash([11, 8]); tg.lineDashOffset = -t * 70;
+            tg.beginPath(); tg.moveTo(TW / 2 - 120, bossY + 60); tg.lineTo(TW / 2 - 120, TGY); tg.stroke(); tg.setLineDash([]);
+            tg.fillStyle = "rgba(178,58,46,.3)"; tg.beginPath(); tg.ellipse(TW / 2 - 120, TGY - 22, 58, 15, 0, 0, Math.PI * 2); tg.fill();
+            tg.fillStyle = "#ff6a55"; tg.font = "800 21px Trebuchet MS, sans-serif"; tg.textAlign = "center"; tg.fillText("INCOMING!", bossX, bossY - 118);
+            tg.restore();
+          }
+          if (diving) { var dp = (lt4 - 4.2) / 1.4; bossX = TW / 2 - 120; bossY = 144 + dp * (TGY - 128 - 144); }
+          if (lt4 >= 5.6 && lt4 < 6.4) { bossX = TW / 2 - 120; bossY = TGY - 128 - (lt4 - 5.6) * 160; }
+          var bossGone = lt4 >= 7.1;
+          if (!bossGone) {
+            var aura2 = tg.createRadialGradient(bossX, bossY, 24, bossX, bossY, 168);
+            aura2.addColorStop(0, "rgba(255,120,40,.22)"); aura2.addColorStop(1, "rgba(255,120,40,0)");
+            tg.fillStyle = aura2; tg.beginPath(); tg.arc(bossX, bossY, 178, 0, Math.PI * 2); tg.fill();
+            drawTurkeyOn(tg, bossX, bossY, 54, t * 7, { variant: "classic" });
+            tg.fillStyle = "rgba(30,16,8,.75)"; tg.fillRect(TW / 2 - 190, 56, 380, 20);
+            tg.fillStyle = "#d95f4b"; tg.fillRect(TW / 2 - 188, 58, 376 * clamp(1 - Math.max(0, lt4 - 5.8) / 1.3, 0.06, 1), 16);
+            tg.fillStyle = "#fdf3e0"; tg.font = "700 13px Trebuchet MS, sans-serif"; tg.textAlign = "center"; tg.fillText("BIG GOBBLER", TW / 2, 71);
+          }
+          var pcx = TW / 2 + (diving || (lt4 >= 3.4 && lt4 < 6.4) ? 150 : Math.sin(lt4 * 1.1) * 70);
+          drawCannonOn(tg, pcx, TGY - 16, 1.5, 0, { flash: (lt4 % 0.26) < 0.07 });
+          for (var b4 = 0; b4 < 3; b4++) { var bf4 = (lt4 * 1.7 + b4 * 0.33) % 1; if (!bossGone) tBerry(bossX + (pcx - bossX) * (1 - bf4) * 0.2, bossY + 60 + (TGY - 110 - bossY) * (1 - bf4) * 0.6, 6.5); }
+          if (lt4 >= 6.9 && lt4 < 7.75) tBurst(bossX, bossY + 10, lt4 - 6.9, 2.1);
+          if (lt4 >= 7.3) {
+            tg.fillStyle = "#fff3d6"; tg.font = "800 44px Georgia, serif"; tg.textAlign = "center";
+            tg.fillText("PLUCKED!", TW / 2, 240);
+          }
+          tFeatherRain(t, lt4 > 7 ? 22 : 7, "#e8e3d8");
+        } else {
+          /* SHOT 5 — FINAL FEAST: hero shot, same farm, same cannon. */
+          var lt5 = t - 27;
+          tFarm(t, "#5b2a6e", "#eda254", "#a8bf74", "#7d9b4e");
+          drawCannonOn(tg, TW / 2, TGY - 16, 1.7, Math.sin(lt5 * 0.7) * 0.08, { flash: (lt5 % 0.9) < 0.09 });
+          for (var b5 = 0; b5 < 4; b5++) { var bf5 = (lt5 * 0.8 + b5 * 0.25) % 1; tBerry(TW / 2 + (b5 - 1.5) * 26, TGY - 70 - bf5 * 190, 7); }
+          drawTurkeyOn(tg, 168, 128 + Math.sin(t * 2) * 7, 21, t * 9, { variant: "classic" });
+          drawTurkeyOn(tg, TW - 168, 128 + Math.cos(t * 2) * 7, 21, t * 9 + 2, { variant: "classic" });
+          tFeatherRain(t, 26, "#ffd98a");
+          tTitle(clamp(lt5 / 0.8, 0, 1), 208, 58);
+          tg.fillStyle = "#fdf3e0"; tg.font = "700 19px Trebuchet MS, sans-serif"; tg.textAlign = "center";
+          tg.fillText("▶  PLAY IT NOW — RIGHT HERE", TW / 2, 316);
+        }
+        /* cinematic grade — the same warm wash + vignette as in-game */
+        tg.fillStyle = "rgba(255,170,60,.05)"; tg.fillRect(0, 0, TW, TH);
+        var vg = tg.createRadialGradient(TW / 2, TH * 0.46, TH * 0.3, TW / 2, TH * 0.5, TH * 0.85);
+        vg.addColorStop(0, "rgba(20,8,2,0)"); vg.addColorStop(1, "rgba(20,8,2,.4)");
+        tg.fillStyle = vg; tg.fillRect(0, 0, TW, TH);
+        tSceneFade(t);
+      }
+      function trailerSyncUI() {
+        var idx = trailerCaptionIdx(trailerT);
+        if (idx !== trailerScene) {
+          trailerScene = idx;
+          var cap = TRAILER_CAPS[idx];
+          document.getElementById("trailerKicker").textContent = cap[1];
+          var cel = document.getElementById("trailerCaption");
+          cel.textContent = "";
+          cel.appendChild(document.createTextNode(cap[2]));
+          var sm = document.createElement("small"); sm.textContent = cap[3]; cel.appendChild(sm);
+          if (trailerOpen && trailerPlaying && !muted) {
+            if (idx === 0 || idx === 3) SFX.gobble();
+            if (idx === 2) SFX.bomb();
+            if (idx === 4) SFX.clear();
+          }
+        }
+        document.getElementById("trailerProgressBar").style.width = (trailerT / TDUR * 100) + "%";
+        var fmt = function (v) { return "0:" + ("0" + Math.floor(v)).slice(-2); };
+        document.getElementById("trailerTime").textContent = fmt(trailerT) + " / 0:32";
+        var shots = document.getElementById("trailerShots").children;
+        for (var i = 0; i < shots.length; i++) shots[i].classList.toggle("active", i === idx);
+        document.getElementById("btnTrailerPlay").textContent = trailerPlaying ? "⏸ Pause" : "▶ Play";
+      }
+      function trailerLoop(ts) {
+        if (!trailerOpen) return;
+        requestAnimationFrame(trailerLoop);
+        if (trailerPlaying) {
+          var dt = Math.min(0.05, (ts - trailerLast) / 1000 || 0.016);
+          trailerT += dt;
+          if (trailerT >= TDUR) { trailerT = TDUR; trailerPlaying = false; }
+        }
+        trailerLast = ts;
+        drawTrailerFrame();
+        trailerSyncUI();
+      }
+      function openTrailer(seekTo) {
+        ac();
+        trailerOpen = true; trailerPlaying = true;
+        trailerT = seekTo || 0; trailerScene = -1; trailerLast = performance.now();
+        trailerOverlay.hidden = false;
+        document.body.style.overflow = "hidden";
+        requestAnimationFrame(trailerLoop);
+        trailerOverlay.scrollTop = 0;
+      }
+      function closeTrailer() {
+        trailerOpen = false; trailerPlaying = false;
+        trailerOverlay.hidden = true;
+        document.body.style.overflow = "";
+      }
+      document.getElementById("btnTrailer").addEventListener("click", function () { openTrailer(0); });
+      document.getElementById("btnLobbyTrailer").addEventListener("click", function () { openTrailer(0); });
+      document.getElementById("btnTrailerClose").addEventListener("click", closeTrailer);
+      document.getElementById("btnTrailerPlay").addEventListener("click", function () {
+        if (!trailerPlaying && trailerT >= TDUR) trailerT = 0;
+        trailerPlaying = !trailerPlaying; ac();
+      });
+      document.getElementById("btnTrailerRestart").addEventListener("click", function () { trailerT = 0; trailerScene = -1; trailerPlaying = true; });
+      document.getElementById("btnTrailerPlayGame").addEventListener("click", function () {
+        closeTrailer();
+        if (!lobbyPanel.hidden) { document.getElementById("btnLobbyGo").click(); }
+        else { menuOverlay.hidden = false; document.getElementById("btnStart").click(); }
+      });
+      document.getElementById("trailerProgress").addEventListener("pointerdown", function (ev) {
+        var r = this.getBoundingClientRect();
+        trailerT = clamp((ev.clientX - r.left) / r.width, 0, 1) * TDUR;
+        trailerScene = -1;
+        if (trailerT < TDUR) trailerPlaying = true;
+      });
+      document.getElementById("trailerShots").addEventListener("click", function (ev) {
+        var btn = ev.target.closest("button[data-t]");
+        if (!btn) return;
+        trailerT = parseFloat(btn.getAttribute("data-t")) || 0;
+        trailerScene = -1; trailerPlaying = true;
+      });
+      window.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape" && trailerOpen) closeTrailer();
+      });
 
       /* ---------------- Main loop ---------------- */
       var lastTs = 0;
