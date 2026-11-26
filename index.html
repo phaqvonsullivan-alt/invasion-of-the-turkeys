@@ -537,20 +537,20 @@
       /* ---------------- Combat ---------------- */
       function playerShoot(dt) {
         player.fireTimer -= dt;
-        var rate = 0.135; // tuned snap: faster cycle, cranberries leave instantly
+        var rate = 0.12; // tuned snap: faster cycle, cranberries leave instantly
         if (player.fireTimer <= 0 && (state === "play" || state === "boss")) {
           player.fireTimer = rate;
           player.recoil = 1;
           var bx = player.x, by = player.y - 26;
           if (player.power === 1) {
-            bullets.push({ x: bx, y: by, vx: 0, vy: -575, r: 5.5, trail: 0 });
+            bullets.push({ x: bx, y: by, vx: 0, vy: -640, r: 5.5, trail: 0 });
           } else if (player.power === 2) {
-            bullets.push({ x: bx - 9, y: by + 4, vx: 0, vy: -575, r: 5.5, trail: 0 });
-            bullets.push({ x: bx + 9, y: by + 4, vx: 0, vy: -575, r: 5.5, trail: 0 });
+            bullets.push({ x: bx - 9, y: by + 4, vx: 0, vy: -640, r: 5.5, trail: 0 });
+            bullets.push({ x: bx + 9, y: by + 4, vx: 0, vy: -640, r: 5.5, trail: 0 });
           } else {
-            bullets.push({ x: bx, y: by, vx: 0, vy: -590, r: 5.5, trail: 0 });
-            bullets.push({ x: bx - 11, y: by + 5, vx: -75, vy: -555, r: 5.5, trail: 0 });
-            bullets.push({ x: bx + 11, y: by + 5, vx: 75, vy: -555, r: 5.5, trail: 0 });
+            bullets.push({ x: bx, y: by, vx: 0, vy: -655, r: 5.5, trail: 0 });
+            bullets.push({ x: bx - 11, y: by + 5, vx: -75, vy: -620, r: 5.5, trail: 0 });
+            bullets.push({ x: bx + 11, y: by + 5, vx: 75, vy: -620, r: 5.5, trail: 0 });
           }
           SFX.shoot();
         }
@@ -562,8 +562,8 @@
         if (state !== "play" && state !== "boss") return false;
         player.dodgeDir = dir < 0 ? -1 : 1;
         player.lastDir = player.dodgeDir;
-        player.dodgeTime = 0.18;
-        player.dodgeCd = 0.65;
+        player.dodgeTime = 0.15;
+        player.dodgeCd = 0.50;
         player.invuln = Math.max(player.invuln, 0.30);
         addParticles(player.x, player.y + 8, ["#fff2cf", "#f4bd76", "#e8873a"], 8, 90);
         SFX.dodge();
@@ -740,8 +740,8 @@
         if (player.dodgeTime > 0) {
           // the dash: fast, committed, untouchable
           player.dodgeTime -= dt;
-          player.x += player.dodgeDir * 940 * dt;
-          player.vx = player.dodgeDir * 940;
+          player.x += player.dodgeDir * 1100 * dt;
+          player.vx = player.dodgeDir * 1100;
           player.tilt = player.dodgeDir * 0.34;
           if (Math.random() < 0.75) {
             particles.push({
@@ -904,9 +904,9 @@
             var en = enemies[ei];
             if (dist2(bl.x, bl.y, en.x, en.y) < Math.pow(en.r + bl.r, 2)) {
               en.hp -= 1;
-              en.flash = 0.09;
-              en.knock = -5; // little upward pop on impact
-              addParticles(bl.x, bl.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 5, 120);
+              en.flash = 0.12;
+              en.knock = -7; // little upward pop on impact
+              addParticles(bl.x, bl.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 7, 120);
               addParticles(bl.x, bl.y, FEATHERS, 2, 70);
               SFX.hit();
               bullets.splice(bi, 1); consumed = true;
@@ -917,8 +917,8 @@
           if (consumed) continue;
           if (boss && dist2(bl.x, bl.y, boss.x, boss.y) < Math.pow(boss.r + bl.r, 2)) {
             boss.hp -= 1;
-            boss.flash = 0.08;
-            addParticles(bl.x, bl.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 6, 130);
+            boss.flash = 0.11;
+            addParticles(bl.x, bl.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 8, 130);
             addParticles(bl.x, bl.y, FEATHERS, 2, 80);
             SFX.hit();
             bullets.splice(bi, 1);
@@ -1071,7 +1071,7 @@
           ctx.moveTo(-15, 14); ctx.lineTo(-10, -8); ctx.lineTo(10, -8); ctx.lineTo(15, 14);
           ctx.closePath(); ctx.fill();
           // barrel (kicks down a touch with each shot — the recoil snap)
-          var kick = p.recoil * 2.6;
+          var kick = p.recoil * 3.4;
           ctx.fillStyle = "#3c2c1e";
           ctx.fillRect(-5, -26 + kick, 10, 20);
           ctx.fillStyle = "#b23a2e";
@@ -1203,7 +1203,7 @@
           drawTurkey(e.x, e.y + (e.knock || 0), 21, e.flap, {});
           if (e.flash > 0) { // cranberry hit flash
             ctx.save();
-            ctx.globalAlpha = clamp(e.flash / 0.09, 0, 1) * 0.55;
+            ctx.globalAlpha = clamp(e.flash / 0.12, 0, 1) * 0.55;
             ctx.fillStyle = "#ff5a48";
             ctx.beginPath(); ctx.arc(e.x, e.y + (e.knock || 0), e.r + 3, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
@@ -1222,7 +1222,7 @@
           drawTurkey(boss.x, boss.y, 47, boss.flap, bopts);
           if (boss.flash > 0) { // cranberry hit flash
             ctx.save();
-            ctx.globalAlpha = clamp(boss.flash / 0.08, 0, 1) * 0.45;
+            ctx.globalAlpha = clamp(boss.flash / 0.11, 0, 1) * 0.45;
             ctx.fillStyle = "#ff5a48";
             ctx.beginPath(); ctx.arc(boss.x, boss.y, boss.r + 5, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
@@ -1295,7 +1295,7 @@
 
         // dodge meter: full gold = dash ready, refills in under a second
         if (state === "play" || state === "boss") {
-          var dReady = clamp(1 - player.dodgeCd / 0.65, 0, 1);
+          var dReady = clamp(1 - player.dodgeCd / 0.50, 0, 1);
           ctx.fillStyle = "rgba(30,16,8,.6)";
           ctx.fillRect(10, H - 24, 62, 7);
           ctx.fillStyle = player.dodgeCd <= 0 ? "#f2c53d" : "#c9a35f";
