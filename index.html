@@ -75,10 +75,6 @@
         }
         .controls { margin-top: 12px; }
         .lobby { max-height: calc(100vh - 108px); max-height: calc(100dvh - 108px); }
-        #msgOverlay .msg-panel {
-          max-width: min(620px, max(220px, calc((100vh - 184px) * 0.65625)));
-          max-width: min(620px, max(220px, calc((100dvh - 184px) * 0.65625)));
-        }
       }
 
       /* ---------- HUD ---------- */
@@ -209,7 +205,28 @@
         touch-action: manipulation;
       }
       .overlay .final-score { font-size: 21px; font-weight: 700; color: #ffd98a; margin: 4px 0 12px; }
-      /* Boss-clear victory screen: elements rise in staggered, numbers count up */
+      /* Boss-clear victory screen: elements rise in staggered, numbers count up.
+         Luna's panel fix (GitHub 961a742f): all message-overlay content lives in
+         a single .msg-panel flex child with margin:auto, so the group stays
+         together — centred when it fits, starting at the top when it
+         overflows — with a normal gap between the two buttons. The panel is
+         exactly as wide as the game field (same height-fitted formula as
+         .stage), so both buttons sit inside the panel like the menu and
+         lobby buttons do, and the second button matches the main one. */
+      .msg-panel {
+        display: flex; flex-direction: column;
+        align-items: center; text-align: center;
+        width: 100%;
+        max-width: min(620px, max(220px, calc((100vh - 248px) * 0.65625)));
+        max-width: min(620px, max(220px, calc((100dvh - 248px) * 0.65625)));
+        margin: auto;
+      }
+      @media (min-width: 700px) {
+        .msg-panel {
+          max-width: min(620px, max(220px, calc((100vh - 184px) * 0.65625)));
+          max-width: min(620px, max(220px, calc((100dvh - 184px) * 0.65625)));
+        }
+      }
       #msgOverlay.stagger .msg-panel > * { animation: msgRise .45s ease both; }
       #msgOverlay.stagger #msgSub { animation-delay: .14s; }
       #msgOverlay.stagger #msgBody { animation-delay: .3s; }
@@ -218,38 +235,11 @@
       #msgOverlay.stagger #msgBtn2 { animation-delay: .65s; }
       @keyframes msgRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
       @media (prefers-reduced-motion: reduce) { #msgOverlay.stagger .msg-panel > * { animation: none; } }
-      /* Victory / clear / game-over overlay: same overflow trap the menu
-         had — the panel is taller than the field on a phone, so with plain
-         centering the top clips and the second button (Skip Lobby / Next
-         Level) is sliced off the bottom with no way to reach it. The
-         overlay now scrolls inside the field, and the panel is a single
-         flex child with auto margins, so the whole group stays together:
-         centred when it fits, starting at the top when it doesn't, and
-         both buttons are always reachable with normal spacing between
-         them. (The old fix put the auto margins on the first child and
-         the main button, which split the free space and pinned the
-         second button to the bottom of the screen, and sized the
-         buttons against the full viewport instead of the field, so
-         they popped out past the panel edges.)
-         The panel is exactly as wide as the game field — same
-         height-fitted formula as .stage — so the buttons sit inside
-         the panel like the menu and lobby buttons do, on every screen. */
-      #msgOverlay {
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
-      }
-      #msgOverlay .msg-panel {
-        margin: auto;
-        width: 100%;
-        max-width: min(620px, max(220px, calc((100vh - 248px) * 0.65625)));
-        max-width: min(620px, max(220px, calc((100dvh - 248px) * 0.65625)));
-        display: flex; flex-direction: column;
-        align-items: center; text-align: center;
-      }
-      /* Second button matches the main one: same width, inside the panel. */
-      #msgOverlay .ghost-btn { width: 100%; max-width: 380px; }
+      /* On a phone the victory/clear panel is taller than the field,
+         so the second button (Skip Lobby / Next Level) gets sliced
+         off the bottom. The overlay still scrolls as a safety net. */
+      #msgOverlay { overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+      #msgOverlay #msgBtn2 { width: 100%; max-width: 380px; }
 
       /* ---------- Touch controls ---------- */
       .controls {
@@ -308,11 +298,14 @@
          px reserve covers the HUD, the wrap padding and the panel's
          own margin, matching the shell's height-fitting approach. */
       .lobby {
-        background: var(--panel);
+        /* Barnyard backdrop treatment: a warm harvest-sky wash fading into
+           the panel, so the Lobby feels like the farmyard the cannon
+           defends — the full barn/fence scene lives in the preview below. */
+        background: linear-gradient(180deg, var(--gold-soft) 0, var(--panel) 190px);
         border: 1px solid var(--line);
         border-radius: 14px;
         box-shadow: var(--shadow);
-        padding: 18px 16px 20px;
+        padding: 16px 14px 18px;
         margin-top: 4px;
         display: flex; flex-direction: column;
         max-height: calc(100vh - 128px);
@@ -353,14 +346,22 @@
       .lobby-banner[hidden] { display: none; }
       .preview-card {
         border: 1px solid var(--line); border-radius: 12px;
-        padding: 12px 14px; margin-top: 12px;
-        display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+        padding: 10px; margin-top: 10px;
+        background: var(--panel);
+        display: flex; flex-direction: column; gap: 10px;
       }
-      .preview-card canvas { max-width: 100%; height: auto; border-radius: 8px; background: #f7dfae; }
-      .stat-list { flex: 1 1 200px; font-size: 14.5px; line-height: 1.9; }
-      .stat-list b { font-variant-numeric: tabular-nums; }
+      .preview-card canvas { width: 100%; max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); display: block; }
+      /* One stat presentation only: a tidy tile grid under the preview.
+         (The canvas used to repeat these same numbers as drawn text.) */
+      .stat-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; width: 100%; }
+      .stat-tile {
+        background: var(--btn); border: 1px solid var(--line); border-radius: 10px;
+        padding: 7px 10px 8px; line-height: 1.3;
+      }
+      .stat-tile span { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-soft); }
+      .stat-tile b { font-size: 15px; font-variant-numeric: tabular-nums; }
       .stat-list .up { color: var(--good); font-weight: 700; }
-      .lobby h3 { font-size: 19px; margin: 20px 0 4px; font-family: Georgia, serif; }
+      .lobby h3 { font-size: 19px; margin: 16px 0 4px; font-family: Georgia, serif; }
       .lobby .shop-sub { margin: 0 0 12px; color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
       .upgrade-grid {
         display: grid; grid-template-columns: 1fr; gap: 10px;
@@ -516,35 +517,6 @@
         #menuOverlay .big-btn { min-height: 58px; font-size: 21px; padding: 13px 24px; }
         #menuOverlay .menu-nav { gap: 8px; margin-top: 10px; }
         #menuOverlay .menu-nav .ghost-btn { min-height: 46px; font-size: 14.5px; padding: 8px 10px; }
-        /* ---------- Lobby on phones: same fix as the menu ----------
-           The pinned head + footer (title/coin bank + next level +
-           Play/Back) are taller than the panel's max-height on a
-           phone, so the footer spilled past the panel's bottom edge
-           and the two bottom buttons landed on the bare page. On
-           small screens the lobby now takes the full viewport and
-           scrolls as one unit inside its shell, exactly like the
-           main menu, so nothing can spill or detach when scrolling. */
-        .lobby {
-          position: fixed; inset: 0; z-index: 30;
-          width: auto; max-width: none; margin: 0;
-          border-radius: 0;
-          max-height: none;
-          display: block;
-          overflow-y: auto;
-          overscroll-behavior: contain;
-          -webkit-overflow-scrolling: touch;
-          touch-action: pan-y;
-          padding: calc(18px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
-        }
-        .lobby-scroll { overflow: visible; }
-        /* ---------- Victory / clear / game-over overlay on phones ----------
-           Same fix as the menu and the lobby: the overlay is trapped
-           inside the game field, which is shorter than the victory panel
-           on a phone, so the second button (Skip Lobby / Next Level) was
-           sliced off the bottom and couldn't be reached by scrolling.
-           On small screens the overlay now takes the full viewport and
-           scrolls as one unit, with tighter type and spacing so both
-           buttons usually fit without scrolling at all. */
         #msgOverlay {
           position: fixed; inset: 0; z-index: 40;
           border-radius: 0;
@@ -557,6 +529,21 @@
         #msgOverlay .final-score { font-size: 18px; margin-bottom: 10px; }
         #msgOverlay .big-btn { min-height: 58px; font-size: 21px; padding: 13px 24px; }
         #msgOverlay .ghost-btn { min-height: 46px; }
+        /* On phones the lobby's pinned head + footer are taller than
+           the panel's max-height, so the footer spilled past the
+           panel's bottom edge. Make the lobby take the full viewport
+           and scroll as one unit, exactly like the main menu. */
+        .lobby {
+          position: fixed; inset: 0; z-index: 30;
+          width: auto; max-width: none; margin: 0;
+          border-radius: 0; max-height: none;
+          display: block; overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          padding: calc(18px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+        }
+        .lobby-scroll { overflow: visible; }
       }
     </style>
   </head>
@@ -594,6 +581,7 @@
             <div>🧬 <b>Mutated turkeys</b> creep in from Level 4, more every level — extra heads, extra tough, bonus coins. Every turkey bursts into feathers, potatoes &amp; gravy</div>
             <div>🪙 Turkeys drop <b>coins</b> — after each run you return to the <b>Lobby</b> to upgrade your cannon</div>
             <div>🦃 Clear every wave, then beat the <b>boss turkey</b></div>
+            <div>⚠️ Bosses dive <b>all the way down</b> to your row — watch for the dashed red lane, then dodge out of it. Sometimes the boss and its flock dive <b>together</b> to trap you, and every fight gets meaner the longer it lasts and the lower the boss's health drops</div>
           </div>
           </div>
           <button class="big-btn" id="btnStart" type="button">Defend Earth!</button>
@@ -659,7 +647,7 @@
 
         <div class="lobby-scroll">
         <div class="preview-card">
-          <canvas id="lobbyCanvas" width="300" height="132" aria-label="Preview of your upgraded cranberry cannon"></canvas>
+          <canvas id="lobbyCanvas" width="560" height="220" aria-label="Preview of your upgraded cranberry cannon in the barnyard"></canvas>
           <div class="stat-list" id="lobbyStats"></div>
         </div>
 
@@ -942,6 +930,67 @@
       var bullets = [], enemyBombs = [], enemies = [], pickups = [], particles = [], leaves = [], floaters = [];
       var boss = null;
       var spawnQueue = 0, spawnTimer = 0, wavePause = 0;
+      /* ---- Smarter flock AI: within-match escalation + coordinated traps ----
+         `levelTime` climbs for the whole level, so a match gets harder the
+         longer it runs — on top of the level-to-level scaling in LEVELS.
+         waveHeat() runs 0 → ~1 across the waves; bossHeat() keeps climbing
+         as the boss loses HP, so a nearly-licked boss is the most dangerous
+         one: faster shots, faster and deeper dives, more minions, and
+         tighter trap patterns. Luna's dodge / cranberry-shot tuning is
+         untouched by any of this. */
+      var levelTime = 0;
+      var waveTrapTimer = 14; // seconds until the next coordinated wave trap
+      var trapToast = null;   // "⚠ TRAP!" warning drawn over the field
+      function waveHeat() {
+        var L = LEVELS[levelIdx];
+        var waveFrac = L.waves.length ? waveIdx / L.waves.length : 0;
+        var timeFrac = clamp(levelTime / 150, 0, 0.35);
+        return clamp(waveFrac * 0.65 + timeFrac, 0, 1);
+      }
+      function bossHeat() {
+        if (!boss) return waveHeat();
+        var lost = clamp(1 - boss.hp / boss.maxHp, 0, 1);
+        return clamp(0.35 + lost * 0.65, 0, 1);
+      }
+      /* Send one holding turkey diving at a chosen lane (not just straight
+         down): `delay` is the telegraph — the bird flashes and shakes at
+         the top for that long first, so a ready player can still escape. */
+      function orderDive(e, targetX, delay, vyMul) {
+        e.pendingDive = { targetX: targetX, delay: delay || 0, vyMul: vyMul || 1 };
+      }
+      function launchDive(e) {
+        var L = LEVELS[levelIdx];
+        var pd = e.pendingDive; e.pendingDive = null;
+        var heat = state === "boss" ? bossHeat() : waveHeat();
+        e.state = "dive";
+        var flightTime = Math.max(0.45, (player.y - e.y) / ((L.enemySpeed * 3.4 + 60) * (pd ? pd.vyMul : 1) * (1 + heat * 0.22)));
+        e.vx = clamp(((pd ? pd.targetX : player.x) - e.x) / flightTime, -260, 260);
+        e.vy = (L.enemySpeed * 3.4 + 60) * (pd ? pd.vyMul : 1) * (1 + heat * 0.22);
+      }
+      /* A coordinated pincer: turkeys dive together at the player's lane
+         AND both flanks, so standing still — or dodging the obvious way —
+         walks into a beak. Always telegraphed, never constant. */
+      function triggerFlockTrap(withBoss) {
+        var holders = [];
+        for (var i = 0; i < enemies.length; i++) if (enemies[i].state === "hold") holders.push(enemies[i]);
+        holders.sort(function (a, b2) { return Math.abs(a.x - player.x) - Math.abs(b2.x - player.x); });
+        var lanes = [player.x, player.x - 82, player.x + 82];
+        var used = 0;
+        for (var h = 0; h < holders.length && used < 3; h++) {
+          orderDive(holders[h], clamp(lanes[used], 34, W - 34), 0.5, 1.08);
+          used++;
+        }
+        // short on volunteers? the flock sends fresh divers in from the top
+        while (used < 2) {
+          spawnEnemy(used === 0 ? 0 : 5, 0);
+          var fresh = enemies[enemies.length - 1];
+          fresh.y = 60; fresh.state = "hold"; fresh.targetY = 78;
+          orderDive(fresh, clamp(lanes[used], 34, W - 34), 0.55, 1.08);
+          used++;
+        }
+        trapToast = { text: withBoss ? "⚠ BOSS TRAP!" : "⚠ TRAP!", t: 1.15 };
+        SFX.gobble();
+      }
       var keys = { left: false, right: false };
       var pointerX = null;
 
@@ -1074,6 +1123,7 @@
         coinsThisRun = 0;
         runRecorded = false;
         ceremony = null; ceremonyFlash = 0; timeScale = 1; countUp = null;
+        levelTime = 0; waveTrapTimer = rand(13, 19); trapToast = null;
         player.speed = 345 + upgrades.boots * 28;
         scoreAtLevelStart = score;
         waveIdx = 0;
@@ -1136,7 +1186,8 @@
           phase: rand(0, 6.28), state: "enter",
           shootTimer: rand(1.2, L.fireEvery + 1.5),
           diveTimer: rand(4, 11), flap: rand(0, 6.28),
-          wobble: rand(14, 26), flash: 0, knock: 0
+          wobble: rand(14, 26), flash: 0, knock: 0,
+          pendingDive: null
         });
       }
 
@@ -1147,6 +1198,12 @@
           hp: L.boss.hp, maxHp: L.boss.hp,
           phase: 0, shootTimer: 1.4, spawnTimer: 5,
           state: "enter", diveTimer: 7, diving: false, diveVx: 0,
+          /* Full-depth dive state machine: "warn" (telegraph, lane locked
+             and shown) → "dive" (all the way down to the player's row) →
+             back up. trapTimer schedules the boss+minions pincer. */
+          divePhase: "idle", diveT: 0, diveWarn: 0, diveDur: 1.05,
+          diveFromX: 0, diveFromY: 0, diveTargetX: W / 2, diveBottomY: GROUND - 26,
+          trapTimer: rand(10, 15),
           name: L.boss.name, idx: levelIdx, flap: 0, flash: 0
         };
         state = "boss";
@@ -1480,6 +1537,8 @@
           if (lf.y > H + 12) leaves.splice(li, 1);
         }
 
+        if (trapToast) { trapToast.t -= rawDt; if (trapToast.t <= 0) trapToast = null; }
+
         // floating coin text always drifts up
         for (var fti = floaters.length - 1; fti >= 0; fti--) {
           floaters[fti].t -= dt; floaters[fti].y -= 34 * dt;
@@ -1495,6 +1554,7 @@
         }
 
         if (state !== "play" && state !== "boss") return;
+        levelTime += dt; // the match heats up the longer it runs
 
         /* --- player movement: tight accel + dodge dash (tuned on Levels 1–2) --- */
         var mv = 0;
@@ -1534,11 +1594,11 @@
         player.x = clamp(player.x, 26, W - 26);
         playerShoot(dt);
 
-        /* --- spawning --- */
+        /* --- spawning: later waves pour in faster as the match heats up --- */
         if (state === "play" && spawnQueue > 0) {
           spawnTimer -= dt;
           if (spawnTimer <= 0) {
-            spawnTimer = 0.55;
+            spawnTimer = Math.max(0.32, 0.55 - waveHeat() * 0.2);
             var rowCount = Math.min(6, spawnQueue);
             for (var c = 0; c < rowCount; c++) { spawnEnemy(c, Math.floor(rand(0, 2))); spawnQueue--; }
           }
@@ -1553,20 +1613,34 @@
             e.y += 95 * dt;
             if (e.y >= e.targetY) { e.y = e.targetY; e.state = "hold"; }
           } else if (e.state === "hold") {
+            var heat = state === "boss" ? bossHeat() : waveHeat();
             e.phase += dt * 1.4;
+            /* herding: the flock slowly crowds toward the player's side of
+               the field, more boldly as the match heats up — standing in
+               one "safe" spot stops being safe. */
+            e.baseX = clamp(e.baseX + clamp(player.x - e.baseX, -1, 1) * dt * (3 + heat * 11), 40, W - 40);
             e.x = e.baseX + Math.sin(e.phase) * e.wobble;
-            e.shootTimer -= dt;
-            if (e.shootTimer <= 0) {
-              e.shootTimer = rand(L.fireEvery * 0.7, L.fireEvery * 1.4);
-              if (e.y > 0 && e.y < H * 0.62 && Math.random() < 0.85) enemyShoot(e);
-            }
-            e.diveTimer -= dt;
-            if (e.diveTimer <= 0 && Math.random() < L.diveChance + 0.5) {
-              e.state = "dive";
-              e.vx = clamp((player.x - e.x) * 0.7, -90, 90);
-              e.vy = L.enemySpeed * 3.4 + 60;
-            } else if (e.diveTimer <= 0) {
-              e.diveTimer = rand(3, 8);
+            if (e.pendingDive) {
+              // telegraphed trap dive: flash & shake, then launch on cue
+              e.pendingDive.delay -= dt;
+              e.flash = Math.max(e.flash, 0.05);
+              e.x += rand(-1.6, 1.6);
+              if (e.pendingDive.delay <= 0) launchDive(e);
+            } else {
+              e.shootTimer -= dt;
+              if (e.shootTimer <= 0) {
+                // shots come faster as the match heats up (Luna's base
+                // fireEvery values unchanged — heat only tightens the gap)
+                e.shootTimer = rand(L.fireEvery * 0.7, L.fireEvery * 1.4) / (1 + heat * 0.45);
+                if (e.y > 0 && e.y < H * 0.62 && Math.random() < 0.85) enemyShoot(e);
+              }
+              e.diveTimer -= dt;
+              if (e.diveTimer <= 0 && Math.random() < L.diveChance + 0.5 + heat * 0.18) {
+                orderDive(e, player.x, 0, 1);
+                launchDive(e);
+              } else if (e.diveTimer <= 0) {
+                e.diveTimer = rand(3, 8) * (1 - heat * 0.25);
+              }
             }
           } else if (e.state === "dive") {
             e.x += (e.vx || 0) * dt;
@@ -1584,6 +1658,15 @@
           }
         }
 
+        /* --- coordinated wave trap: every so often the flock dives as one --- */
+        if (state === "play") {
+          waveTrapTimer -= dt;
+          if (waveTrapTimer <= 0) {
+            waveTrapTimer = rand(13, 19) * (1 - waveHeat() * 0.3);
+            if (enemies.length >= 2) triggerFlockTrap(false);
+          }
+        }
+
         /* --- wave / boss flow --- */
         if (state === "play" && spawnQueue <= 0 && enemies.length === 0) {
           if (waveIdx < L.waves.length - 1) {
@@ -1596,58 +1679,89 @@
           }
         }
 
-        /* --- boss --- */
+        /* --- boss: smarter, and its dives now go ALL the way down ---
+           The old swoop bottomed out at GROUND-190 — halfway up the field —
+           so it could never touch the cannon. A dive now runs warn → dive →
+           climb-out, and at the bottom of the dive the boss's centre reaches
+           the player's own row (GROUND-26), so contact really costs a heart.
+           It stays fair: the lane is locked and drawn during the warning,
+           and the boss commits to it — a timed dodge or a sidestep after
+           the lock still escapes clean. The lower the boss's HP, the faster
+           and more frequent everything gets (bossHeat). */
         if (boss && state === "boss") {
           var b = boss;
+          var bHeat = bossHeat();
           b.flap += dt * 7;
           if (b.state === "enter") {
             b.y += 80 * dt;
             if (b.y >= b.targetY) { b.y = b.targetY; b.state = "fight"; }
-          } else {
-            b.phase += dt * (0.7 + levelIdx * 0.11);
-            if (!b.diving) {
-              b.x = W / 2 + Math.sin(b.phase) * (W / 2 - 78);
-              b.y = b.targetY + Math.sin(b.phase * 2.1) * 16;
-              b.shootTimer -= dt;
-              if (b.shootTimer <= 0) {
-                b.shootTimer = Math.max(0.55, 1.7 - levelIdx * 0.13);
-                var roll = Math.random();
-                bossShoot(roll < 0.4 ? "spread" : (roll < 0.75 ? "aimed" : "single"));
-                if (levelIdx >= 5 && Math.random() < 0.35) bossShoot("aimed");
-              }
-              if (levelIdx >= 0) {
-                b.spawnTimer -= dt;
-                var minionCap = levelIdx >= 7 ? 5 : (levelIdx >= 3 ? 4 : 3);
-                if (b.spawnTimer <= 0 && enemies.length < minionCap) {
-                  b.spawnTimer = levelIdx >= 6 ? rand(4.5, 7) : rand(6, 9);
-                  spawnEnemy(1, 0); spawnEnemy(4, 0);
-                  if (levelIdx >= 7) spawnEnemy(2, 0);
-                }
-              }
-              if (levelIdx >= 1) {
-                b.diveTimer -= dt;
-                if (b.diveTimer <= 0) {
-                  b.diving = true; b.diveT = 0;
-                  b.diveFromX = b.x; b.diveFromY = b.y;
-                  SFX.gobble();
-                }
-              }
+          } else if (b.divePhase === "warn") {
+            // telegraph: shake in place while the dive lane stays locked
+            b.diveWarn -= dt;
+            b.x = b.diveFromX + rand(-1.8, 1.8);
+            b.flash = Math.max(b.flash, 0.05);
+            if (b.diveWarn <= 0) {
+              b.divePhase = "dive"; b.diveT = 0;
+              b.x = b.diveFromX;
+            }
+          } else if (b.divePhase === "dive") {
+            b.diveT += dt;
+            var t = b.diveT / b.diveDur;
+            if (t >= 1) {
+              b.divePhase = "idle"; b.diving = false;
+              b.diveTimer = rand(5.5, 8) * (1 - bHeat * 0.35);
+              b.y = b.targetY;
             } else {
-              b.diveT += dt;
-              var t = b.diveT / 1.15;
-              if (t >= 1) {
-                b.diving = false; b.diveTimer = rand(5.5, 8);
-                b.y = b.targetY;
-              } else {
-                var swoop = Math.sin(t * Math.PI);
-                b.y = b.diveFromY + swoop * (GROUND - 190 - b.diveFromY);
-                b.x = b.diveFromX + (player.x - b.diveFromX) * t * 0.55;
+              var swoop = Math.sin(t * Math.PI);
+              b.y = b.diveFromY + swoop * (b.diveBottomY - b.diveFromY);
+              b.x = b.diveFromX + (b.diveTargetX - b.diveFromX) * t;
+            }
+          } else {
+            b.phase += dt * (0.7 + levelIdx * 0.11) * (1 + bHeat * 0.35);
+            b.x = W / 2 + Math.sin(b.phase) * (W / 2 - 78);
+            b.y = b.targetY + Math.sin(b.phase * 2.1) * 16;
+            b.shootTimer -= dt;
+            if (b.shootTimer <= 0) {
+              b.shootTimer = Math.max(0.42, (1.7 - levelIdx * 0.13) * (1 - bHeat * 0.3));
+              var roll = Math.random();
+              bossShoot(roll < 0.4 ? "spread" : (roll < 0.75 ? "aimed" : "single"));
+              if (Math.random() < 0.2 + bHeat * 0.35) bossShoot("aimed");
+            }
+            b.spawnTimer -= dt;
+            var minionCap = (levelIdx >= 7 ? 5 : (levelIdx >= 3 ? 4 : 3)) + (bHeat > 0.62 ? 1 : 0) + (bHeat > 0.86 ? 1 : 0);
+            if (b.spawnTimer <= 0 && enemies.length < minionCap) {
+              b.spawnTimer = (levelIdx >= 6 ? rand(4.5, 7) : rand(6, 9)) * (1 - bHeat * 0.28);
+              spawnEnemy(1, 0); spawnEnemy(4, 0);
+              if (levelIdx >= 7) spawnEnemy(2, 0);
+            }
+            /* Coordinated boss trap: now and then the boss dives together
+               with its minions — boss takes the player's lane, minions take
+               the flanks. One shared warning, then everything drops at once. */
+            b.trapTimer -= dt;
+            if (b.trapTimer <= 0) {
+              b.trapTimer = rand(11, 16) * (1 - bHeat * 0.3);
+              triggerFlockTrap(true);
+              b.divePhase = "warn"; b.diving = true;
+              b.diveWarn = 0.55; b.diveDur = Math.max(0.85, 1.1 - bHeat * 0.22);
+              b.diveFromX = b.x; b.diveFromY = b.y;
+              b.diveTargetX = clamp(player.x, 50, W - 50);
+              b.diveBottomY = GROUND - 26;
+            } else {
+              b.diveTimer -= dt;
+              if (b.diveTimer <= 0) {
+                b.divePhase = "warn"; b.diving = true;
+                b.diveWarn = Math.max(0.42, 0.62 - bHeat * 0.18);
+                b.diveDur = Math.max(0.85, 1.15 - bHeat * 0.25);
+                b.diveFromX = b.x; b.diveFromY = b.y;
+                b.diveTargetX = clamp(player.x, 50, W - 50);
+                b.diveBottomY = GROUND - 26; // all the way down to the cannon's row
+                SFX.gobble();
               }
             }
           }
           if (dist2(b.x, b.y, player.x, player.y) < Math.pow(b.r + player.r - 8, 2)) {
             hurtPlayer();
-            b.diving = false; b.y = b.targetY; b.diveTimer = 4;
+            b.diving = false; b.divePhase = "idle"; b.y = b.targetY; b.diveTimer = 4;
           }
         }
 
@@ -2112,7 +2226,24 @@
           ctx.font = "700 11.5px Trebuchet MS, sans-serif";
           ctx.textAlign = "center";
           ctx.fillText(boss.name.toUpperCase(), W / 2, 24.5);
-          if (boss.diving && boss.diveT < 0.25) {
+          if (boss.divePhase === "warn") {
+            // the telegraph: a dashed lane from the boss to the ground shows
+            // exactly where the full-depth dive will land — dodge out of it
+            ctx.save();
+            ctx.strokeStyle = "rgba(178,58,46,.75)";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([9, 7]);
+            ctx.lineDashOffset = -time * 60;
+            ctx.beginPath(); ctx.moveTo(boss.diveTargetX, boss.y + 40); ctx.lineTo(boss.diveTargetX, GROUND); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = "rgba(178,58,46,.28)";
+            ctx.beginPath(); ctx.ellipse(boss.diveTargetX, GROUND - 24, 44, 13, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "rgba(178,58,46,.95)";
+            ctx.font = "700 15px Trebuchet MS, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("INCOMING!", boss.x, boss.y - 78);
+            ctx.restore();
+          } else if (boss.diving && boss.diveT < 0.25) {
             ctx.fillStyle = "rgba(178,58,46,.9)";
             ctx.font = "700 15px Trebuchet MS, sans-serif";
             ctx.fillText("INCOMING!", boss.x, boss.y - 78);
@@ -2191,6 +2322,14 @@
           ctx.textAlign = "center";
           ctx.fillText(fl.text, fl.x, fl.y);
           ctx.restore();
+        }
+
+        // trap warning — the flock is about to dive together
+        if (trapToast) {
+          ctx.fillStyle = "rgba(178,58,46,.92)";
+          ctx.font = "800 24px Georgia, serif";
+          ctx.textAlign = "center";
+          ctx.fillText(trapToast.text, W / 2, H * 0.34);
         }
 
         // wave toast
@@ -2356,7 +2495,8 @@
         lobbyStats.textContent = "";
         rows.forEach(function (r) {
           var div = document.createElement("div");
-          var label = document.createElement("span"); label.textContent = r[0] + ": ";
+          div.className = "stat-tile";
+          var label = document.createElement("span"); label.textContent = r[0];
           var val = document.createElement("b"); val.textContent = r[1];
           div.appendChild(label); div.appendChild(val);
           lobbyStats.appendChild(div);
@@ -2439,56 +2579,176 @@
         updateHUD();
       }
 
+      /* Lobby preview: the cannon in its barnyard — a proper cranberry
+         cannon (angled barrel on a wheeled carriage) on the ground line,
+         barn and fence behind it, and berries that leave the muzzle on a
+         clear arc. NO stat text in here: the numbers live once, in the
+         stat tiles under the picture. Upgrades still show on the cannon:
+         wider barrel with damage, gold bands with Rapid Fire, real side
+         barrels with Extra Barrels, bigger glowing berries with Big
+         Berries, ringed berries with Piercing. */
       function drawLobbyPreview() {
         var c = document.getElementById("lobbyCanvas");
         var g = c.getContext("2d");
-        g.clearRect(0, 0, c.width, c.height);
-        var grad = g.createLinearGradient(0, 0, 0, c.height);
-        grad.addColorStop(0, "#8ec9e8"); grad.addColorStop(1, "#f7dfae");
-        g.fillStyle = grad; g.fillRect(0, 0, c.width, c.height);
-        g.fillStyle = "#8a6a35"; g.fillRect(0, c.height - 22, c.width, 22);
-        var cx = 86, cy = c.height - 30;
-        // sample berries in flight, sized & colored by the upgrades
+        var PW = c.width, PH = c.height, GY = PH - 38; // ground line
+        g.clearRect(0, 0, PW, PH);
+        // harvest sky
+        var grad = g.createLinearGradient(0, 0, 0, PH);
+        grad.addColorStop(0, "#7fb6de"); grad.addColorStop(0.62, "#cfe3ee"); grad.addColorStop(0.8, "#f7dfae"); grad.addColorStop(1, "#f2c98a");
+        g.fillStyle = grad; g.fillRect(0, 0, PW, PH);
+        // sun
+        g.fillStyle = "rgba(255,236,180,.95)";
+        g.beginPath(); g.arc(PW - 64, 40, 24, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(255,246,214,.95)";
+        g.beginPath(); g.arc(PW - 64, 40, 17, 0, Math.PI * 2); g.fill();
+        // far + near hills
+        g.fillStyle = "#a8bf74";
+        g.beginPath(); g.moveTo(0, GY);
+        g.quadraticCurveTo(PW * 0.28, GY - 62, PW * 0.55, GY - 26);
+        g.quadraticCurveTo(PW * 0.8, GY + 2, PW, GY - 40);
+        g.lineTo(PW, GY); g.closePath(); g.fill();
+        g.fillStyle = "#7d9b4e";
+        g.beginPath(); g.moveTo(0, GY);
+        g.quadraticCurveTo(PW * 0.32, GY - 30, PW * 0.64, GY - 10);
+        g.quadraticCurveTo(PW * 0.86, GY + 2, PW, GY - 16);
+        g.lineTo(PW, GY); g.closePath(); g.fill();
+        // the barn, left background: red walls, gambrel roof, white trim
+        g.save();
+        g.globalAlpha = 0.92;
+        g.fillStyle = "#9c3a2a";
+        g.fillRect(26, GY - 74, 92, 74);
+        g.fillStyle = "#7e2a1e";
+        g.beginPath();
+        g.moveTo(18, GY - 74); g.lineTo(40, GY - 102); g.lineTo(104, GY - 102); g.lineTo(126, GY - 74);
+        g.closePath(); g.fill();
+        g.strokeStyle = "rgba(253,243,224,.9)"; g.lineWidth = 3;
+        g.strokeRect(58, GY - 46, 28, 46);
+        g.beginPath(); g.moveTo(58, GY - 46); g.lineTo(86, GY); g.moveTo(86, GY - 46); g.lineTo(58, GY); g.stroke();
+        g.strokeStyle = "rgba(253,243,224,.75)"; g.lineWidth = 2;
+        g.strokeRect(63, GY - 92, 18, 18);
+        g.beginPath(); g.moveTo(63, GY - 83); g.lineTo(81, GY - 83); g.moveTo(72, GY - 92); g.lineTo(72, GY - 74); g.stroke();
+        g.restore();
+        // fence line along the horizon
+        g.fillStyle = "rgba(93,58,26,.8)";
+        for (var fx = 138; fx < PW - 8; fx += 44) g.fillRect(fx, GY - 17, 5, 17);
+        g.fillRect(132, GY - 13, PW - 132, 3.5);
+        g.fillRect(132, GY - 6, PW - 132, 3);
+        // ground
+        g.fillStyle = "#8a6a35"; g.fillRect(0, GY, PW, PH - GY);
+        g.fillStyle = "#75582a";
+        for (var gx = 8; gx < PW; gx += 46) g.fillRect(gx, GY + 14, 18, 3);
+        g.fillRect(0, GY + 27, PW, 3);
+        // hay bales + a pumpkin, right of the cannon
+        function hayBale(x, y, r) {
+          g.fillStyle = "#d9a83f";
+          g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+          g.strokeStyle = "#b4832a"; g.lineWidth = 2;
+          g.beginPath(); g.arc(x, y, r * 0.62, 0, Math.PI * 2); g.stroke();
+          g.beginPath(); g.arc(x, y, r * 0.28, 0, Math.PI * 2); g.stroke();
+        }
+        hayBale(PW - 52, GY - 13, 15);
+        hayBale(PW - 96, GY - 9, 10);
+        g.fillStyle = "#e8873a";
+        g.beginPath(); g.ellipse(PW - 132, GY - 8, 13, 10, 0, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = "#c96a24"; g.lineWidth = 1.6;
+        g.beginPath(); g.moveTo(PW - 138, GY - 16); g.quadraticCurveTo(PW - 132, GY - 2, PW - 138, GY); g.stroke();
+        g.beginPath(); g.moveTo(PW - 126, GY - 16); g.quadraticCurveTo(PW - 132, GY - 2, PW - 126, GY); g.stroke();
+        g.fillStyle = "#4d7c3a"; g.fillRect(PW - 134, GY - 21, 4, 6);
+
+        /* ---- the cannon: wheeled carriage + barrel angled up ---- */
         var col = BULLET_COLORS[upgrades.damage];
-        for (var s = 0; s < getBaseShots(); s++) {
-          for (var k = 0; k < 3; k++) {
-            var bx = cx + (s - (getBaseShots() - 1) / 2) * 16 + (s === 2 ? k * 5 : (s === 1 && getBaseShots() === 3 ? -k * 5 : 0));
-            var by = cy - 34 - k * 22;
-            if (upgrades.big >= 2) { g.fillStyle = "rgba(255,190,60,.35)"; g.beginPath(); g.arc(bx, by, getBulletR() + 4, 0, Math.PI * 2); g.fill(); }
-            g.fillStyle = col;
-            g.beginPath(); g.arc(bx, by, getBulletR(), 0, Math.PI * 2); g.fill();
-            if (upgrades.pierce > 0) { g.strokeStyle = "rgba(120,70,0,.85)"; g.lineWidth = 1.4; g.beginPath(); g.arc(bx, by, getBulletR() + 2, 0, Math.PI * 2); g.stroke(); }
+        var ax = 218, ay = GY - 17; // axle / barrel pivot point
+        var ang = -0.5;             // barrel elevation
+        var bw = 17 + upgrades.damage * 1.6 + upgrades.big * 2.2; // barrel width grows with upgrades
+        var bl = 86;                // barrel length
+        var mx = ax + Math.cos(ang) * bl, my = ay + Math.sin(ang) * bl; // muzzle tip
+        // trail leg running back-down to the ground
+        g.strokeStyle = "#5d4632"; g.lineWidth = 11; g.lineCap = "round";
+        g.beginPath(); g.moveTo(ax - 4, ay + 2); g.lineTo(ax - 52, GY - 3); g.stroke();
+        g.strokeStyle = "#6e5138"; g.lineWidth = 5;
+        g.beginPath(); g.moveTo(ax - 4, ay - 3); g.lineTo(ax - 50, GY - 7); g.stroke();
+        // spoked wheels
+        function wheel(x, y, r) {
+          g.fillStyle = "#6e4520";
+          g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+          g.strokeStyle = "#4c2c12"; g.lineWidth = 3;
+          g.beginPath(); g.arc(x, y, r - 1.5, 0, Math.PI * 2); g.stroke();
+          g.strokeStyle = "#a5692f"; g.lineWidth = 3.4;
+          for (var sp = 0; sp < 4; sp++) {
+            var sa = sp * Math.PI / 4 + 0.4;
+            g.beginPath(); g.moveTo(x - Math.cos(sa) * (r - 3), y - Math.sin(sa) * (r - 3));
+            g.lineTo(x + Math.cos(sa) * (r - 3), y + Math.sin(sa) * (r - 3)); g.stroke();
+          }
+          g.fillStyle = "#3c2c1e";
+          g.beginPath(); g.arc(x, y, 5.5, 0, Math.PI * 2); g.fill();
+        }
+        wheel(ax - 16, GY - 15, 17);
+        wheel(ax + 24, GY - 12, 13);
+        // side barrels first (Extra Barrels upgrade) so the main barrel sits on top
+        if (upgrades.spread >= 1) {
+          [-1, 1].forEach(function (side) {
+            g.save();
+            g.translate(ax + side * 13, ay + 9);
+            g.rotate(ang);
+            g.fillStyle = "#33261a";
+            g.fillRect(-14, -5.5, bl * 0.78, 11);
+            g.fillStyle = col; g.fillRect(bl * 0.78 - 18, -7, 6, 14);
+            g.restore();
+          });
+        }
+        // main barrel: tapered tube from breech to muzzle
+        g.save();
+        g.translate(ax, ay);
+        g.rotate(ang);
+        g.fillStyle = "#3c2c1e";
+        g.beginPath();
+        g.moveTo(-20, -bw / 2); g.lineTo(bl, -bw * 0.32); g.lineTo(bl, bw * 0.32); g.lineTo(-20, bw / 2);
+        g.closePath(); g.fill();
+        g.fillStyle = "#2c2016";
+        g.beginPath(); g.ellipse(-20, 0, 7, bw / 2, 0, 0, Math.PI * 2); g.fill(); // breech cap
+        if (upgrades.rapid > 0) { // gold speed bands, same as in-game
+          g.fillStyle = "#d9a83f";
+          for (var band = 0; band < upgrades.rapid; band++) {
+            var bx2 = 8 + band * 13;
+            g.fillRect(bx2, -bw * 0.44 + band * 0.4, 4.5, bw * 0.88 - band * 0.8);
           }
         }
-        // hay bale + cannon, mirroring the in-game look
-        g.fillStyle = "#d9a83f";
-        g.beginPath(); g.ellipse(cx, cy + 12, 27, 10, 0, 0, Math.PI * 2); g.fill();
-        g.fillStyle = "#5d4632";
-        g.beginPath();
-        g.moveTo(cx - 15, cy + 10); g.lineTo(cx - 10, cy - 12); g.lineTo(cx + 10, cy - 12); g.lineTo(cx + 15, cy + 10);
-        g.closePath(); g.fill();
-        var bw = 10 + upgrades.damage * 1.1 + upgrades.big * 1.3;
-        if (upgrades.spread >= 1) {
-          g.fillStyle = "#3c2c1e"; g.fillRect(cx - 17, cy - 24, 7, 15); g.fillRect(cx + 10, cy - 24, 7, 15);
-          g.fillStyle = col; g.fillRect(cx - 18, cy - 26, 9, 4); g.fillRect(cx + 9, cy - 26, 9, 4);
+        g.fillStyle = col; // cranberry-red muzzle ring — berries come out THIS colour
+        g.fillRect(bl - 9, -bw * 0.36, 9, bw * 0.72);
+        g.fillStyle = "#1c1410"; // the bore the berries leave from
+        g.beginPath(); g.ellipse(bl, 0, 3.2, bw * 0.3, 0, 0, Math.PI * 2); g.fill();
+        g.restore();
+        // muzzle flash at the mouth
+        g.fillStyle = "rgba(255,190,60,.9)";
+        g.beginPath(); g.ellipse(mx + 7, my - 3, 9, 5.5, ang, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(255,242,207,.95)";
+        g.beginPath(); g.ellipse(mx + 5, my - 2, 4.5, 2.8, ang, 0, Math.PI * 2); g.fill();
+        // the crew's pilgrim hat, parked on the trail — not floating
+        g.fillStyle = "#2b2b30";
+        g.fillRect(ax - 66, GY - 16, 24, 8);
+        g.fillRect(ax - 71, GY - 9, 34, 3.5);
+        g.fillStyle = "#d9a83f"; g.fillRect(ax - 58, GY - 15, 8, 6.5);
+        /* Berries in flight: each stream starts AT the muzzle and follows
+           one clear arc up and away — nothing floats unconnected. */
+        var streams = getBaseShots();
+        for (var s = 0; s < streams; s++) {
+          var spreadOff = (s - (streams - 1) / 2) * 15;
+          for (var k = 0; k < 3; k++) {
+            var tt = 0.16 + k * 0.3;
+            var bx3 = mx + 14 + tt * 235;
+            var by3 = my - Math.sin(tt * Math.PI * 0.92) * 74 + tt * 30 + spreadOff * tt;
+            var br = getBulletR() * 1.5;
+            // short motion streak back toward the muzzle
+            g.strokeStyle = "rgba(178,58,46,.4)"; g.lineWidth = 3; g.lineCap = "round";
+            g.beginPath(); g.moveTo(bx3 - 15, by3 + 6); g.lineTo(bx3 - 3, by3 + 1.5); g.stroke();
+            if (upgrades.big >= 2) { g.fillStyle = "rgba(255,190,60,.35)"; g.beginPath(); g.arc(bx3, by3, br + 4.5, 0, Math.PI * 2); g.fill(); }
+            g.fillStyle = col;
+            g.beginPath(); g.arc(bx3, by3, br, 0, Math.PI * 2); g.fill();
+            g.fillStyle = "rgba(255,255,255,.65)";
+            g.beginPath(); g.arc(bx3 - br * 0.3, by3 - br * 0.3, Math.max(1.8, br * 0.3), 0, Math.PI * 2); g.fill();
+            if (upgrades.pierce > 0) { g.strokeStyle = "rgba(120,70,0,.85)"; g.lineWidth = 1.4; g.beginPath(); g.arc(bx3, by3, br + 2.2, 0, Math.PI * 2); g.stroke(); }
+          }
         }
-        g.fillStyle = "#3c2c1e"; g.fillRect(cx - bw / 2, cy - 30, bw, 20);
-        if (upgrades.rapid > 0) {
-          g.fillStyle = "#d9a83f";
-          for (var band = 0; band < upgrades.rapid; band++) g.fillRect(cx - bw / 2 - 1, cy - 26 + band * 4, bw + 2, 1.8);
-        }
-        g.fillStyle = col; g.fillRect(cx - bw / 2 - 1.5, cy - 32, bw + 3, 5);
-        g.fillStyle = "#2b2b30"; g.fillRect(cx - 13, cy - 18, 26, 9); g.fillRect(cx - 18, cy - 10, 36, 4);
-        g.fillStyle = "#d9a83f"; g.fillRect(cx - 4, cy - 17, 8, 7);
-        // labels
-        g.fillStyle = "#33231a";
-        g.font = "700 12.5px Trebuchet MS, sans-serif"; g.textAlign = "left";
-        g.fillText("Your cannon right now", 150, 30);
-        g.font = "12.5px Trebuchet MS, sans-serif";
-        g.fillText("Damage " + getDamage() + " · " + Math.round(1 / getFireRate()) + " shots/sec", 150, 50);
-        g.fillText(getBaseShots() + (getBaseShots() === 1 ? " barrel" : " barrels") + " · " + ["normal", "large", "extra-large", "jumbo", "feast-size"][upgrades.big] + " berries", 150, 68);
-        g.fillText(upgrades.pierce > 0 ? "Piercing rounds equipped" : "Standard rounds", 150, 86);
-        g.fillText("Bomb damage " + getBombDamage(), 150, 104);
       }
 
       /* ---------------- Main menu, level select & leaderboard ---------------- */
