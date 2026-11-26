@@ -58,8 +58,10 @@
          the width, so the HUD, field and touch controls always fit on
          screen together — on tablets the controls used to fall below
          the fold. 0.65625 = the field's 420:640 aspect ratio; the px
-         reserve covers the HUD, the controls row and page padding. */
-      .stage, .controls, .hud {
+         reserve covers the HUD, the controls row and page padding.
+         The Lobby shares this same shell width so every screen of the
+         game lines up the same way. */
+      .stage, .controls, .hud, .lobby {
         width: 100%;
         margin-left: auto; margin-right: auto;
         max-width: min(620px, max(220px, calc((100vh - 248px) * 0.65625)));
@@ -67,11 +69,12 @@
       }
       @media (min-width: 700px) {
         .wrap { padding: 18px 20px 28px; }
-        .stage, .controls, .hud {
+        .stage, .controls, .hud, .lobby {
           max-width: min(620px, max(220px, calc((100vh - 184px) * 0.65625)));
           max-width: min(620px, max(220px, calc((100dvh - 184px) * 0.65625)));
         }
         .controls { margin-top: 12px; }
+        .lobby { max-height: calc(100vh - 108px); max-height: calc(100dvh - 108px); }
       }
 
       /* ---------- HUD ---------- */
@@ -259,7 +262,15 @@
         margin-bottom: 8px;
       }
       .hud .stat.coins b { color: var(--gold); }
-      /* ---------- Lobby ---------- */
+      /* ---------- Lobby ----------
+         Same shell as the rest of the game: the width comes from the
+         shared .stage/.controls/.hud rule above, and the panel is
+         height-fitted to the viewport like the field is — the header
+         (title + coin bank) and the footer (next level + Play / Back)
+         stay pinned, and only the middle shop content scrolls inside
+         the panel, so nothing runs off the bottom of the screen. The
+         px reserve covers the HUD, the wrap padding and the panel's
+         own margin, matching the shell's height-fitting approach. */
       .lobby {
         background: var(--panel);
         border: 1px solid var(--line);
@@ -267,8 +278,20 @@
         box-shadow: var(--shadow);
         padding: 18px 16px 20px;
         margin-top: 4px;
+        display: flex; flex-direction: column;
+        max-height: calc(100vh - 128px);
+        max-height: calc(100dvh - 128px);
       }
       .lobby[hidden] { display: none; }
+      .lobby-head, .lobby-banner, .next-card, .lobby-actions { flex: 0 0 auto; }
+      .lobby-scroll {
+        flex: 1 1 auto; min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+      .lobby-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+      .lobby-actions .ghost-dark { margin-top: 0; flex: 1 1 190px; }
       .lobby-head {
         display: flex; align-items: flex-start; justify-content: space-between;
         gap: 12px; flex-wrap: wrap; margin-bottom: 6px;
@@ -553,6 +576,7 @@
         </div>
         <div class="lobby-banner" id="lobbyBanner" hidden></div>
 
+        <div class="lobby-scroll">
         <div class="preview-card">
           <canvas id="lobbyCanvas" width="300" height="132" aria-label="Preview of your upgraded cranberry cannon"></canvas>
           <div class="stat-list" id="lobbyStats"></div>
@@ -567,6 +591,7 @@
           <p class="shop-sub">Your best finished runs — saved on this device along with your coins, upgrades and unlocked levels.</p>
           <div class="lb-list" id="lobbyLeaderboard"></div>
         </div>
+        </div>
 
         <div class="next-card">
           <h4 id="lobbyNextTitle">Next: Level 1</h4>
@@ -574,8 +599,10 @@
           <button class="big-btn" id="btnLobbyGo" type="button">Start Level 1</button>
           <div class="level-chips" id="levelChips" aria-label="Replay an unlocked level"></div>
         </div>
-        <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
-        <button class="ghost-dark" id="btnLobbyMenu" type="button">🎬 Back to Main Menu</button>
+        <div class="lobby-actions">
+          <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
+          <button class="ghost-dark" id="btnLobbyMenu" type="button">🎬 Back to Main Menu</button>
+        </div>
       </section>
 
       <!-- Touch controls -->
