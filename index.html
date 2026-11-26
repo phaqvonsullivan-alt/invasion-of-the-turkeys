@@ -176,7 +176,13 @@
         width: 100%;
       }
       .overlay .howto b { color: #ffd98a; }
-      #menuOverlay { justify-content: flex-start; overflow-y: auto; padding-top: 18px; padding-bottom: 30px; background: linear-gradient(180deg,#2b1030 0%,#6e2430 34%,#b23a2e 58%,#e8873a 78%,#3a1e0e 100%); }
+      #menuOverlay { justify-content: flex-start; overflow-y: auto; padding-top: 18px; padding-bottom: 30px; background: radial-gradient(120% 46% at 78% 6%, rgba(255,190,80,.34), rgba(255,190,80,0) 60%), radial-gradient(90% 30% at 12% 22%, rgba(255,120,60,.18), rgba(255,120,60,0) 60%), linear-gradient(180deg,#2b1030 0%,#6e2430 34%,#b23a2e 58%,#e8873a 78%,#3a1e0e 100%); }
+      /* Intro / clear / game-over screens sit OVER the level's own
+         painted scene on the canvas — keep the veil light and warm so
+         the battlefield stays bright and visible behind the words,
+         like a chapter card, instead of a dark empty box. */
+      #msgOverlay { background: linear-gradient(180deg, rgba(46,20,6,.30) 0%, rgba(46,20,6,.44) 55%, rgba(30,12,4,.58) 100%); }
+      #msgOverlay h2, #msgOverlay .sub, #msgOverlay p, #msgOverlay .final-score { text-shadow: 0 2px 10px rgba(20,6,2,.65), 0 1px 3px rgba(20,6,2,.8); }
       /* ---------- Cover art (main screen) ----------
          A wide poster for the game, drawn at runtime by drawCoverArt()
          from the SAME canonical art as gameplay — drawCannonOn,
@@ -374,7 +380,7 @@
         /* Barnyard backdrop treatment: a warm harvest-sky wash fading into
            the panel, so the Lobby feels like the farmyard the cannon
            defends — the full barn/fence scene lives in the preview below. */
-        background: linear-gradient(180deg, var(--gold-soft) 0, var(--panel) 190px);
+        background: radial-gradient(130% 34% at 82% 0%, rgba(255,190,80,.38), rgba(255,190,80,0) 62%), radial-gradient(80% 26% at 8% 12%, rgba(232,135,58,.20), rgba(232,135,58,0) 60%), linear-gradient(180deg, #f2c98a 0, var(--gold-soft) 120px, var(--panel) 260px);
         border: 1px solid var(--line);
         border-radius: 14px;
         box-shadow: var(--shadow);
@@ -2288,6 +2294,239 @@
         c.restore();
       }
       /* ============================================================
+         SHARED SCENERY — one painted world, every screen.
+         drawSceneLayer() paints the layered depth behind the action
+         (star field / treeline silhouettes / per-biome landmarks)
+         and drawGroundDetail() textures the ground band (dirt path,
+         swaying grass, stones, and per-biome puddles / snow / ash /
+         gravy / embers). Gameplay, chapter thumbnails, the Lobby
+         stage and the cover poster ALL call these with the level's
+         own variant, so a biome looks the same everywhere it shows.
+         Everything is placed from deterministic seeds — the scene
+         never reshuffles between frames or screens.
+         ============================================================ */
+      function det(n) { var x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+      function drawPineOn(c, x, gy, h, col, snow) {
+        c.fillStyle = "#4a3420"; c.fillRect(x - h * 0.045, gy - h * 0.16, h * 0.09, h * 0.16);
+        c.fillStyle = col;
+        for (var i = 0; i < 3; i++) {
+          var wTier = h * (0.46 - i * 0.11), yBase = gy - h * 0.12 - i * h * 0.26;
+          c.beginPath(); c.moveTo(x - wTier / 2, yBase); c.lineTo(x, yBase - h * 0.34); c.lineTo(x + wTier / 2, yBase); c.closePath(); c.fill();
+          if (snow) { c.fillStyle = "rgba(255,255,255,.85)"; c.beginPath(); c.moveTo(x - wTier * 0.18, yBase - h * 0.22); c.lineTo(x, yBase - h * 0.34); c.lineTo(x + wTier * 0.18, yBase - h * 0.22); c.closePath(); c.fill(); c.fillStyle = col; }
+        }
+      }
+      function drawRoundTreeOn(c, x, gy, s, leaf, trunk) {
+        c.fillStyle = trunk || "#5d4023"; c.fillRect(x - s * 0.09, gy - s * 0.52, s * 0.18, s * 0.52);
+        c.fillStyle = leaf;
+        c.beginPath(); c.arc(x, gy - s * 0.78, s * 0.52, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.arc(x - s * 0.42, gy - s * 0.55, s * 0.34, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.arc(x + s * 0.42, gy - s * 0.55, s * 0.34, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "rgba(255,255,255,.14)";
+        c.beginPath(); c.arc(x - s * 0.18, gy - s * 0.92, s * 0.2, 0, Math.PI * 2); c.fill();
+      }
+      function drawCharredTreeOn(c, x, gy, h) {
+        c.strokeStyle = "#241a12"; c.lineCap = "round";
+        c.lineWidth = Math.max(2, h * 0.07);
+        c.beginPath(); c.moveTo(x, gy); c.lineTo(x + h * 0.05, gy - h * 0.72); c.stroke();
+        c.lineWidth = Math.max(1.4, h * 0.04);
+        c.beginPath(); c.moveTo(x + h * 0.03, gy - h * 0.5); c.lineTo(x - h * 0.26, gy - h * 0.78); c.stroke();
+        c.beginPath(); c.moveTo(x + h * 0.04, gy - h * 0.62); c.lineTo(x + h * 0.3, gy - h * 0.92); c.stroke();
+        c.beginPath(); c.moveTo(x + h * 0.05, gy - h * 0.72); c.lineTo(x + h * 0.12, gy - h); c.stroke();
+      }
+      function drawFortressOn(c, x, gy, w, col, trim) {
+        c.fillStyle = col;
+        c.fillRect(x - w / 2, gy - w * 0.34, w, w * 0.34);
+        c.fillRect(x - w / 2 - w * 0.1, gy - w * 0.52, w * 0.2, w * 0.52);
+        c.fillRect(x + w / 2 - w * 0.1, gy - w * 0.52, w * 0.2, w * 0.52);
+        for (var m = 0; m < 3; m++) { c.fillRect(x - w / 2 + m * w * 0.4, gy - w * 0.42, w * 0.14, w * 0.09); c.fillRect(x - w / 2 - w * 0.1 + m * w * 0.07, gy - w * 0.6, w * 0.09, w * 0.09); c.fillRect(x + w / 2 - w * 0.03 + m * w * 0.07, gy - w * 0.6, w * 0.09, w * 0.09); }
+        c.fillStyle = trim;
+        c.beginPath(); c.moveTo(x - w * 0.09, gy); c.lineTo(x - w * 0.09, gy - w * 0.18); c.arc(x, gy - w * 0.18, w * 0.09, Math.PI, 0); c.lineTo(x + w * 0.09, gy); c.closePath(); c.fill();
+        c.fillStyle = "rgba(255,214,120,.9)";
+        c.fillRect(x - w * 0.52, gy - w * 0.46, w * 0.05, w * 0.07);
+        c.fillRect(x + w * 0.47, gy - w * 0.46, w * 0.05, w * 0.07);
+        // banners hanging from the towers
+        c.fillStyle = "#b23a2e";
+        c.fillRect(x - w * 0.44, gy - w * 0.5, w * 0.07, w * 0.2);
+        c.fillRect(x + w * 0.37, gy - w * 0.5, w * 0.07, w * 0.2);
+      }
+      function drawPumpkinOn(c, x, y, rx, ry) {
+        c.fillStyle = "#e8873a";
+        c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#c96a24"; c.lineWidth = Math.max(1, rx * 0.1);
+        c.beginPath(); c.moveTo(x - rx * 0.45, y - ry + 1); c.quadraticCurveTo(x, y, x - rx * 0.45, y + ry - 1); c.stroke();
+        c.beginPath(); c.moveTo(x + rx * 0.45, y - ry + 1); c.quadraticCurveTo(x, y, x + rx * 0.45, y + ry - 1); c.stroke();
+        c.fillStyle = "#4d7c3a"; c.fillRect(x - rx * 0.1, y - ry - rx * 0.28, rx * 0.2, rx * 0.32);
+      }
+      function drawHayBaleOn(c, x, y, r) {
+        c.fillStyle = "#d9a83f";
+        c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#b4832a"; c.lineWidth = Math.max(1.2, r * 0.14);
+        c.beginPath(); c.arc(x, y, r * 0.62, 0, Math.PI * 2); c.stroke();
+        c.beginPath(); c.arc(x, y, r * 0.28, 0, Math.PI * 2); c.stroke();
+      }
+      function drawBogReedsOn(c, x, gy, h, col) {
+        c.strokeStyle = col; c.lineWidth = Math.max(1.4, h * 0.07); c.lineCap = "round";
+        for (var i = -1; i <= 1; i++) {
+          c.beginPath(); c.moveTo(x + i * h * 0.16, gy);
+          c.quadraticCurveTo(x + i * h * 0.22, gy - h * 0.6, x + i * h * 0.34, gy - h); c.stroke();
+        }
+        c.fillStyle = "#8a6a35";
+        c.beginPath(); c.ellipse(x + h * 0.34, gy - h, h * 0.1, h * 0.2, 0.25, 0, Math.PI * 2); c.fill();
+      }
+      /* The layered backdrop for one biome. Drawn AFTER the sky and
+         hills, BEFORE the fence/ground: distant treeline silhouettes
+         give the horizon depth, then the biome's own landmarks sit on
+         the hill line. `u` is the scene unit (field width / 420). */
+      function drawSceneLayer(c, idx, t, wd, gy, u) {
+        var v = LEVELS[idx].variant;
+        var dark = (v === "night" || v === "burnt" || v === "storm" || v === "prime");
+        // stars for the dark skies — pinned by seed, gently twinkling
+        if (dark || v === "royal") {
+          c.fillStyle = "#fff6da";
+          for (var si = 0; si < 34; si++) {
+            c.globalAlpha = 0.25 + det(si * 3.1) * 0.55 * (0.7 + 0.3 * Math.sin(t * 1.6 + si));
+            c.beginPath(); c.arc(det(si * 7.3) * wd, det(si * 13.7) * gy * 0.52, 1 + det(si) * 1.3, 0, Math.PI * 2); c.fill();
+          }
+          c.globalAlpha = 1;
+        }
+        // distant treeline silhouette along the horizon
+        var treeCol = dark ? "rgba(16,10,8,.5)" : "rgba(46,64,30,.38)";
+        if (v === "frost") treeCol = "rgba(70,100,120,.4)";
+        if (v === "royal" || v === "prime") treeCol = "rgba(24,10,30,.5)";
+        c.fillStyle = treeCol;
+        for (var ti = 0; ti < 11; ti++) {
+          var tx = (ti + 0.5) * (wd / 11) + (det(ti * 5.9) - 0.5) * 14 * u;
+          var th = (26 + det(ti * 9.4) * 26) * u;
+          c.beginPath(); c.moveTo(tx - th * 0.34, gy - 2); c.lineTo(tx, gy - th); c.lineTo(tx + th * 0.34, gy - 2); c.closePath(); c.fill();
+          c.beginPath(); c.arc(tx + th * 0.5, gy - th * 0.3, th * 0.3, 0, Math.PI * 2); c.fill();
+        }
+        // per-biome mid-ground landmarks on the hill line
+        if (v === "forest" || v === "night" || v === "storm") {
+          drawPineOn(c, wd * 0.13, gy, 74 * u, v === "night" ? "#22301f" : "#3d5a2a", false);
+          drawPineOn(c, wd * 0.24, gy, 52 * u, v === "night" ? "#2b3d26" : "#4d7c3a", false);
+          drawPineOn(c, wd * 0.86, gy, 66 * u, v === "night" ? "#22301f" : "#3d5a2a", false);
+          drawRoundTreeOn(c, wd * 0.68, gy, 44 * u, v === "night" ? "#2e4226" : "#5d8a3a");
+        } else if (v === "frost") {
+          drawPineOn(c, wd * 0.14, gy, 68 * u, "#5d84a0", true);
+          drawPineOn(c, wd * 0.87, gy, 76 * u, "#527a96", true);
+          drawPineOn(c, wd * 0.76, gy, 48 * u, "#6e94b0", true);
+        } else if (v === "burnt" || v === "prime") {
+          drawCharredTreeOn(c, wd * 0.15, gy, 62 * u);
+          drawCharredTreeOn(c, wd * 0.85, gy, 74 * u);
+          drawCharredTreeOn(c, wd * 0.72, gy, 44 * u);
+          if (v === "prime") drawFortressOn(c, wd * 0.5, gy - 6 * u, 120 * u, "#2b1810", "#140c08");
+        } else if (v === "royal") {
+          drawFortressOn(c, wd * 0.5, gy - 6 * u, 128 * u, "#4a2a5e", "#2c1838");
+          drawRoundTreeOn(c, wd * 0.13, gy, 42 * u, "#6e3480");
+          drawRoundTreeOn(c, wd * 0.88, gy, 46 * u, "#5a2a6e");
+        } else if (v === "cranberry") {
+          drawSiloShape(c, wd * 0.8, gy, 0.72 * u);
+          drawBogReedsOn(c, wd * 0.16, gy, 30 * u, "#5a7a3a");
+          drawBogReedsOn(c, wd * 0.66, gy, 24 * u, "#4d6e32");
+          // cranberry bushes — dark shrubs dotted with red berries
+          c.fillStyle = "#4a3a2e";
+          c.beginPath(); c.arc(wd * 0.3, gy - 6 * u, 13 * u, 0, Math.PI * 2); c.arc(wd * 0.58, gy - 5 * u, 10 * u, 0, Math.PI * 2); c.fill();
+          c.fillStyle = "#d93a4a";
+          for (var bi2 = 0; bi2 < 9; bi2++) { c.beginPath(); c.arc(wd * (0.26 + det(bi2 * 3.3) * 0.36), gy - (3 + det(bi2 * 7.1) * 10) * u, 1.8 * u, 0, Math.PI * 2); c.fill(); }
+        } else if (v === "gravy") {
+          drawSiloShape(c, wd * 0.82, gy, 0.78 * u);
+          drawRoundTreeOn(c, wd * 0.14, gy, 46 * u, "#97793d");
+          drawHayBaleOn(c, wd * 0.64, gy - 9 * u, 10 * u);
+        } else { // classic, pumpkin, golden — the home farm, fully dressed
+          drawSiloShape(c, wd * 0.3, gy, 0.8 * u);
+          drawRoundTreeOn(c, wd * 0.62, gy, 46 * u, v === "golden" ? "#c98a2e" : v === "pumpkin" ? "#c96a24" : "#5d8a3a");
+          drawRoundTreeOn(c, wd * 0.9, gy, 36 * u, v === "golden" ? "#dda93e" : v === "pumpkin" ? "#d97c2e" : "#6e9a44");
+          drawHayBaleOn(c, wd * 0.44, gy - 9 * u, 10 * u);
+          drawHayBaleOn(c, wd * 0.5, gy - 7 * u, 7.5 * u);
+          if (v === "pumpkin") { drawPumpkinOn(c, wd * 0.68, gy - 7 * u, 11 * u, 8 * u); drawPumpkinOn(c, wd * 0.74, gy - 5 * u, 8 * u, 6 * u); drawPumpkinOn(c, wd * 0.2, gy - 6 * u, 9 * u, 7 * u); }
+        }
+      }
+      /* Ground-band texture, drawn over the flat ground fill: a worn
+         dirt path under the cannon's lane, swaying grass tufts,
+         scattered stones, and the biome's own surface — bog puddles,
+         snow drifts, ash, gravy pools or drifting embers. */
+      function drawGroundDetail(c, idx, t, wd, ht, gy, u) {
+        var v = LEVELS[idx].variant;
+        var gh = ht - gy;
+        // worn dirt path, widening toward the viewer
+        c.fillStyle = v === "frost" ? "rgba(230,242,248,.35)" : v === "burnt" || v === "prime" ? "rgba(0,0,0,.28)" : "rgba(210,170,105,.34)";
+        c.beginPath();
+        c.moveTo(wd * 0.36, gy); c.lineTo(wd * 0.64, gy);
+        c.lineTo(wd * 0.78, ht); c.lineTo(wd * 0.22, ht);
+        c.closePath(); c.fill();
+        // surface patches per biome
+        var pi, px, py, pw;
+        if (v === "cranberry" || v === "gravy" || v === "storm") {
+          for (pi = 0; pi < 5; pi++) {
+            px = det(pi * 11.3 + idx) * wd; py = gy + gh * (0.25 + det(pi * 5.7) * 0.6); pw = (22 + det(pi * 3.9) * 30) * u;
+            c.fillStyle = v === "cranberry" ? "rgba(150,40,50,.4)" : v === "gravy" ? "rgba(110,72,30,.5)" : "rgba(90,120,150,.35)";
+            c.beginPath(); c.ellipse(px, py, pw, pw * 0.26, 0, 0, Math.PI * 2); c.fill();
+            c.fillStyle = "rgba(255,255,255,.18)";
+            c.beginPath(); c.ellipse(px - pw * 0.3, py - pw * 0.07, pw * 0.4, pw * 0.09, 0, 0, Math.PI * 2); c.fill();
+          }
+        } else if (v === "frost") {
+          c.fillStyle = "rgba(255,255,255,.5)";
+          for (pi = 0; pi < 6; pi++) {
+            px = det(pi * 9.1 + idx) * wd; py = gy + gh * (0.2 + det(pi * 6.3) * 0.65); pw = (18 + det(pi * 4.7) * 26) * u;
+            c.beginPath(); c.ellipse(px, py, pw, pw * 0.3, 0, 0, Math.PI * 2); c.fill();
+          }
+        } else if (v === "burnt" || v === "prime") {
+          c.fillStyle = "rgba(20,12,8,.4)";
+          for (pi = 0; pi < 6; pi++) {
+            px = det(pi * 8.3 + idx) * wd; py = gy + gh * (0.2 + det(pi * 5.1) * 0.65); pw = (14 + det(pi * 3.7) * 24) * u;
+            c.beginPath(); c.ellipse(px, py, pw, pw * 0.3, 0, 0, Math.PI * 2); c.fill();
+          }
+          // embers drifting up off the scorched ground
+          c.fillStyle = "#ff8a3a";
+          for (pi = 0; pi < 8; pi++) {
+            var ey = ht - ((t * (14 + det(pi) * 12) + det(pi * 17.7) * gh * 2) % (gh + 26));
+            c.globalAlpha = 0.35 + det(pi * 3.3) * 0.45;
+            c.beginPath(); c.arc(det(pi * 13.9) * wd + Math.sin(t * 2 + pi) * 5, ey, 1.6 + det(pi) * 1.4, 0, Math.PI * 2); c.fill();
+          }
+          c.globalAlpha = 1;
+        }
+        // stones
+        c.fillStyle = "rgba(70,50,30,.35)";
+        for (pi = 0; pi < 10; pi++) {
+          px = det(pi * 15.3 + idx * 2) * wd; py = gy + gh * (0.18 + det(pi * 8.9) * 0.7);
+          c.beginPath(); c.ellipse(px, py, (2.5 + det(pi) * 3.5) * u, (1.6 + det(pi) * 2) * u, 0, 0, Math.PI * 2); c.fill();
+        }
+        // swaying grass tufts — snow biomes get frosted blades
+        c.strokeStyle = v === "frost" ? "rgba(210,232,240,.75)" : v === "burnt" || v === "prime" ? "rgba(60,44,26,.8)" : v === "night" ? "rgba(50,70,36,.9)" : "rgba(96,124,52,.85)";
+        c.lineWidth = Math.max(1.2, 1.6 * u); c.lineCap = "round";
+        for (pi = 0; pi < 30; pi++) {
+          px = det(pi * 19.7 + idx * 3) * wd; py = gy + gh * (0.12 + det(pi * 12.1) * 0.8);
+          var sway = Math.sin(t * 1.8 + pi * 1.7) * 2.2 * u, bh = (5 + det(pi * 4.3) * 6) * u;
+          for (var b = -1; b <= 1; b++) {
+            c.beginPath(); c.moveTo(px + b * 2.4 * u, py);
+            c.quadraticCurveTo(px + b * 3 * u + sway * 0.5, py - bh * 0.6, px + b * 3.6 * u + sway, py - bh); c.stroke();
+          }
+        }
+        // frost sparkles / night fireflies drifting over the field
+        if (v === "night") {
+          c.fillStyle = "#d8f26e";
+          for (pi = 0; pi < 7; pi++) {
+            c.globalAlpha = 0.3 + 0.5 * Math.abs(Math.sin(t * 1.3 + pi * 2.1));
+            c.beginPath(); c.arc(det(pi * 21.3) * wd + Math.sin(t * 0.9 + pi) * 9, gy - 30 - det(pi * 9.9) * 130, 1.8, 0, Math.PI * 2); c.fill();
+          }
+          c.globalAlpha = 1;
+        }
+        if (v === "storm") { // slanted rain streaks, kept faint for readability
+          c.strokeStyle = "rgba(220,238,250,.28)"; c.lineWidth = 1.2;
+          for (pi = 0; pi < 22; pi++) {
+            px = (det(pi * 23.7) * wd + t * 130) % (wd + 30); py = (det(pi * 29.3) * ht + t * 330) % (ht + 20);
+            c.beginPath(); c.moveTo(px, py); c.lineTo(px - 4, py + 11); c.stroke();
+          }
+        }
+        if (v === "frost") { // falling snow, faint
+          c.fillStyle = "rgba(255,255,255,.65)";
+          for (pi = 0; pi < 20; pi++) {
+            px = det(pi * 27.1) * wd + Math.sin(t * 1.2 + pi) * 6; py = (det(pi * 31.7) * ht + t * 36) % (ht + 10);
+            c.beginPath(); c.arc(px, py, 1.4 + det(pi) * 1.3, 0, Math.PI * 2); c.fill();
+          }
+        }
+      }
+      /* ============================================================
          COVER ART — the main screen's poster, drawn ONLY from the
          canonical art above: the golden-hour sunset farm (barn, silo,
          windmill), the exact red-and-brass cranberry cannon from
@@ -2345,6 +2584,10 @@
         g.quadraticCurveTo(CW * 0.32, GY - 36, CW * 0.64, GY - 12);
         g.quadraticCurveTo(CW * 0.86, GY + 4, CW, GY - 20);
         g.lineTo(CW, GY); g.closePath(); g.fill();
+        // painted depth on the poster too: autumn trees on the hill line
+        drawRoundTreeOn(g, CW * 0.55, GY, 52, "#c96a24");
+        drawRoundTreeOn(g, CW * 0.68, GY, 40, "#d98e2b");
+        drawPineOn(g, CW * 0.06, GY, 58, "#4d7c3a", false);
         // the farm — the shared shapes, identical on every screen
         drawBarnShape(g, 30, GY, 1.5);
         drawSiloShape(g, 148, GY, 1.28);
@@ -2353,11 +2596,12 @@
         g.fillStyle = "rgba(93,58,26,.8)";
         for (var fx = 262; fx < CW - 110; fx += 46) g.fillRect(fx, GY - 18, 5, 18);
         g.fillRect(256, GY - 13, CW - 366, 3.5);
-        // ground
-        g.fillStyle = "#8a6a35"; g.fillRect(0, GY, CW, CH - GY);
-        g.fillStyle = "#75582a";
-        for (var gx = 10; gx < CW; gx += 48) g.fillRect(gx, GY + 18, 20, 3);
-        g.fillRect(0, GY + 34, CW, 3);
+        // ground — shaded band + the shared ground texture (grass,
+        // stones, dirt path) so the poster floor matches the field
+        var cgrad = g.createLinearGradient(0, GY, 0, CH);
+        cgrad.addColorStop(0, "#96753e"); cgrad.addColorStop(1, "#6e5227");
+        g.fillStyle = cgrad; g.fillRect(0, GY, CW, CH - GY);
+        drawGroundDetail(g, 0, t, CW, CH, GY, 1.6);
         // pumpkins in the foreground — it's Thanksgiving, after all
         [[66, GY + 44, 17, 12], [108, GY + 50, 12, 9], [CW - 88, GY + 46, 14, 10]].forEach(function (pk) {
           g.fillStyle = "#e8873a";
@@ -2727,6 +2971,11 @@
         ctx.quadraticCurveTo(W * 0.85, GROUND + 4, W, GROUND - 30);
         ctx.lineTo(W, GROUND); ctx.closePath(); ctx.fill();
 
+        /* Painted-scene depth: treeline silhouettes + this biome's
+           landmarks (shared drawSceneLayer — same scene on the
+           chapter cards, Lobby stage and cover). */
+        drawSceneLayer(ctx, levelIdx, time, W, GROUND, 1);
+
         /* Trailer wide-shot landmarks — drawn by the SAME shared
            functions the Lobby and trailer use, so the barn and
            windmill are identical on every screen. */
@@ -2738,12 +2987,18 @@
         for (var fx = 14; fx < W; fx += 52) ctx.fillRect(fx, GROUND - 20, 5, 20);
         ctx.fillRect(0, GROUND - 15, W, 3.5);
 
-        // ground
-        ctx.fillStyle = "#8a6a35";
+        // ground — a shaded band, then the shared ground texture:
+        // dirt path, grass, stones, and this biome's puddles / snow /
+        // ash / embers, so the field floor reads painted, not flat.
+        var groundGrad = ctx.createLinearGradient(0, GROUND, 0, H);
+        groundGrad.addColorStop(0, "#96753e"); groundGrad.addColorStop(0.25, "#8a6a35"); groundGrad.addColorStop(1, "#6e5227");
+        ctx.fillStyle = groundGrad;
         ctx.fillRect(-12, GROUND, W + 24, H - GROUND + 12);
-        ctx.fillStyle = "#75582a";
-        for (var gx = 0; gx < W; gx += 34) ctx.fillRect(gx + ((time * 40) % 34), GROUND + 16, 16, 3);
-        ctx.fillRect(0, GROUND + 30, W, 3);
+        ctx.fillStyle = "rgba(255,230,170,.35)";
+        ctx.fillRect(-12, GROUND, W + 24, 3);
+        drawGroundDetail(ctx, levelIdx, time, W, H, GROUND, 1);
+        ctx.fillStyle = "rgba(117,88,42,.55)";
+        for (var gx = 0; gx < W; gx += 34) ctx.fillRect(gx + ((time * 40) % 34), GROUND + 30, 16, 3);
 
         // falling leaves
         for (var li = 0; li < leaves.length; li++) {
@@ -3215,19 +3470,22 @@
         g.quadraticCurveTo(PW * 0.32, GY - 30, PW * 0.64, GY - 10);
         g.quadraticCurveTo(PW * 0.86, GY + 2, PW, GY - 16);
         g.lineTo(PW, GY); g.closePath(); g.fill();
+        // the shared painted scene — treeline + farm landmarks, the
+        // same layer the game field paints for the home farm
+        drawSceneLayer(g, 0, t, PW, GY, 1.1);
         // the barn — the shared shape, identical to gameplay & trailer
         drawBarnShape(g, 26, GY, 1.18);
-        drawWindmillShape(g, PW - 30, GY, 0.82, 0.7);
+        drawWindmillShape(g, PW - 30, GY, 0.82, t * 0.7);
         // fence line along the horizon
         g.fillStyle = "rgba(93,58,26,.8)";
         for (var fx = 138; fx < PW - 8; fx += 44) g.fillRect(fx, GY - 17, 5, 17);
         g.fillRect(132, GY - 13, PW - 132, 3.5);
         g.fillRect(132, GY - 6, PW - 132, 3);
-        // ground
-        g.fillStyle = "#8a6a35"; g.fillRect(0, GY, PW, PH - GY);
-        g.fillStyle = "#75582a";
-        for (var gx = 8; gx < PW; gx += 46) g.fillRect(gx, GY + 14, 18, 3);
-        g.fillRect(0, GY + 27, PW, 3);
+        // ground — shaded band + the shared ground texture
+        var lgrad = g.createLinearGradient(0, GY, 0, PH);
+        lgrad.addColorStop(0, "#96753e"); lgrad.addColorStop(1, "#6e5227");
+        g.fillStyle = lgrad; g.fillRect(0, GY, PW, PH - GY);
+        drawGroundDetail(g, 0, t, PW, PH, GY, 1.1);
         // hay bales + a pumpkin, right of the cannon
         function hayBale(x, y, r) {
           g.fillStyle = "#d9a83f";
@@ -3342,9 +3600,10 @@
         g.quadraticCurveTo(cw * 0.3, gy - ch * 0.13, cw * 0.62, gy - ch * 0.04);
         g.quadraticCurveTo(cw * 0.86, gy + 2, cw, gy - ch * 0.07);
         g.lineTo(cw, gy); g.closePath(); g.fill();
+        drawSceneLayer(g, idx, 1.4, cw, gy, cw / 420);
         drawBarnShape(g, cw * 0.02, gy, ch / 235);
         g.fillStyle = "#8a6a35"; g.fillRect(0, gy, cw, ch - gy);
-        g.fillStyle = "#75582a"; g.fillRect(0, gy + (ch - gy) * 0.45, cw, 2.5);
+        drawGroundDetail(g, idx, 1.4, cw, ch, gy, cw / 420);
         // the flock, small — then the boss, big, exactly as in its fight
         drawTurkeyOn(g, cw * 0.30, gy - ch * 0.30, ch * 0.075, 1.2, { variant: L.variant });
         drawTurkeyOn(g, cw * 0.44, gy - ch * 0.20, ch * 0.058, 2.4, { variant: L.variant });
@@ -3511,14 +3770,14 @@
         tg.fillStyle = hill; tg.beginPath(); tg.moveTo(0, TGY);
         tg.quadraticCurveTo(TW * 0.32, TGY - 44, TW * 0.64, TGY - 14);
         tg.quadraticCurveTo(TW * 0.86, TGY + 4, TW, TGY - 24); tg.lineTo(TW, TGY); tg.closePath(); tg.fill();
+        drawSceneLayer(tg, 0, t, TW, TGY, 1.7);
         drawBarnShape(tg, 54, TGY, 1.9);
         drawWindmillShape(tg, TW - 74, TGY, 1.9, t * 0.7);
         tg.fillStyle = "rgba(93,58,26,.8)";
         for (var fx = 230; fx < TW - 130; fx += 52) tg.fillRect(fx, TGY - 20, 6, 20);
         tg.fillRect(224, TGY - 15, TW - 350, 4);
         tg.fillStyle = "#8a6a35"; tg.fillRect(0, TGY, TW, TH - TGY);
-        tg.fillStyle = "#75582a"; tg.fillRect(0, TGY + 34, TW, 4);
-        for (var gx = 12; gx < TW; gx += 54) tg.fillRect(gx, TGY + 16, 22, 3.5);
+        drawGroundDetail(tg, 0, t, TW, TH, TGY, 1.7);
       }
       function tFeatherRain(t, n, col) {
         tg.fillStyle = col;
