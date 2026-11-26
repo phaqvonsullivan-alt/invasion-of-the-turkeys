@@ -54,9 +54,23 @@
         margin: 0 auto;
         padding: 10px 12px 22px;
       }
+      /* Issue #5: the field is sized off the viewport HEIGHT as well as
+         the width, so the HUD, field and touch controls always fit on
+         screen together — on tablets the controls used to fall below
+         the fold. 0.65625 = the field's 420:640 aspect ratio; the px
+         reserve covers the HUD, the controls row and page padding. */
+      .stage, .controls, .hud {
+        width: 100%;
+        margin-left: auto; margin-right: auto;
+        max-width: min(620px, max(220px, calc((100vh - 248px) * 0.65625)));
+        max-width: min(620px, max(220px, calc((100dvh - 248px) * 0.65625)));
+      }
       @media (min-width: 700px) {
         .wrap { padding: 18px 20px 28px; }
-        .stage, .controls, .hud { max-width: 620px; margin-left: auto; margin-right: auto; }
+        .stage, .controls, .hud {
+          max-width: min(620px, max(220px, calc((100vh - 184px) * 0.65625)));
+          max-width: min(620px, max(220px, calc((100dvh - 184px) * 0.65625)));
+        }
         .controls { margin-top: 12px; }
       }
 
@@ -404,6 +418,44 @@
       .danger-btn { color: #ffb4a2; border-color: rgba(255, 180, 162, .55); }
       .lobby-board { margin-top: 20px; }
       .lobby-board .lb-row { background: var(--btn); }
+
+      /* ---------- Issue #5: phone main menu ----------
+         On a phone the menu used to be trapped inside the game field,
+         which is shorter than the menu itself, so "Defend Earth!" was
+         sliced in half and the rest scrolled with no hint that it could.
+         On small screens the menu now takes the full viewport, with
+         tighter type and spacing so it fits; if an open panel still
+         makes it taller than the screen, it scrolls and the "More
+         below" cue says so. */
+      .menu-scroll-cue {
+        position: fixed; left: 50%; z-index: 45;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        transform: translateX(-50%);
+        background: rgba(38, 20, 8, .9); color: #ffd98a;
+        border: 1px solid rgba(255, 217, 138, .55);
+        border-radius: 999px; padding: 7px 15px;
+        font-size: 13px; font-weight: 700; letter-spacing: .03em;
+        pointer-events: none;
+        animation: cueBob 1.6s ease-in-out infinite;
+      }
+      .menu-scroll-cue[hidden] { display: none; }
+      @keyframes cueBob { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 4px); } }
+      @media (prefers-reduced-motion: reduce) { .menu-scroll-cue { animation: none; } }
+      @media (max-width: 700px) {
+        #menuOverlay {
+          position: fixed; inset: 0; z-index: 40;
+          border-radius: 0;
+          padding: 18px 18px 24px;
+          touch-action: pan-y;
+        }
+        #menuOverlay h2 { font-size: 32px; margin-bottom: 6px; }
+        #menuOverlay .sub { font-size: 15.5px; margin-bottom: 10px; }
+        #menuOverlay .save-summary { font-size: 13px; padding: 7px 12px; margin-bottom: 10px; }
+        #menuOverlay p { font-size: 14px; line-height: 1.5; margin-bottom: 10px; }
+        #menuOverlay .big-btn { min-height: 58px; font-size: 21px; padding: 13px 24px; }
+        #menuOverlay .menu-nav { gap: 8px; margin-top: 10px; }
+        #menuOverlay .menu-nav .ghost-btn { min-height: 46px; font-size: 14.5px; padding: 8px 10px; }
+      }
     </style>
   </head>
   <body>
@@ -475,6 +527,7 @@
             </div>
             <button class="ghost-btn danger-btn" id="btnResetSave" type="button">Reset save (coins, upgrades &amp; progress)</button>
           </div>
+          <div class="menu-scroll-cue" id="menuScrollCue" hidden aria-hidden="true">More below ▾</div>
         </div>
 
         <!-- Generic message overlay (level intro / clear / game over / victory / pause) -->
@@ -2139,6 +2192,7 @@
         state = "lobby";
         msgOverlay.hidden = true;
         menuOverlay.hidden = true;
+        updateMenuCue();
         stage.style.display = "none";
         document.getElementById("controlsRow").style.display = "none";
         document.getElementById("hintText").style.display = "none";
@@ -2398,10 +2452,25 @@
           if (id === "panelLevels") renderMenu();
           target.scrollIntoView({ block: "nearest" });
         }
+        updateMenuCue();
       }
+
+      /* "More below" cue (Issue #5): shown only while the menu can
+         actually scroll and its bottom hasn't been reached yet, so a
+         cut-off menu never looks like the end of the menu. */
+      var menuScrollCue = document.getElementById("menuScrollCue");
+      function updateMenuCue() {
+        if (!menuScrollCue) return;
+        var canScroll = !menuOverlay.hidden && menuOverlay.scrollHeight > menuOverlay.clientHeight + 4;
+        var atBottom = menuOverlay.scrollTop + menuOverlay.clientHeight >= menuOverlay.scrollHeight - 10;
+        menuScrollCue.hidden = !(canScroll && !atBottom);
+      }
+      menuOverlay.addEventListener("scroll", updateMenuCue, { passive: true });
+      window.addEventListener("resize", updateMenuCue);
 
       function startFromMenu(idx) {
         menuOverlay.hidden = true;
+        updateMenuCue();
         MENU_PANELS.forEach(function (pid) { document.getElementById(pid).hidden = true; });
         score = 0; lives = 3; bombs = 2;
         resetPlayer();
@@ -2481,7 +2550,12 @@
       function endPointer() { pointerX = null; pDownX = null; }
       stage.addEventListener("pointerup", endPointer);
       stage.addEventListener("pointercancel", endPointer);
-      stage.addEventListener("touchmove", function (ev) { ev.preventDefault(); }, { passive: false });
+      stage.addEventListener("touchmove", function (ev) {
+        // the main menu is allowed to scroll on touch (Issue #5) —
+        // drags on the field itself stay locked so aiming never scrolls
+        if (!menuOverlay.hidden && menuOverlay.contains(ev.target)) return;
+        ev.preventDefault();
+      }, { passive: false });
 
       function holdButton(el, on, off) {
         function start(ev) { ev.preventDefault(); ac(); el.classList.add("held"); on(); }
@@ -2569,6 +2643,7 @@
         lobbyTarget = highestUnlocked;
         renderMenu();
         updateHUD();
+        updateMenuCue();
         window.scrollTo(0, 0);
       });
 
@@ -2628,6 +2703,7 @@
       updateHUD();
       renderMenu();
       renderBoard();
+      updateMenuCue();
     </script>
   </body>
 </html>
