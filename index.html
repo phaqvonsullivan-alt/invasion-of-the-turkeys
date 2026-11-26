@@ -1615,7 +1615,11 @@
             SFX.hit();
             if (bl.pierceLeft > 0) { bl.pierceLeft--; }
             else bullets.splice(bi, 1);
-            if (boss && boss.hp <= 0) bossDown();
+            /* bossDown() swaps in a fresh, empty bullet list — the loop
+               must stop here. Iterating on into the new list read
+               `undefined` bullets, threw, and killed the animation loop,
+               freezing the game on the boss kill (and every level after). */
+            if (boss && boss.hp <= 0) { bossDown(); break; }
           }
         }
 
@@ -2535,12 +2539,25 @@
       /* ---------------- Main loop ---------------- */
       var lastTs = 0;
       function loop(ts) {
+        /* Schedule the next frame FIRST: if a single frame ever throws,
+           the game keeps running instead of freezing solid for good. */
+        requestAnimationFrame(loop);
         var dt = Math.min(0.033, (ts - lastTs) / 1000 || 0.016);
         lastTs = ts;
-        if (state !== "paused") update(dt);
-        btnDodge.classList.toggle("cooling", player.dodgeCd > 0);
-        draw();
-        requestAnimationFrame(loop);
+        try {
+          if (state !== "paused") update(dt);
+          btnDodge.classList.toggle("cooling", player.dodgeCd > 0);
+          draw();
+        } catch (err) {
+          /* Recover instead of staying frozen: clear any boss-ceremony
+             timing state, and if the ceremony was mid-flight, finish it
+             so the level-clear screen still appears. */
+          var stuckCeremony = ceremony;
+          ceremony = null; countUp = null; timeScale = 1; ceremonyFlash = 0;
+          if (stuckCeremony && state === "ceremony") {
+            try { levelClear(stuckCeremony); } catch (e2) { /* keep the last good frame */ }
+          }
+        }
       }
       requestAnimationFrame(loop);
 
