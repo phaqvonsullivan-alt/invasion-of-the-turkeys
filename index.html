@@ -776,6 +776,101 @@
       .lobby .ghost-dark:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(90, 52, 18, .2); }
       .lb-row { border-width: 2px; border-radius: 12px; font-weight: 600; }
 
+      /* ============================================================
+         LOBBY SCENE BACKDROP + MENU RICHNESS PASS
+         The Lobby used to sit on pale cream with white tiles while
+         the menu blazed sunset — washed out by comparison. Now the
+         whole Lobby panel is backed by the sunset barnyard scene
+         itself (a canvas painted by drawLobbyBackdrop() from the
+         SAME shared art as everywhere else: drawSceneLayer,
+         drawBarnShape, drawSiloShape, drawWindmillShape,
+         drawGroundDetail), with a warm sunset gradient as the CSS
+         fallback underneath, and every content surface becomes a
+         warm translucent dark/amber panel with light text — no
+         white tiles anywhere. The hero stage, workshop cards,
+         rarity borders and all behaviour are unchanged.
+         ============================================================ */
+      .lobby {
+        position: relative;
+        background: radial-gradient(120% 46% at 78% 6%, rgba(255,190,80,.34), rgba(255,190,80,0) 60%),
+          linear-gradient(180deg, #2b1030 0%, #6e2430 30%, #b23a2e 55%, #e8873a 78%, #3a1e0e 100%);
+        color: #fdf3e0;
+        overflow: hidden;
+      }
+      .lobby-bg {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        z-index: 0; pointer-events: none;
+      }
+      .lobby > *:not(.lobby-bg) { position: relative; z-index: 1; }
+      .lobby-head h2 { color: #fff3d6; text-shadow: 0 3px 0 #7e2418, 0 6px 18px rgba(0,0,0,.4); }
+      .lobby-head p { color: #ffe9c2; text-shadow: 0 1px 6px rgba(20,6,2,.55); }
+      .coin-bank {
+        background: linear-gradient(180deg, #ffd968 0%, #e8a94c 55%, #c97b24 100%);
+        border: 3px solid #8a5a10;
+        box-shadow: 0 5px 0 rgba(90,52,8,.55), 0 10px 22px rgba(20,6,2,.35), inset 0 2px 0 rgba(255,255,255,.7);
+        color: #2e1a04;
+      }
+      .coin-bank span { color: #6b3d08; }
+      .coin-bank b { color: #2e1a04; text-shadow: 0 1px 0 rgba(255,255,255,.4); }
+      .lobby-banner {
+        background: rgba(58, 32, 10, .88);
+        border: 2px solid var(--gold);
+        color: #ffe9c2;
+        box-shadow: 0 4px 14px rgba(20,6,2,.35), inset 0 2px 0 rgba(255,217,138,.25);
+      }
+      .preview-card {
+        background: rgba(38, 20, 8, .68);
+        box-shadow: 0 6px 0 rgba(20,6,2,.35), 0 14px 30px rgba(20,6,2,.35);
+      }
+      .stat-tile {
+        background: linear-gradient(180deg, #a5692f, #7c4a1e);
+        border: 2px solid #d9a83f;
+        box-shadow: inset 0 2px 0 rgba(255,236,180,.45), 0 3px 0 rgba(20,6,2,.4);
+        color: #fff3d6;
+      }
+      .stat-tile span { color: #ffd98a; }
+      .stat-tile b { color: #fff7e8; }
+      .stat-list .up { color: #b5e48c; }
+      .lobby .shop-sub { color: #f3d9ae; text-shadow: 0 1px 5px rgba(20,6,2,.5); }
+      .upgrade-card {
+        background: linear-gradient(180deg, rgba(84,50,20,.94), rgba(46,26,10,.96));
+        color: #fff3d6;
+        box-shadow: 0 4px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.22);
+      }
+      .upgrade-card .upgrade-top h4 { color: #fff3d6; }
+      .upgrade-card p { color: #ecd3a3; }
+      .upgrade-effect { color: #fff3d6; }
+      .upgrade-effect .next { color: #b5e48c; }
+      .next-card { color: #33200a; }
+      .next-card h4 { color: #3a2404; }
+      .next-card p { color: #5d4020; }
+      .lobby-board .lb-row {
+        background: rgba(38, 20, 8, .72);
+        border-color: rgba(255, 217, 138, .45);
+        color: #ffe9c2;
+      }
+      .lobby-board .lb-empty { color: #ffe9c2; }
+      .lobby .ghost-dark {
+        background: linear-gradient(180deg, #e8873a, #b23a2e);
+        border: 2px solid #7e2418;
+        color: #fff3d6;
+        box-shadow: 0 3px 0 #7e2418, inset 0 2px 0 rgba(255,255,255,.3);
+        text-shadow: 0 1px 0 rgba(90,20,8,.5);
+      }
+      .lobby .ghost-dark:active { transform: translateY(2px); box-shadow: 0 1px 0 #7e2418; }
+      /* Menu secondary buttons: rich glossy cranberry-amber instead
+         of pale tan outlines floating on the sunset. */
+      .ghost-btn {
+        background: linear-gradient(180deg, rgba(232,135,58,.94), rgba(178,58,46,.94));
+        border: 2px solid rgba(255, 217, 138, .85);
+        color: #fff7e8;
+        box-shadow: 0 4px 0 rgba(90,20,8,.6), inset 0 2px 0 rgba(255,255,255,.35);
+        text-shadow: 0 1px 0 rgba(90,20,8,.5);
+      }
+      .ghost-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(90,20,8,.6); }
+      .danger-btn { color: #ffe1d6; border-color: rgba(255, 217, 138, .85); }
+
       /* ---------- Issue #5: phone main menu ----------
          On a phone the menu used to be trapped inside the game field,
          which is shorter than the menu itself, so "Defend Earth!" was
@@ -842,6 +937,62 @@
         }
         .lobby-scroll { overflow: visible; }
       }
+      /* ============================================================
+         FIT-TO-SCREEN PASS — the complete main menu (cover art,
+         title, welcome-back line, Continue, trailer, the four nav
+         buttons and the Lobby button) must fit inside ONE screen
+         height with no scrolling, so the "More below" cue — which
+         only appears when the menu can actually scroll — stays
+         hidden. Achieved by the shorter cover poster (840×272),
+         the tightened story line, and the compact menu-only
+         spacing below. Open panels (chapter list, leaderboard…)
+         may still scroll, and the cue returns for those.
+         The Lobby gets the same discipline on phones: it becomes
+         a flex column again — header + coin bank pinned on top,
+         Play / Back actions pinned at the bottom, and only the
+         middle (workshop) scrolls internally — so the hero stage
+         and the primary actions are always on screen.
+         ============================================================ */
+      #menuOverlay { padding-top: 14px; padding-bottom: 18px; }
+      #menuOverlay h2 { margin-bottom: 2px; }
+      #menuOverlay .sub { margin-bottom: 8px; }
+      #menuOverlay p { margin-bottom: 8px; }
+      .cover-art { margin-bottom: 10px; }
+      .save-summary { margin-bottom: 10px; padding: 7px 12px; }
+      #menuOverlay .big-btn { min-height: 56px; }
+      #btnTrailer { margin-top: 8px !important; min-height: 48px !important; }
+      .menu-nav { margin-top: 8px; gap: 8px; }
+      .menu-nav .ghost-btn { min-height: 46px; }
+      @media (max-width: 700px) {
+        #menuOverlay { padding: 12px 14px 14px; }
+        #menuOverlay h2 { font-size: 29px; line-height: 1.04; margin-bottom: 2px; }
+        #menuOverlay .sub { font-size: 14.5px; margin-bottom: 6px; }
+        #menuOverlay .save-summary { font-size: 12.5px; padding: 6px 11px; margin-bottom: 8px; }
+        #menuOverlay p { font-size: 13.5px; line-height: 1.45; margin-bottom: 8px; }
+        #menuOverlay .big-btn { min-height: 52px; font-size: 20px; padding: 10px 20px; }
+        #menuOverlay .menu-nav { gap: 7px; margin-top: 7px; }
+        #menuOverlay .menu-nav .ghost-btn { min-height: 44px; font-size: 14px; padding: 7px 8px; }
+        .cover-art { margin-bottom: 8px; }
+        .cover-badge { font-size: 10px; padding: 3px 9px; bottom: 7px; left: 7px; }
+        .cover-badge.right { left: auto; right: 7px; }
+        /* Lobby: pinned head + actions, internally scrolling middle */
+        .lobby { display: flex; flex-direction: column; overflow-y: hidden; }
+        .lobby-scroll {
+          flex: 1 1 auto; min-height: 0;
+          overflow-y: auto; overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch; touch-action: pan-y;
+        }
+        .lobby-head p { font-size: 13.5px; line-height: 1.4; }
+        .lobby-head h2 { font-size: 25px; }
+        .coin-bank { padding: 7px 13px; min-width: 112px; }
+        .coin-bank b { font-size: 23px; }
+        .preview-card { margin-top: 6px; padding: 8px; }
+        .lobby h3 { margin: 12px 0 8px; }
+        .next-card { margin-top: 12px; padding: 11px 13px; }
+        .next-card p { margin-bottom: 8px; }
+        .lobby-actions { margin-top: 10px; }
+        .lobby .ghost-dark { margin-top: 0; }
+      }
     </style>
   </head>
   <body>
@@ -864,14 +1015,14 @@
         <!-- Main menu / start overlay -->
         <div class="overlay" id="menuOverlay">
           <div class="cover-art">
-            <canvas id="coverCanvas" width="840" height="340" aria-label="Cover art: Big Gobbler the boss turkey looming over a farm at sunset while the cranberry cannon takes aim"></canvas>
+            <canvas id="coverCanvas" width="840" height="272" aria-label="Cover art: Big Gobbler the boss turkey looming over a farm at sunset while the cranberry cannon takes aim"></canvas>
             <span class="cover-badge">★ COVER ART</span>
             <span class="cover-badge right">12 LEVELS · 12 BOSSES</span>
           </div>
           <h2>Invasion of the Turkeys</h2>
           <p class="sub">Thanksgiving will never be the same.</p>
           <div class="save-summary" id="menuSaveSummary">💾 New save — progress, coins &amp; upgrades save automatically on this device as you play.</div>
-          <p>The turkeys have had enough. This year, <b>they're</b> coming for <b>us</b> — wave after wave across <b>12 levels</b>, from the barnyard to the Final Feast. Every level brings a different flock: pumpkin-orange, forest, night, frosty white, even burnt extra-crispy turkeys — and deeper in, strange <b>mutated</b> birds with extra heads, third eyes and glowing green spots. You're Earth's last line of defense. Man the cranberry cannon!</p>
+          <p>The turkeys have had enough — this year <b>they're</b> coming for <b>us</b>, wave after wave across <b>12 levels</b>, from the barnyard to the Final Feast, every flock stranger than the last. You're Earth's last line of defense. Man the cranberry cannon!</p>
           <div class="menu-panel" id="panelHow" hidden>
           <h3>How to Play</h3>
           <div class="howto">
@@ -939,6 +1090,7 @@
 
       <!-- Lobby: spend collected coins on weapon upgrades between runs -->
       <section class="lobby" id="lobbyPanel" hidden aria-label="Lobby and weapon workshop">
+        <canvas class="lobby-bg" id="lobbyBgCanvas" width="760" height="1150" aria-hidden="true"></canvas>
         <div class="lobby-head">
           <div>
             <h2>The Lobby</h2>
@@ -2542,7 +2694,7 @@
         var cv = document.getElementById("coverCanvas");
         if (!cv) return;
         var g = cv.getContext("2d");
-        var CW = cv.width, CH = cv.height, GY = 278; // ground line
+        var CW = cv.width, CH = cv.height, GY = 222; // ground line (poster shortened so the whole menu fits one screen)
         t = t || 0;
         // golden-hour sky — the trailer/menu sunset, top to horizon
         var sky = g.createLinearGradient(0, 0, 0, GY);
@@ -2603,7 +2755,7 @@
         g.fillStyle = cgrad; g.fillRect(0, GY, CW, CH - GY);
         drawGroundDetail(g, 0, t, CW, CH, GY, 1.6);
         // pumpkins in the foreground — it's Thanksgiving, after all
-        [[66, GY + 44, 17, 12], [108, GY + 50, 12, 9], [CW - 88, GY + 46, 14, 10]].forEach(function (pk) {
+        [[66, GY + 34, 17, 12], [108, GY + 40, 12, 9], [CW - 88, GY + 36, 14, 10]].forEach(function (pk) {
           g.fillStyle = "#e8873a";
           g.beginPath(); g.ellipse(pk[0], pk[1], pk[2], pk[3], 0, 0, Math.PI * 2); g.fill();
           g.strokeStyle = "#c96a24"; g.lineWidth = 1.6;
@@ -2628,12 +2780,17 @@
            real upgrades, taking aim at Big Gobbler, berries in flight
            from its actual muzzle, just like the Lobby preview. */
         var col = BULLET_COLORS[upgrades.damage];
-        var mz = drawCannonOn(g, 316, GY - 16, 1.95, 0.52, { flash: (t % 0.9) < 0.1 });
+        // a warm stage glow behind the cannon so it reads big and
+        // bright against the sunset instead of small and dark
+        var cGlow = g.createRadialGradient(306, GY - 34, 10, 306, GY - 34, 150);
+        cGlow.addColorStop(0, "rgba(255,214,120,.5)"); cGlow.addColorStop(1, "rgba(255,214,120,0)");
+        g.fillStyle = cGlow; g.fillRect(146, GY - 194, 320, 210);
+        var mz = drawCannonOn(g, 306, GY - 18, 2.55, 0.52, { flash: (t % 0.9) < 0.1 });
         for (var k = 0; k < 3; k++) {
           var tt = 0.22 + k * 0.27;
           var bx = mz.x + (bossX - 20 - mz.x) * tt;
           var by = mz.y + (bossY + 10 - mz.y) * tt - Math.sin(tt * Math.PI) * 22;
-          var br = getBulletR() * 1.5;
+          var br = getBulletR() * 1.9;
           g.strokeStyle = "rgba(178,58,46,.4)"; g.lineWidth = 3; g.lineCap = "round";
           g.beginPath(); g.moveTo(bx - 14, by + 6); g.lineTo(bx - 3, by + 1); g.stroke();
           if (upgrades.big >= 2) { g.fillStyle = "rgba(255,190,60,.35)"; g.beginPath(); g.arc(bx, by, br + 4.5, 0, Math.PI * 2); g.fill(); }
@@ -3359,6 +3516,7 @@
           div.appendChild(label); div.appendChild(val);
           lobbyStats.appendChild(div);
         });
+        drawLobbyBackdrop();
         drawLobbyPreview();
 
         // upgrade cards
@@ -3431,6 +3589,72 @@
         SFX.pickup(); SFX.clear();
         renderLobby();
         updateHUD();
+      }
+
+      /* Lobby backdrop — the full sunset barnyard scene behind the
+         whole Lobby panel, painted ONLY from the shared scene art
+         (the cover poster's sunset sky, Level 1's hills, and
+         drawSceneLayer / drawBarnShape / drawSiloShape /
+         drawWindmillShape / drawGroundDetail), so the Lobby stands
+         in the same farm the menu and the game show. A warm dark
+         veil over the scene keeps the amber panels and light text
+         on top of it readable. Animated gently (turning windmill,
+         shared ground texture) from the main loop while open. */
+      function drawLobbyBackdrop(t) {
+        var c = document.getElementById("lobbyBgCanvas");
+        if (!c) return;
+        var g = c.getContext("2d");
+        var BW = c.width, BH = c.height, GY = Math.round(BH * 0.62); // ground line
+        t = t || 0;
+        // golden-hour sky — the same sunset as the menu / cover art
+        var sky = g.createLinearGradient(0, 0, 0, GY);
+        sky.addColorStop(0, "#2b1030"); sky.addColorStop(0.34, "#6e2430");
+        sky.addColorStop(0.62, "#b23a2e"); sky.addColorStop(0.85, "#e8873a");
+        sky.addColorStop(1, "#eda254");
+        g.fillStyle = sky; g.fillRect(0, 0, BW, BH);
+        // low sun + glow
+        var sx = BW * 0.78, sy = GY * 0.3;
+        var glow = g.createRadialGradient(sx, sy, 8, sx, sy, 300);
+        glow.addColorStop(0, "rgba(255,214,120,.55)"); glow.addColorStop(0.4, "rgba(255,160,60,.2)"); glow.addColorStop(1, "rgba(255,160,60,0)");
+        g.fillStyle = glow; g.fillRect(0, 0, BW, GY);
+        g.fillStyle = "rgba(255,236,180,.9)";
+        g.beginPath(); g.arc(sx, sy, 30, 0, Math.PI * 2); g.fill();
+        // slow clouds
+        g.fillStyle = "rgba(38,16,20,.20)";
+        for (var ci = 0; ci < 3; ci++) {
+          var cx = ((ci * 300 + t * (6 + ci * 3)) % (BW + 220)) - 110, cy = 36 + ci * 44;
+          g.beginPath(); g.ellipse(cx, cy, 64, 12, 0, 0, Math.PI * 2); g.ellipse(cx + 38, cy + 5, 44, 9, 0, 0, Math.PI * 2); g.fill();
+        }
+        // hills — Level 1's own greens
+        g.fillStyle = "#a8bf74";
+        g.beginPath(); g.moveTo(0, GY);
+        g.quadraticCurveTo(BW * 0.27, GY - 70, BW * 0.55, GY - 28);
+        g.quadraticCurveTo(BW * 0.8, GY + 4, BW, GY - 46);
+        g.lineTo(BW, GY); g.closePath(); g.fill();
+        g.fillStyle = "#7d9b4e";
+        g.beginPath(); g.moveTo(0, GY);
+        g.quadraticCurveTo(BW * 0.32, GY - 34, BW * 0.64, GY - 11);
+        g.quadraticCurveTo(BW * 0.86, GY + 4, BW, GY - 19);
+        g.lineTo(BW, GY); g.closePath(); g.fill();
+        // the shared painted scene — treeline, silo, trees, hay bales
+        drawSceneLayer(g, 0, t, BW, GY, 1.7);
+        // the farm buildings — the shared shapes, identical everywhere
+        drawBarnShape(g, 26, GY, 1.6);
+        drawSiloShape(g, BW * 0.24, GY, 1.35);
+        drawWindmillShape(g, BW - 52, GY, 1.6, t * 0.7);
+        // fence line along the horizon
+        g.fillStyle = "rgba(93,58,26,.8)";
+        for (var fx = BW * 0.42; fx < BW - 120; fx += 48) g.fillRect(fx, GY - 19, 5, 19);
+        g.fillRect(BW * 0.41, GY - 14, BW * 0.47, 3.5);
+        // ground — shaded band + the shared ground texture
+        var grd = g.createLinearGradient(0, GY, 0, BH);
+        grd.addColorStop(0, "#96753e"); grd.addColorStop(1, "#5d4020");
+        g.fillStyle = grd; g.fillRect(0, GY, BW, BH - GY);
+        drawGroundDetail(g, 0, t, BW, BH, GY, 1.7);
+        // warm veil: deepens the scene so panels + light text read
+        var veil = g.createLinearGradient(0, 0, 0, BH);
+        veil.addColorStop(0, "rgba(43,16,8,.30)"); veil.addColorStop(0.55, "rgba(43,16,8,.22)"); veil.addColorStop(1, "rgba(30,12,4,.48)");
+        g.fillStyle = veil; g.fillRect(0, 0, BW, BH);
       }
 
       /* Lobby preview — the equip-screen hero stage: the cannon BIG
@@ -4052,7 +4276,7 @@
           if (!menuOverlay.hidden && (coverFrame++ % 2 === 0)) drawCoverArt(time);
           /* The Lobby hero stage stays alive too — pulsing pedestal
              glow, drifting turkeys — while the Lobby is open. */
-          if (!lobbyPanel.hidden && (lobbyFrame++ % 2 === 0)) drawLobbyPreview(time);
+          if (!lobbyPanel.hidden && (lobbyFrame++ % 2 === 0)) { drawLobbyBackdrop(time); drawLobbyPreview(time); }
         } catch (err) {
           /* Recover instead of staying frozen: clear any boss-ceremony
              timing state, and if the ceremony was mid-flight, finish it
