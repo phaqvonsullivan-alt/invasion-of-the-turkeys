@@ -9,7 +9,7 @@ Open `index.html` in any browser (phone or desktop) — no build step, no instal
 
 ## Controls
 - **Move:** drag, hold the ◀ ▶ buttons, or use arrow keys / A / D
-- **Dodge (dash):** double-tap ◀ or ▶, flick sideways on the field, double-tap an arrow / A / D key, press **Space**, or tap the gold **Dodge** button. You're untouchable mid-dash; watch the DODGE meter for the cooldown (0.65 s)
+- **Dodge (dash):** double-tap ◀ or ▶, flick sideways on the field, double-tap an arrow / A / D key, press **Space**, or tap the gold **Dodge** button. You're untouchable mid-dash; watch the DODGE meter for the cooldown (0.50 s)
 - **Gravy Bomb:** tap the bomb button to clear the screen (limited count)
 - **Pause:** pause button. **Sound:** mute toggle (synthesized effects, no audio files)
 
