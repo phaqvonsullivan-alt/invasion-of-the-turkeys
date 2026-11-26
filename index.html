@@ -480,6 +480,27 @@
         #menuOverlay .big-btn { min-height: 58px; font-size: 21px; padding: 13px 24px; }
         #menuOverlay .menu-nav { gap: 8px; margin-top: 10px; }
         #menuOverlay .menu-nav .ghost-btn { min-height: 46px; font-size: 14.5px; padding: 8px 10px; }
+        /* ---------- Lobby on phones: same fix as the menu ----------
+           The pinned head + footer (title/coin bank + next level +
+           Play/Back) are taller than the panel's max-height on a
+           phone, so the footer spilled past the panel's bottom edge
+           and the two bottom buttons landed on the bare page. On
+           small screens the lobby now takes the full viewport and
+           scrolls as one unit inside its shell, exactly like the
+           main menu, so nothing can spill or detach when scrolling. */
+        .lobby {
+          position: fixed; inset: 0; z-index: 30;
+          width: auto; max-width: none; margin: 0;
+          border-radius: 0;
+          max-height: none;
+          display: block;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          padding: calc(18px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+        }
+        .lobby-scroll { overflow: visible; }
       }
     </style>
   </head>
