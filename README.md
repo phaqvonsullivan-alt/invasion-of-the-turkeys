@@ -18,7 +18,16 @@ Open `index.html` in any browser (phone or desktop) — no build step, no instal
 2. **Pumpkin Patch Assault** — Pumpkin Patch Pete
 3. **Autumn Forest Ambush** — Colonel Cornbread
 4. **Harvest Night Raid** — The Stuffing Titan
-5. **The Great Roost** — Emperor Gobblezilla
+5. **Cranberry Bog Blitz** — Cranberry Queen
+6. **Frozen Farm Front** — Frostfeather the Frozen
+7. **The Great Roost** — Emperor Gobblezilla
+8. **Burnt Offering Ridge** — Charcoal King
+9. **Gravy Flood Valley** — Gravy Goliath
+10. **Storm Roost Skies** — Tempest Tom
+11. **Feast Day Fortress** — General Gravybeard
+12. **The Final Feast** — Emperor Gobblezilla Prime
+
+64 waves across the 12 levels, and the flocks get harder as you go — mutated turkeys creep in from Level 4. Between runs, the **Lobby** and **Weapon Workshop** let you spend banked coins on permanent cannon upgrades. Progress and best runs are saved on your device, with a local leaderboard on the main menu.
 
 ## Pickups
 - **Corn** — bonus points
