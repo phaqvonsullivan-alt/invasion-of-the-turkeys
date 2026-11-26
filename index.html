@@ -49,9 +49,15 @@
         overscroll-behavior: none;
       }
       .wrap {
-        max-width: 480px;
+        max-width: 860px;
+        width: 100%;
         margin: 0 auto;
         padding: 10px 12px 22px;
+      }
+      @media (min-width: 700px) {
+        .wrap { padding: 18px 20px 28px; }
+        .stage, .controls, .hud { max-width: 620px; margin-left: auto; margin-right: auto; }
+        .controls { margin-top: 12px; }
       }
 
       /* ---------- HUD ---------- */
@@ -120,37 +126,41 @@
       .overlay[hidden] { display: none; }
       .overlay h2 {
         font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(26px, 8vw, 38px);
-        margin: 0 0 6px;
-        line-height: 1.08;
+        font-size: clamp(32px, 9vw, 52px);
+        margin: 0 0 8px;
+        line-height: 1.05;
         letter-spacing: .01em;
       }
       .overlay .sub {
-        font-size: clamp(14px, 4.2vw, 17px);
+        font-size: clamp(16px, 4.6vw, 20px);
         color: #f3cf96;
-        margin: 0 0 12px;
+        margin: 0 0 14px;
         font-style: italic;
       }
       .overlay p {
-        font-size: 15px; line-height: 1.5;
-        margin: 0 0 10px; max-width: 34ch;
+        font-size: 16px; line-height: 1.55;
+        margin: 0 0 12px; max-width: 42ch;
         color: #fbeed3;
       }
       .overlay .howto {
         text-align: left;
-        font-size: 14px; line-height: 1.65;
+        font-size: 15px; line-height: 1.65;
         background: rgba(255, 244, 214, .10);
         border: 1px solid rgba(255, 224, 160, .35);
         border-radius: 10px;
-        padding: 10px 14px;
-        margin: 2px 0 16px;
-        max-width: 320px;
+        padding: 12px 16px;
+        margin: 2px 0 18px;
+        max-width: 440px;
+        width: 100%;
       }
       .overlay .howto b { color: #ffd98a; }
+      #menuOverlay { justify-content: flex-start; overflow-y: auto; padding-top: 30px; padding-bottom: 30px; }
+      #menuOverlay h2 { font-size: clamp(36px, 10vw, 58px); }
       .big-btn {
-        min-height: 54px;
-        padding: 12px 30px;
-        font-size: 19px; font-weight: 700;
+        min-height: 64px;
+        padding: 16px 36px;
+        font-size: 22px; font-weight: 800;
+        letter-spacing: .01em;
         font-family: inherit;
         color: var(--accent-ink);
         background: var(--accent);
@@ -159,7 +169,10 @@
         cursor: pointer;
         box-shadow: 0 4px 0 #7e2418;
         touch-action: manipulation;
+        width: 100%;
+        max-width: 380px;
       }
+      #menuOverlay .big-btn { font-size: 24px; min-height: 68px; }
       .big-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #7e2418; }
       .ghost-btn {
         min-height: 46px;
@@ -222,6 +235,104 @@
         letter-spacing: .03em;
         margin-bottom: 8px;
       }
+      .hud .stat.coins b { color: var(--gold); }
+      /* ---------- Lobby ---------- */
+      .lobby {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        padding: 18px 16px 20px;
+        margin-top: 4px;
+      }
+      .lobby[hidden] { display: none; }
+      .lobby-head {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        gap: 12px; flex-wrap: wrap; margin-bottom: 6px;
+      }
+      .lobby-head h2 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(26px, 6vw, 36px); margin: 0; line-height: 1.1;
+      }
+      .lobby-head p { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; line-height: 1.5; max-width: 52ch; }
+      .coin-bank {
+        background: var(--gold-soft);
+        border: 1.5px solid var(--gold);
+        border-radius: 12px;
+        padding: 10px 16px; text-align: center; min-width: 132px;
+      }
+      .coin-bank span { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+      .coin-bank b { font-size: 28px; color: var(--ink); font-variant-numeric: tabular-nums; }
+      .lobby-banner {
+        background: var(--gold-soft); border: 1px solid var(--btn-line);
+        border-radius: 10px; padding: 9px 13px; font-size: 14.5px; font-weight: 600;
+        margin: 10px 0 4px;
+      }
+      .lobby-banner[hidden] { display: none; }
+      .preview-card {
+        border: 1px solid var(--line); border-radius: 12px;
+        padding: 12px 14px; margin-top: 12px;
+        display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+      }
+      .preview-card canvas { max-width: 100%; height: auto; border-radius: 8px; background: #f7dfae; }
+      .stat-list { flex: 1 1 200px; font-size: 14.5px; line-height: 1.9; }
+      .stat-list b { font-variant-numeric: tabular-nums; }
+      .stat-list .up { color: var(--good); font-weight: 700; }
+      .lobby h3 { font-size: 19px; margin: 20px 0 4px; font-family: Georgia, serif; }
+      .lobby .shop-sub { margin: 0 0 12px; color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
+      .upgrade-grid {
+        display: grid; grid-template-columns: 1fr; gap: 10px;
+      }
+      @media (min-width: 620px) { .upgrade-grid { grid-template-columns: 1fr 1fr; } }
+      .upgrade-card {
+        border: 1px solid var(--line); border-radius: 12px;
+        padding: 13px 14px; background: var(--btn);
+        display: flex; flex-direction: column; gap: 6px;
+      }
+      .upgrade-card.maxed { border-color: var(--good); }
+      .upgrade-top { display: flex; align-items: center; gap: 9px; }
+      .upgrade-icon {
+        width: 40px; height: 40px; flex: 0 0 40px; border-radius: 10px;
+        background: var(--gold-soft); border: 1px solid var(--btn-line);
+        display: flex; align-items: center; justify-content: center; font-size: 21px;
+      }
+      .upgrade-top h4 { margin: 0; font-size: 16.5px; line-height: 1.2; }
+      .pips { font-size: 13px; letter-spacing: 2px; color: var(--gold); }
+      .pips .off { opacity: .25; }
+      .upgrade-card p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+      .upgrade-effect { font-size: 14px; font-weight: 600; }
+      .upgrade-effect .next { color: var(--good); }
+      .buy-btn {
+        margin-top: auto; min-height: 48px; padding: 10px 14px;
+        font-family: inherit; font-size: 16px; font-weight: 800;
+        color: var(--accent-ink); background: var(--accent);
+        border: 2px solid #7e2418; border-radius: 10px; cursor: pointer;
+        box-shadow: 0 3px 0 #7e2418; touch-action: manipulation;
+      }
+      .buy-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #7e2418; }
+      .buy-btn:disabled { background: var(--btn); color: var(--ink-soft); border-color: var(--btn-line); box-shadow: none; cursor: default; }
+      .buy-btn.maxed-btn { background: var(--good); border-color: #33591f; box-shadow: 0 3px 0 #33591f; color: #fff; }
+      .next-card {
+        border: 1.5px solid var(--gold); background: var(--gold-soft);
+        border-radius: 12px; padding: 14px 16px; margin-top: 20px;
+      }
+      .next-card h4 { margin: 0 0 4px; font-size: 18px; }
+      .next-card p { margin: 0 0 12px; font-size: 14.5px; line-height: 1.5; color: var(--ink-soft); }
+      .next-card .big-btn { max-width: none; }
+      .level-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+      .chip {
+        min-height: 40px; padding: 7px 13px; font-family: inherit; font-size: 14px; font-weight: 700;
+        border-radius: 999px; border: 1.5px solid var(--btn-line); background: var(--btn); color: var(--ink);
+        cursor: pointer; touch-action: manipulation;
+      }
+      .chip:disabled { opacity: .4; cursor: default; }
+      .chip.current { border-color: var(--gold); background: var(--gold-soft); }
+      .lobby .ghost-dark {
+        min-height: 44px; padding: 8px 18px; margin-top: 14px;
+        font-family: inherit; font-size: 14.5px; font-weight: 600;
+        color: var(--ink-soft); background: transparent;
+        border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -229,8 +340,10 @@
       <!-- HUD -->
       <div class="hud" aria-label="Game status">
         <div class="stat"><span>Score</span><b id="hudScore">0</b></div>
+        <div class="stat coins"><span>🪙 Coins</span><b id="hudCoins">0</b></div>
         <div class="stat grow"><span id="hudLevelLabel">Level 1</span><b id="hudWave">Get ready</b></div>
         <div class="lives" id="hudLives" aria-label="Lives"></div>
+        <button class="icon-btn" id="btnLobby" type="button" aria-label="Go to lobby" title="Lobby">🏠</button>
         <button class="icon-btn" id="btnSound" type="button" aria-label="Toggle sound">🔊</button>
         <button class="icon-btn" id="btnPause" type="button" aria-label="Pause game">⏸</button>
       </div>
@@ -243,13 +356,14 @@
         <div class="overlay" id="menuOverlay">
           <h2>Invasion of the Turkeys</h2>
           <p class="sub">Thanksgiving will never be the same.</p>
-          <p>The turkeys have had enough. This year, <b>they're</b> coming for <b>us</b> — wave after wave of them, dropping out of the sky over the harvest festival. You're Earth's last line of defense. Man the cranberry cannon!</p>
+          <p>The turkeys have had enough. This year, <b>they're</b> coming for <b>us</b> — wave after wave across <b>12 levels</b>, from the barnyard to the Final Feast. Every level brings a different flock: pumpkin-orange, forest, night, frosty white, even burnt extra-crispy turkeys. You're Earth's last line of defense. Man the cranberry cannon!</p>
           <div class="howto">
             <div>🖐️ <b>Drag</b> on the field (or hold ◀ ▶) to move</div>
             <div>💨 <b>Double-tap</b> ◀ ▶, flick sideways, or tap <b>Dodge</b> to dash — nothing can hit you mid-dash</div>
             <div>🔴 Your cranberry cannon <b>fires on its own</b> — fast, snappy shots; just aim by moving</div>
             <div>💣 <b>Gravy Bomb</b> button blasts everything on screen</div>
-            <div>🌽 Grab corn for points, cranberries for triple-shot, pie for an extra life</div>
+            <div>🌽 Grab corn for points and coins, cranberries for triple-shot, pie for an extra life</div>
+            <div>🪙 Turkeys drop <b>coins</b> — after each run you return to the <b>Lobby</b> to upgrade your cannon</div>
             <div>🦃 Clear every wave, then beat the <b>boss turkey</b></div>
           </div>
           <button class="big-btn" id="btnStart" type="button">Defend Earth!</button>
@@ -267,22 +381,51 @@
         </div>
       </div>
 
+      <!-- Lobby: spend collected coins on weapon upgrades between runs -->
+      <section class="lobby" id="lobbyPanel" hidden aria-label="Lobby and weapon workshop">
+        <div class="lobby-head">
+          <div>
+            <h2>The Lobby</h2>
+            <p>Home base between runs. Every coin your cannon collects out there lands here — spend them on the guns and watch the cannon itself change.</p>
+          </div>
+          <div class="coin-bank"><span>🪙 Coin bank</span><b id="lobbyCoins">0</b></div>
+        </div>
+        <div class="lobby-banner" id="lobbyBanner" hidden></div>
+
+        <div class="preview-card">
+          <canvas id="lobbyCanvas" width="300" height="132" aria-label="Preview of your upgraded cranberry cannon"></canvas>
+          <div class="stat-list" id="lobbyStats"></div>
+        </div>
+
+        <h3>Weapon Workshop</h3>
+        <p class="shop-sub">Upgrades are permanent and stack with pickups. Stronger shots get bigger and change color, extra barrels really appear on the cannon, and piercing rounds fly straight through a turkey. Short on coins? Replay an earlier level to earn more.</p>
+        <div class="upgrade-grid" id="upgradeGrid"></div>
+
+        <div class="next-card">
+          <h4 id="lobbyNextTitle">Next: Level 1</h4>
+          <p id="lobbyNextBody"></p>
+          <button class="big-btn" id="btnLobbyGo" type="button">Start Level 1</button>
+          <div class="level-chips" id="levelChips" aria-label="Replay an unlocked level"></div>
+        </div>
+        <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
+      </section>
+
       <!-- Touch controls -->
-      <div class="controls">
+      <div class="controls" id="controlsRow">
         <button class="ctl-btn" id="btnLeft" type="button" aria-label="Move left, double-tap to dodge left">◀<small>Move · 2×tap = dodge</small></button>
         <button class="ctl-btn dodge" id="btnDodge" type="button" aria-label="Dodge dash">💨<small>Dodge</small></button>
         <button class="ctl-btn bomb" id="btnBomb" type="button" aria-label="Use gravy bomb">💣<small>Gravy Bomb · <span id="bombCount">2</span></small></button>
         <button class="ctl-btn" id="btnRight" type="button" aria-label="Move right, double-tap to dodge right">▶<small>Move · 2×tap = dodge</small></button>
       </div>
 
-      <p class="hint">Dodge: double-tap ◀ or ▶, flick sideways on the field, or tap Dodge — you're untouchable mid-dash. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Five levels stand between Earth and the turkeys — each one ends with a boss.</p>
+      <p class="hint" id="hintText">Dodge: double-tap ◀ or ▶, flick sideways on the field, or tap Dodge — you're untouchable mid-dash. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries.</p>
     </main>
 
     <script>
       "use strict";
       /* ============================================================
          INVASION OF THE TURKEYS — a Thanksgiving wave shooter
-         Defend Earth: waves of invading turkeys, 5 levels, 5 bosses.
+         Defend Earth: waves of invading turkeys, 12 levels, 12 bosses.
          ============================================================ */
       var W = 420, H = 640;
       var GROUND = H - 46;
@@ -313,33 +456,75 @@
       var LEVELS = [
         {
           name: "Barnyard Landing", sub: "They came from behind the barn…",
-          skyTop: "#8ec9e8", skyBot: "#f7dfae", hill: "#7d9b4e", hillFar: "#a8bf74",
-          waves: [5, 6, 6], enemyHp: 1, enemySpeed: 26, fireEvery: 3.6, diveChance: 0.14,
-          boss: { name: "Big Gobbler", hp: 34, tag: "BOSS · LEVEL 1" }
+          skyTop: "#8ec9e8", skyBot: "#f7dfae", hill: "#7d9b4e", hillFar: "#a8bf74", variant: "classic",
+          waves: [6, 7, 8, 7], enemyHp: 1, enemySpeed: 28, fireEvery: 3.4, diveChance: 0.16,
+          boss: { name: "Big Gobbler", hp: 90, tag: "BOSS · LEVEL 1" }
         },
         {
           name: "Pumpkin Patch Assault", sub: "The patch is crawling with them.",
-          skyTop: "#f2a65a", skyBot: "#f9dc9a", hill: "#8a7a3a", hillFar: "#b39b52",
-          waves: [6, 7, 7], enemyHp: 1, enemySpeed: 32, fireEvery: 3.0, diveChance: 0.20,
-          boss: { name: "Pumpkin Patch Pete", hp: 52, tag: "BOSS · LEVEL 2" }
+          skyTop: "#f2a65a", skyBot: "#f9dc9a", hill: "#8a7a3a", hillFar: "#b39b52", variant: "pumpkin",
+          waves: [7, 8, 8, 9], enemyHp: 1, enemySpeed: 34, fireEvery: 2.9, diveChance: 0.22,
+          boss: { name: "Pumpkin Patch Pete", hp: 135, tag: "BOSS · LEVEL 2" }
         },
         {
           name: "Autumn Forest Ambush", sub: "They're dropping through the trees!",
-          skyTop: "#e07b39", skyBot: "#f4bd76", hill: "#6e4f2a", hillFar: "#97713d",
-          waves: [7, 7, 8, 8], enemyHp: 2, enemySpeed: 38, fireEvery: 2.5, diveChance: 0.22,
-          boss: { name: "Colonel Cornbread", hp: 74, tag: "BOSS · LEVEL 3" }
+          skyTop: "#e07b39", skyBot: "#f4bd76", hill: "#6e4f2a", hillFar: "#97713d", variant: "forest",
+          waves: [8, 8, 9, 9, 8], enemyHp: 2, enemySpeed: 40, fireEvery: 2.4, diveChance: 0.25,
+          boss: { name: "Colonel Cornbread", hp: 190, tag: "BOSS · LEVEL 3" }
         },
         {
           name: "Harvest Night Raid", sub: "They attack under cover of darkness.",
-          skyTop: "#2e3d33", skyBot: "#77603c", hill: "#24301f", hillFar: "#3d4a2e",
-          waves: [8, 8, 9, 9], enemyHp: 2, enemySpeed: 45, fireEvery: 2.1, diveChance: 0.28,
-          boss: { name: "The Stuffing Titan", hp: 100, tag: "BOSS · LEVEL 4" }
+          skyTop: "#2e3d33", skyBot: "#77603c", hill: "#24301f", hillFar: "#3d4a2e", variant: "night",
+          waves: [8, 9, 10, 9, 10], enemyHp: 2, enemySpeed: 47, fireEvery: 2.0, diveChance: 0.30,
+          boss: { name: "The Stuffing Titan", hp: 255, tag: "BOSS · LEVEL 4" }
         },
         {
-          name: "The Great Roost", sub: "The Emperor himself has come for Earth.",
-          skyTop: "#93392b", skyBot: "#eda254", hill: "#4c2c1c", hillFar: "#6e422a",
-          waves: [9, 9, 10, 10, 10], enemyHp: 3, enemySpeed: 52, fireEvery: 1.8, diveChance: 0.34,
-          boss: { name: "Emperor Gobblezilla", hp: 140, tag: "FINAL BOSS" }
+          name: "Cranberry Bog Blitz", sub: "The bog is bubbling red — and full of turkeys.",
+          skyTop: "#c94f6d", skyBot: "#f7c8a0", hill: "#5a3a4a", hillFar: "#7d4a5a", variant: "cranberry",
+          waves: [9, 10, 10, 11, 10], enemyHp: 2, enemySpeed: 52, fireEvery: 1.9, diveChance: 0.32,
+          boss: { name: "Cranberry Queen", hp: 325, tag: "BOSS · LEVEL 5" }
+        },
+        {
+          name: "Frozen Farm Front", sub: "They came in on the cold wind, feathers frosted white.",
+          skyTop: "#bfe3f0", skyBot: "#eef8fb", hill: "#8fb8cc", hillFar: "#a8c8d8", variant: "frost",
+          waves: [10, 10, 11, 11, 12], enemyHp: 3, enemySpeed: 56, fireEvery: 1.8, diveChance: 0.34,
+          boss: { name: "Frostfeather the Frozen", hp: 405, tag: "BOSS · LEVEL 6" }
+        },
+        {
+          name: "The Great Roost", sub: "The Emperor's roost — golden feathers everywhere.",
+          skyTop: "#93392b", skyBot: "#eda254", hill: "#4c2c1c", hillFar: "#6e422a", variant: "golden",
+          waves: [10, 11, 11, 12, 12], enemyHp: 3, enemySpeed: 60, fireEvery: 1.7, diveChance: 0.36,
+          boss: { name: "Emperor Gobblezilla", hp: 485, tag: "BOSS · LEVEL 7" }
+        },
+        {
+          name: "Burnt Offering Ridge", sub: "Some turkeys came back… extra crispy.",
+          skyTop: "#3a2a20", skyBot: "#8a4a2a", hill: "#241a12", hillFar: "#3d2c1e", variant: "burnt",
+          waves: [11, 12, 12, 12, 13, 12], enemyHp: 3, enemySpeed: 64, fireEvery: 1.6, diveChance: 0.38,
+          boss: { name: "Charcoal King", hp: 575, tag: "BOSS · LEVEL 8" }
+        },
+        {
+          name: "Gravy Flood Valley", sub: "The valley is drowning in gravy — and turkeys.",
+          skyTop: "#8a6a35", skyBot: "#d9b988", hill: "#6e5426", hillFar: "#97793d", variant: "gravy",
+          waves: [12, 12, 13, 13, 13, 14], enemyHp: 4, enemySpeed: 68, fireEvery: 1.5, diveChance: 0.40,
+          boss: { name: "Gravy Goliath", hp: 675, tag: "BOSS · LEVEL 9" }
+        },
+        {
+          name: "Storm Roost Skies", sub: "Thunder, lightning, and very angry birds.",
+          skyTop: "#33404e", skyBot: "#7d94a6", hill: "#2b3644", hillFar: "#46586a", variant: "storm",
+          waves: [13, 13, 14, 14, 14, 15], enemyHp: 4, enemySpeed: 72, fireEvery: 1.4, diveChance: 0.42,
+          boss: { name: "Tempest Tom", hp: 785, tag: "BOSS · LEVEL 10" }
+        },
+        {
+          name: "Feast Day Fortress", sub: "The fortress gates are made of wishbones.",
+          skyTop: "#5a2a6e", skyBot: "#eda254", hill: "#3d1c4a", hillFar: "#4a2a5e", variant: "royal",
+          waves: [14, 14, 15, 15, 15, 16], enemyHp: 4, enemySpeed: 76, fireEvery: 1.3, diveChance: 0.44,
+          boss: { name: "General Gravybeard", hp: 895, tag: "BOSS · LEVEL 11" }
+        },
+        {
+          name: "The Final Feast", sub: "One last stand. Pluck him once and for all.",
+          skyTop: "#1c0f0a", skyBot: "#b23a2e", hill: "#140c08", hillFar: "#2b1810", variant: "prime",
+          waves: [15, 15, 16, 16, 16, 17, 16], enemyHp: 5, enemySpeed: 82, fireEvery: 1.2, diveChance: 0.46,
+          boss: { name: "Emperor Gobblezilla Prime", hp: 1020, tag: "FINAL BOSS" }
         }
       ];
 
@@ -355,8 +540,69 @@
       var flash = 0;
       var time = 0;
 
+      /* ---------------- Coins & weapon upgrades (the Lobby) ----------------
+         Coins and upgrades live in these variables for the whole session:
+         they survive level clears, game overs and fresh restarts, and are
+         spent only in the Lobby. */
+      var coins = 0, coinsThisRun = 0, totalCoinsEarned = 0;
+      var highestUnlocked = 0; // highest level index the player may start
+      var lobbyTarget = 0;     // level the Lobby's main button will start
+      var upgrades = { damage: 0, rapid: 0, big: 0, spread: 0, pierce: 0, bomb: 0, boots: 0 };
+      var UPGRADES = [
+        { id: "damage", icon: "🔴", name: "Cranberry Damage",
+          desc: "Harder-hitting berries. Each level adds +1 damage per shot — and the shots change color as they get meaner.",
+          max: 5, costs: [40, 90, 160, 260, 400],
+          now: function (lv) { return "Damage " + (1 + lv) + " per shot"; },
+          next: function (lv) { return "Damage " + (2 + lv) + " per shot"; } },
+        { id: "rapid", icon: "⚡", name: "Rapid Fire",
+          desc: "A faster cannon cycle with gold speed bands on the barrel. Shots pour out noticeably quicker.",
+          max: 5, costs: [40, 90, 160, 260, 400],
+          now: function (lv) { return Math.round(1 / fireRateFor(lv)) + " shots / sec"; },
+          next: function (lv) { return Math.round(1 / fireRateFor(lv + 1)) + " shots / sec"; } },
+        { id: "big", icon: "🍒", name: "Big Berries",
+          desc: "Bigger cranberries with a glowing core — a wider hit area that is easy to see in flight.",
+          max: 4, costs: [50, 110, 200, 330],
+          now: function (lv) { return "Berry size " + ["Normal", "Large", "Extra large", "Jumbo", "Feast-size"][lv]; },
+          next: function (lv) { return "Berry size " + ["Normal", "Large", "Extra large", "Jumbo", "Feast-size"][lv + 1]; } },
+        { id: "spread", icon: "🎯", name: "Extra Barrels",
+          desc: "Bolt real extra barrels onto the cannon. Two barrels fire side by side; three add a spread shot.",
+          max: 2, costs: [150, 400],
+          now: function (lv) { return (1 + lv) + (lv === 0 ? " barrel" : " barrels") + " firing"; },
+          next: function (lv) { return (2 + lv) + " barrels firing"; } },
+        { id: "pierce", icon: "➤", name: "Piercing Rounds",
+          desc: "Shots punch straight through turkeys instead of stopping at the first one they hit.",
+          max: 2, costs: [120, 300],
+          now: function (lv) { return lv === 0 ? "Stops at first turkey" : "Flies through " + (lv + 1) + " turkeys"; },
+          next: function (lv) { return "Flies through " + (lv + 2) + " turkeys"; } },
+        { id: "bomb", icon: "💣", name: "Gravy Bomb Power",
+          desc: "Bigger gravy blasts: more damage to every turkey on screen and a much bigger bite out of bosses.",
+          max: 3, costs: [60, 140, 260],
+          now: function (lv) { return "Blast damage " + (3 + lv * 2) + " · boss hit " + (10 + lv * 6); },
+          next: function (lv) { return "Blast damage " + (5 + lv * 2) + " · boss hit " + (16 + lv * 6); } },
+        { id: "boots", icon: "👢", name: "Swift Boots",
+          desc: "For the cannon crew: faster movement and a dodge that recharges sooner, so the dash is ready more often.",
+          max: 3, costs: [50, 120, 220],
+          now: function (lv) { return "Move speed " + Math.round((345 + lv * 28) / 345 * 100) + "% · dodge back in " + dodgeCdFor(lv).toFixed(2) + "s"; },
+          next: function (lv) { return "Move speed " + Math.round((345 + (lv + 1) * 28) / 345 * 100) + "% · dodge back in " + dodgeCdFor(lv + 1).toFixed(2) + "s"; } }
+      ];
+      function fireRateFor(lv) { return [0.12, 0.105, 0.092, 0.08, 0.069, 0.059][lv]; }
+      function dodgeCdFor(lv) { return [0.50, 0.44, 0.38, 0.32][lv]; }
+      function getDamage() { return 1 + upgrades.damage; }
+      function getFireRate() { return fireRateFor(upgrades.rapid); }
+      function getBulletR() { return 5.5 + upgrades.big * 1.6; }
+      function getBaseShots() { return 1 + upgrades.spread; }
+      function getPierce() { return upgrades.pierce; }
+      function getBombDamage() { return 3 + upgrades.bomb * 2; }
+      function getBossBombDamage() { return 10 + upgrades.bomb * 6; }
+      var BULLET_COLORS = ["#b23a2e", "#c22f3d", "#d93a2e", "#e85d2a", "#f28c28", "#ffb52e"];
+      function earnCoins(n, x, y) {
+        coins += n; coinsThisRun += n; totalCoinsEarned += n;
+        if (x !== undefined) floaters.push({ x: x, y: y, text: "+" + n + " 🪙", t: 1.1 });
+        updateHUD();
+      }
+
       var player = null;
-      var bullets = [], enemyBombs = [], enemies = [], pickups = [], particles = [], leaves = [];
+      var bullets = [], enemyBombs = [], enemies = [], pickups = [], particles = [], leaves = [], floaters = [];
       var boss = null;
       var spawnQueue = 0, spawnTimer = 0, wavePause = 0;
       var keys = { left: false, right: false };
@@ -365,7 +611,7 @@
       function resetPlayer() {
         player = {
           x: W / 2, y: GROUND - 26, r: 17,
-          speed: 345, vx: 0, fireTimer: 0, power: 1, powerTimer: 0,
+          speed: 345 + upgrades.boots * 28, vx: 0, fireTimer: 0, power: 1, powerTimer: 0,
           invuln: 0, shield: false, tilt: 0,
           dodgeTime: 0, dodgeCd: 0, dodgeDir: 1, lastDir: 1, recoil: 0
         };
@@ -446,6 +692,8 @@
       /* ---------------- Waves & enemies ---------------- */
       function startLevel(idx) {
         levelIdx = idx;
+        coinsThisRun = 0;
+        player.speed = 345 + upgrades.boots * 28;
         scoreAtLevelStart = score;
         waveIdx = 0;
         bullets = []; enemyBombs = []; enemies = []; pickups = []; particles = [];
@@ -482,12 +730,14 @@
         updateHUD();
       }
 
+      var enemyUid = 0;
       function spawnEnemy(col, row) {
         var L = LEVELS[levelIdx];
         var margin = 46;
         var x = margin + col * ((W - margin * 2) / 5) + rand(-6, 6);
         var targetY = 78 + row * 52;
         enemies.push({
+          uid: ++enemyUid,
           x: x, y: -40 - row * 10, baseX: x, targetY: targetY,
           r: 20, hp: L.enemyHp, maxHp: L.enemyHp,
           phase: rand(0, 6.28), state: "enter",
@@ -518,8 +768,10 @@
         if (!boss) return;
         var i, ang;
         if (kind === "spread") {
-          for (i = -2; i <= 2; i++) {
-            enemyBombs.push({ x: boss.x, y: boss.y + 30, vx: i * 46, vy: 150, r: 7.5 });
+          var range = levelIdx >= 4 ? 3 : 2;
+          var spd = 150 + levelIdx * 6;
+          for (i = -range; i <= range; i++) {
+            enemyBombs.push({ x: boss.x, y: boss.y + 30, vx: i * 46, vy: spd, r: 7.5 });
           }
         } else if (kind === "aimed") {
           var dx = player.x - boss.x, dy = player.y - boss.y;
@@ -537,20 +789,23 @@
       /* ---------------- Combat ---------------- */
       function playerShoot(dt) {
         player.fireTimer -= dt;
-        var rate = 0.12; // tuned snap: faster cycle, cranberries leave instantly
+        var rate = getFireRate(); // Lobby Rapid Fire upgrades make this snappier
         if (player.fireTimer <= 0 && (state === "play" || state === "boss")) {
           player.fireTimer = rate;
           player.recoil = 1;
           var bx = player.x, by = player.y - 26;
-          if (player.power === 1) {
-            bullets.push({ x: bx, y: by, vx: 0, vy: -640, r: 5.5, trail: 0 });
-          } else if (player.power === 2) {
-            bullets.push({ x: bx - 9, y: by + 4, vx: 0, vy: -640, r: 5.5, trail: 0 });
-            bullets.push({ x: bx + 9, y: by + 4, vx: 0, vy: -640, r: 5.5, trail: 0 });
+          var shots = Math.max(getBaseShots(), player.power); // permanent barrels + pickup power
+          var r = getBulletR(), dmg = getDamage(), pierce = getPierce();
+          function mk(x, y, vx, vy) { bullets.push({ x: x, y: y, vx: vx, vy: vy, r: r, trail: 0, dmg: dmg, pierceLeft: pierce, hitSet: {} }); }
+          if (shots === 1) {
+            mk(bx, by, 0, -640);
+          } else if (shots === 2) {
+            mk(bx - 9, by + 4, 0, -640);
+            mk(bx + 9, by + 4, 0, -640);
           } else {
-            bullets.push({ x: bx, y: by, vx: 0, vy: -655, r: 5.5, trail: 0 });
-            bullets.push({ x: bx - 11, y: by + 5, vx: -75, vy: -620, r: 5.5, trail: 0 });
-            bullets.push({ x: bx + 11, y: by + 5, vx: 75, vy: -620, r: 5.5, trail: 0 });
+            mk(bx, by, 0, -655);
+            mk(bx - 11, by + 5, -75, -620);
+            mk(bx + 11, by + 5, 75, -620);
           }
           SFX.shoot();
         }
@@ -563,7 +818,7 @@
         player.dodgeDir = dir < 0 ? -1 : 1;
         player.lastDir = player.dodgeDir;
         player.dodgeTime = 0.15;
-        player.dodgeCd = 0.50;
+        player.dodgeCd = dodgeCdFor(upgrades.boots);
         player.invuln = Math.max(player.invuln, 0.30);
         addParticles(player.x, player.y + 8, ["#fff2cf", "#f4bd76", "#e8873a"], 8, 90);
         SFX.dodge();
@@ -584,6 +839,7 @@
       function killEnemy(e, idx) {
         enemies.splice(idx, 1);
         score += 100;
+        earnCoins(3 + Math.floor(levelIdx * 0.8), e.x, e.y - 14);
         addParticles(e.x, e.y, FEATHERS, 12, 130);
         addParticles(e.x, e.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 9, 165); // cranberry splat payoff
         shake = Math.max(shake, 0.10);
@@ -618,12 +874,12 @@
         flash = 0.35; shake = 0.5;
         SFX.bomb();
         for (var i = enemies.length - 1; i >= 0; i--) {
-          enemies[i].hp -= 3;
+          enemies[i].hp -= getBombDamage();
           addParticles(enemies[i].x, enemies[i].y, FEATHERS, 6, 120);
-          if (enemies[i].hp <= 0) { score += 100; enemies.splice(i, 1); }
+          if (enemies[i].hp <= 0) { score += 100; earnCoins(3 + Math.floor(levelIdx * 0.8), enemies[i].x, enemies[i].y - 14); enemies.splice(i, 1); }
         }
         if (boss) {
-          boss.hp -= 10;
+          boss.hp -= getBossBombDamage();
           addParticles(boss.x, boss.y, FEATHERS, 16, 170);
           if (boss.hp <= 0) bossDown();
         }
@@ -636,6 +892,7 @@
         addParticles(boss.x, boss.y, FEATHERS.concat(["#ffd98a"]), 42, 230);
         addParticles(boss.x, boss.y, ["#ffd98a", "#fff2cf"], 20, 160);
         score += 1000 + levelIdx * 250;
+        earnCoins(40 + levelIdx * 10, boss.x, boss.y);
         SFX.boom(); SFX.gobble();
         boss = null;
         enemyBombs = [];
@@ -646,49 +903,51 @@
       function levelClear() {
         var bonus = lives * 100 + bombs * 50;
         score += bonus;
+        bombs += 1; // a spare Gravy Bomb for clearing the level
+        earnCoins(25, W / 2, H / 2); // level-clear coin bonus, banked in the Lobby
         state = "clear";
         SFX.clear();
         var last = levelIdx >= LEVELS.length - 1;
+        if (!last) highestUnlocked = Math.max(highestUnlocked, levelIdx + 1);
+        lobbyTarget = last ? 0 : levelIdx + 1;
         msgTag.hidden = false;
         msgTag.textContent = "LEVEL " + (levelIdx + 1) + " CLEARED";
         msgTitle.textContent = last ? "Earth Is Saved!" : "The turkeys retreat… for now";
         msgSub.textContent = last
-          ? "Emperor Gobblezilla has been plucked. Thanksgiving is back on the menu — ours."
+          ? LEVELS[levelIdx].boss.name + " has been plucked. Thanksgiving is back on the menu — ours."
           : LEVELS[levelIdx].boss.name + " has been plucked and stuffed.";
-        msgBody.textContent = "Survival bonus: +" + bonus + " points.";
+        msgBody.textContent = "Survival bonus: +" + bonus + " points. This run banked 🪙 " + coinsThisRun + " coins — spend them in the Lobby before the next level.";
         msgScore.hidden = false;
-        msgScore.textContent = "Score: " + score.toLocaleString();
-        if (last) {
-          state = "victory";
-          msgBtn.textContent = "Play Again";
-          msgBtn2.hidden = true;
-        } else {
-          msgBtn.textContent = "On to Level " + (levelIdx + 2);
-          msgBtn2.hidden = false;
-          msgBtn2.textContent = "Restart game";
-        }
+        msgScore.textContent = "Score: " + score.toLocaleString() + " · 🪙 " + coins.toLocaleString() + " coins banked";
+        if (last) state = "victory";
+        msgBtn.textContent = "🏠 Return to Lobby";
+        msgBtn2.hidden = false;
+        msgBtn2.textContent = last ? "Play Again" : "Skip Lobby — Level " + (levelIdx + 2);
         msgOverlay.hidden = false;
         updateHUD();
       }
 
       function gameOver() {
         state = "over";
+        lobbyTarget = levelIdx;
         msgTag.hidden = false;
         msgTag.textContent = "GAME OVER";
         msgTitle.textContent = "The turkeys win this year";
         msgSub.textContent = "Earth has been thoroughly gobbled.";
         msgBody.textContent = "You reached Level " + (levelIdx + 1) + " — " + LEVELS[levelIdx].name +
-          ", wave " + Math.min(waveIdx + 1, LEVELS[levelIdx].waves.length) + ".";
+          ", wave " + Math.min(waveIdx + 1, LEVELS[levelIdx].waves.length) + ". The 🪙 " + coinsThisRun +
+          " coins from this run are still yours — bank them on upgrades in the Lobby, then retry stronger.";
         msgScore.hidden = false;
-        msgScore.textContent = "Final score: " + score.toLocaleString();
-        msgBtn.textContent = "Retry Level " + (levelIdx + 1);
+        msgScore.textContent = "Final score: " + score.toLocaleString() + " · 🪙 " + coins.toLocaleString() + " coins banked";
+        msgBtn.textContent = "🏠 Return to Lobby";
         msgBtn2.hidden = false;
-        msgBtn2.textContent = "Restart game";
+        msgBtn2.textContent = "Retry Level " + (levelIdx + 1) + " now";
         msgOverlay.hidden = false;
         updateHUD();
       }
 
       function fullRestart() {
+        // A fresh game resets score/lives — coins and Lobby upgrades are kept.
         score = 0; lives = 3; bombs = 2;
         resetPlayer();
         startLevel(0);
@@ -720,6 +979,12 @@
           var lf = leaves[li];
           lf.y += lf.vy * dt; lf.sway += dt * 2; lf.x += Math.sin(lf.sway) * 18 * dt; lf.rot += dt * 1.5;
           if (lf.y > H + 12) leaves.splice(li, 1);
+        }
+
+        // floating coin text always drifts up
+        for (var fti = floaters.length - 1; fti >= 0; fti--) {
+          floaters[fti].t -= dt; floaters[fti].y -= 34 * dt;
+          if (floaters[fti].t <= 0) floaters.splice(fti, 1);
         }
 
         // particles always drift
@@ -840,24 +1105,27 @@
             b.y += 80 * dt;
             if (b.y >= b.targetY) { b.y = b.targetY; b.state = "fight"; }
           } else {
-            b.phase += dt * (0.7 + levelIdx * 0.08);
+            b.phase += dt * (0.7 + levelIdx * 0.11);
             if (!b.diving) {
               b.x = W / 2 + Math.sin(b.phase) * (W / 2 - 78);
               b.y = b.targetY + Math.sin(b.phase * 2.1) * 16;
               b.shootTimer -= dt;
               if (b.shootTimer <= 0) {
-                b.shootTimer = Math.max(0.85, 1.7 - levelIdx * 0.16);
+                b.shootTimer = Math.max(0.55, 1.7 - levelIdx * 0.13);
                 var roll = Math.random();
                 bossShoot(roll < 0.4 ? "spread" : (roll < 0.75 ? "aimed" : "single"));
+                if (levelIdx >= 5 && Math.random() < 0.35) bossShoot("aimed");
               }
-              if (levelIdx >= 1) {
+              if (levelIdx >= 0) {
                 b.spawnTimer -= dt;
-                if (b.spawnTimer <= 0 && enemies.length < 3) {
-                  b.spawnTimer = rand(6, 9);
+                var minionCap = levelIdx >= 7 ? 5 : (levelIdx >= 3 ? 4 : 3);
+                if (b.spawnTimer <= 0 && enemies.length < minionCap) {
+                  b.spawnTimer = levelIdx >= 6 ? rand(4.5, 7) : rand(6, 9);
                   spawnEnemy(1, 0); spawnEnemy(4, 0);
+                  if (levelIdx >= 7) spawnEnemy(2, 0);
                 }
               }
-              if (levelIdx >= 3) {
+              if (levelIdx >= 1) {
                 b.diveTimer -= dt;
                 if (b.diveTimer <= 0) {
                   b.diving = true; b.diveT = 0;
@@ -902,27 +1170,32 @@
           var consumed = false;
           for (var ei = enemies.length - 1; ei >= 0; ei--) {
             var en = enemies[ei];
+            if (bl.hitSet[en.uid]) continue;
             if (dist2(bl.x, bl.y, en.x, en.y) < Math.pow(en.r + bl.r, 2)) {
-              en.hp -= 1;
+              bl.hitSet[en.uid] = true;
+              en.hp -= bl.dmg;
               en.flash = 0.12;
               en.knock = -7; // little upward pop on impact
               addParticles(bl.x, bl.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 7, 120);
               addParticles(bl.x, bl.y, FEATHERS, 2, 70);
               SFX.hit();
-              bullets.splice(bi, 1); consumed = true;
               if (en.hp <= 0) killEnemy(en, ei);
+              if (bl.pierceLeft > 0) { bl.pierceLeft--; }
+              else { bullets.splice(bi, 1); consumed = true; }
               break;
             }
           }
           if (consumed) continue;
-          if (boss && dist2(bl.x, bl.y, boss.x, boss.y) < Math.pow(boss.r + bl.r, 2)) {
-            boss.hp -= 1;
+          if (boss && !bl.hitSet.boss && dist2(bl.x, bl.y, boss.x, boss.y) < Math.pow(boss.r + bl.r, 2)) {
+            bl.hitSet.boss = true;
+            boss.hp -= bl.dmg;
             boss.flash = 0.11;
             addParticles(bl.x, bl.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 8, 130);
             addParticles(bl.x, bl.y, FEATHERS, 2, 80);
             SFX.hit();
-            bullets.splice(bi, 1);
-            if (boss.hp <= 0) bossDown();
+            if (bl.pierceLeft > 0) { bl.pierceLeft--; }
+            else bullets.splice(bi, 1);
+            if (boss && boss.hp <= 0) bossDown();
           }
         }
 
@@ -949,7 +1222,7 @@
           if (dist2(u.x, u.y, player.x, player.y) < Math.pow(u.r + player.r + 6, 2)) {
             pickups.splice(ui, 1);
             SFX.pickup();
-            if (u.type === "corn") { score += 50; addParticles(u.x, u.y, ["#f2c53d", "#ffe98a"], 7, 90); }
+            if (u.type === "corn") { score += 50; earnCoins(8, u.x, u.y - 10); addParticles(u.x, u.y, ["#f2c53d", "#ffe98a"], 7, 90); }
             if (u.type === "cranberry") {
               player.power = 3; player.powerTimer = 14;
               addParticles(u.x, u.y, ["#b23a2e", "#e35d6a"], 9, 100);
@@ -975,15 +1248,28 @@
       }
 
       /* ---------------- Drawing ---------------- */
+      var TURKEY_PALETTES = {
+        classic:   { fan: ["#7a4a22", "#96602c", "#b5762f", "#8a5a2b", "#6b3f1c"], tip: "#e8e3d8", wing: "#6e4520", body: "#8a5a2b", belly: "#a5692f", head: "#7d94a6" },
+        pumpkin:   { fan: ["#d96c1e", "#e8873a", "#f2a65a", "#c85a12", "#e07b39"], tip: "#ffe98a", wing: "#b85a12", body: "#d96c1e", belly: "#f2a65a", head: "#8a9a5b" },
+        forest:    { fan: ["#4d7c3a", "#5d8a3a", "#6e4f2a", "#7d9b4e", "#3d5a2a"], tip: "#d9e8b0", wing: "#3d5a2a", body: "#5d6e32", belly: "#7d9b4e", head: "#6b7d94" },
+        night:     { fan: ["#2b2438", "#3a304a", "#4a3a5a", "#332840", "#241e30"], tip: "#c9b8e8", wing: "#241e30", body: "#3a304a", belly: "#4a4058", head: "#5a6a7d" },
+        cranberry: { fan: ["#8e1f16", "#b23a2e", "#c22f3d", "#a02622", "#7a1810"], tip: "#ffd9c9", wing: "#7a1810", body: "#b23a2e", belly: "#d95f4b", head: "#7d94a6" },
+        frost:     { fan: ["#bfe3f0", "#dff3fa", "#a8d4ea", "#cfeaf5", "#9ac8e0"], tip: "#ffffff", wing: "#8fb8cc", body: "#e8f4f8", belly: "#ffffff", head: "#a8c8d8" },
+        golden:    { fan: ["#e8a94c", "#f2c53d", "#d98e2b", "#f7dc7a", "#c97b24"], tip: "#fff2cf", wing: "#c98a2e", body: "#dda93e", belly: "#f2cd72", head: "#7d94a6" },
+        burnt:     { fan: ["#1c1410", "#2b2018", "#3a2a1c", "#241a12", "#14100c"], tip: "#e35d2a", wing: "#14100c", body: "#2b2018", belly: "#3d2c1e", head: "#4a4a4a" },
+        gravy:     { fan: ["#a87f3e", "#c9a35f", "#8a6a35", "#b8934a", "#75582a"], tip: "#ffe98a", wing: "#75582a", body: "#a87f3e", belly: "#c9a35f", head: "#7d94a6" },
+        storm:     { fan: ["#3d4a5a", "#4a5a6e", "#5a6a7d", "#33404e", "#46586a"], tip: "#bfe3f0", wing: "#33404e", body: "#4a5a6e", belly: "#5f748a", head: "#8aa0b5" },
+        royal:     { fan: ["#5a2a6e", "#7a3a8a", "#d98e2b", "#6e3480", "#4a2260"], tip: "#f2c53d", wing: "#4a2260", body: "#6e3480", belly: "#8a4a9e", head: "#7d94a6" },
+        prime:     { fan: ["#14100c", "#d98e2b", "#b23a2e", "#f2c53d", "#1c1410"], tip: "#ffd98a", wing: "#1c1410", body: "#2b2018", belly: "#d98e2b", head: "#8a2a20" }
+      };
       function drawTurkey(x, y, s, flap, opts) {
         opts = opts || {};
+        var pal = TURKEY_PALETTES[opts.variant] || (opts.golden ? TURKEY_PALETTES.golden : TURKEY_PALETTES.classic);
         ctx.save();
         ctx.translate(x, y);
         var i;
         // tail fan
-        var fanCols = opts.golden
-          ? ["#e8a94c", "#f2c53d", "#d98e2b", "#f7dc7a", "#c97b24"]
-          : ["#7a4a22", "#96602c", "#b5762f", "#8a5a2b", "#6b3f1c"];
+        var fanCols = pal.fan;
         for (i = -2; i <= 2; i++) {
           ctx.save();
           ctx.rotate(i * 0.34);
@@ -991,7 +1277,7 @@
           ctx.beginPath();
           ctx.ellipse(0, -s * 0.95, s * 0.30, s * 0.78, 0, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = opts.golden ? "#fff2cf" : "#e8e3d8";
+          ctx.fillStyle = pal.tip;
           ctx.beginPath();
           ctx.ellipse(0, -s * 1.52, s * 0.13, s * 0.16, 0, 0, Math.PI * 2);
           ctx.fill();
@@ -999,18 +1285,29 @@
         }
         // wings
         var wob = Math.sin(flap) * 0.35;
-        ctx.fillStyle = opts.golden ? "#c98a2e" : "#6e4520";
+        ctx.fillStyle = pal.wing;
         ctx.save(); ctx.rotate(-0.5 - wob);
         ctx.beginPath(); ctx.ellipse(-s * 0.85, 0, s * 0.30, s * 0.62, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
         ctx.save(); ctx.rotate(0.5 + wob);
         ctx.beginPath(); ctx.ellipse(s * 0.85, 0, s * 0.30, s * 0.62, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
         // body
-        ctx.fillStyle = opts.golden ? "#dda93e" : "#8a5a2b";
+        ctx.fillStyle = pal.body;
         ctx.beginPath(); ctx.ellipse(0, 0, s * 0.78, s * 0.88, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = opts.golden ? "#f2cd72" : "#a5692f";
+        ctx.fillStyle = pal.belly;
         ctx.beginPath(); ctx.ellipse(0, s * 0.18, s * 0.5, s * 0.55, 0, 0, Math.PI * 2); ctx.fill();
+        if (opts.variant === "burnt" || opts.variant === "prime") {
+          ctx.fillStyle = "#e35d2a";
+          ctx.beginPath(); ctx.ellipse(-s * 0.22, -s * 0.1, s * 0.09, s * 0.05, 0.6, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(s * 0.18, s * 0.28, s * 0.07, s * 0.04, -0.5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(0, -s * 0.38, s * 0.06, s * 0.04, 0.2, 0, Math.PI * 2); ctx.fill();
+        }
+        if (opts.variant === "frost") {
+          ctx.fillStyle = "rgba(255,255,255,.9)";
+          ctx.beginPath(); ctx.ellipse(-s * 0.3, -s * 0.45, s * 0.12, s * 0.06, -0.4, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(s * 0.28, -s * 0.2, s * 0.1, s * 0.05, 0.4, 0, Math.PI * 2); ctx.fill();
+        }
         // head (faces down toward the player)
-        ctx.fillStyle = "#7d94a6";
+        ctx.fillStyle = pal.head;
         ctx.beginPath(); ctx.ellipse(0, s * 0.92, s * 0.34, s * 0.38, 0, 0, Math.PI * 2); ctx.fill();
         // eyes — angry invader eyes
         ctx.fillStyle = "#fff";
@@ -1071,11 +1368,26 @@
           ctx.moveTo(-15, 14); ctx.lineTo(-10, -8); ctx.lineTo(10, -8); ctx.lineTo(15, 14);
           ctx.closePath(); ctx.fill();
           // barrel (kicks down a touch with each shot — the recoil snap)
+          // Lobby upgrades change the cannon itself: wider barrel with more
+          // damage, gold bands with Rapid Fire, side barrels with Extra Barrels.
           var kick = p.recoil * 3.4;
+          var bw = 10 + upgrades.damage * 1.1 + upgrades.big * 1.3;
+          if (upgrades.spread >= 1) {
+            ctx.fillStyle = "#3c2c1e";
+            ctx.fillRect(-17, -20 + kick, 7, 15);
+            ctx.fillRect(10, -20 + kick, 7, 15);
+            ctx.fillStyle = BULLET_COLORS[upgrades.damage];
+            ctx.fillRect(-18, -22 + kick, 9, 4);
+            ctx.fillRect(9, -22 + kick, 9, 4);
+          }
           ctx.fillStyle = "#3c2c1e";
-          ctx.fillRect(-5, -26 + kick, 10, 20);
-          ctx.fillStyle = "#b23a2e";
-          ctx.fillRect(-6.5, -28 + kick, 13, 5);
+          ctx.fillRect(-bw / 2, -26 + kick, bw, 20);
+          if (upgrades.rapid > 0) {
+            ctx.fillStyle = "#d9a83f";
+            for (var band = 0; band < upgrades.rapid; band++) ctx.fillRect(-bw / 2 - 1, -22 + kick + band * 4, bw + 2, 1.8);
+          }
+          ctx.fillStyle = BULLET_COLORS[upgrades.damage];
+          ctx.fillRect(-bw / 2 - 1.5, -28 + kick, bw + 3, 5);
           // muzzle flash when firing cycle peaks
           if (p.fireTimer < 0.05 && (state === "play" || state === "boss")) {
             ctx.fillStyle = "rgba(255,190,60,.95)";
@@ -1200,7 +1512,7 @@
         // enemies
         for (var ei = 0; ei < enemies.length; ei++) {
           var e = enemies[ei];
-          drawTurkey(e.x, e.y + (e.knock || 0), 21, e.flap, {});
+          drawTurkey(e.x, e.y + (e.knock || 0), 21, e.flap, { variant: L.variant });
           if (e.flash > 0) { // cranberry hit flash
             ctx.save();
             ctx.globalAlpha = clamp(e.flash / 0.12, 0, 1) * 0.55;
@@ -1218,7 +1530,7 @@
 
         // boss
         if (boss) {
-          var bopts = { golden: boss.idx === 4, crown: boss.idx === 4 || boss.idx === 2, helmet: boss.idx === 1, chefHat: boss.idx === 3 };
+          var bopts = { variant: LEVELS[boss.idx].variant, golden: boss.idx === 6 || boss.idx === 11, crown: boss.idx === 11 || boss.idx === 10 || boss.idx === 6, helmet: boss.idx === 1, chefHat: boss.idx === 3 || boss.idx === 4 };
           drawTurkey(boss.x, boss.y, 47, boss.flap, bopts);
           if (boss.flash > 0) { // cranberry hit flash
             ctx.save();
@@ -1253,16 +1565,27 @@
           ctx.beginPath(); ctx.arc(ob.x + 3, ob.y + 2, ob.r * 0.4, 0, Math.PI * 2); ctx.fill();
         }
 
-        // player bullets (cranberries) — streaked so the speed reads
+        // player bullets (cranberries) — color & size show the Lobby upgrades
         for (var bi = 0; bi < bullets.length; bi++) {
           var bl = bullets[bi];
-          ctx.strokeStyle = "rgba(178,58,46,.45)";
+          var bcol = BULLET_COLORS[upgrades.damage];
+          if (upgrades.big >= 2) { // jumbo berries glow
+            ctx.fillStyle = "rgba(255,190,60,.35)";
+            ctx.beginPath(); ctx.arc(bl.x, bl.y, bl.r + 4.5, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.strokeStyle = bcol;
+          ctx.globalAlpha = 0.45;
           ctx.lineWidth = 3; ctx.lineCap = "round";
           ctx.beginPath(); ctx.moveTo(bl.x - bl.vx * 0.028, bl.y - bl.vy * 0.028); ctx.lineTo(bl.x, bl.y); ctx.stroke();
-          ctx.fillStyle = "#b23a2e";
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = bcol;
           ctx.beginPath(); ctx.arc(bl.x, bl.y, bl.r, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "rgba(255,255,255,.65)";
-          ctx.beginPath(); ctx.arc(bl.x - 1.5, bl.y - 1.5, 1.8, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = upgrades.big >= 1 ? "rgba(255,225,150,.9)" : "rgba(255,255,255,.65)";
+          ctx.beginPath(); ctx.arc(bl.x - bl.r * 0.28, bl.y - bl.r * 0.28, Math.max(1.8, bl.r * 0.32), 0, Math.PI * 2); ctx.fill();
+          if (bl.pierceLeft > 0) { // piercing rounds carry a bright ring
+            ctx.strokeStyle = "rgba(255,242,207,.9)"; ctx.lineWidth = 1.6;
+            ctx.beginPath(); ctx.arc(bl.x, bl.y, bl.r + 2, 0, Math.PI * 2); ctx.stroke();
+          }
         }
 
         // player
@@ -1281,6 +1604,18 @@
         }
         ctx.globalAlpha = 1;
 
+        // floating coin gains
+        for (var fdi = 0; fdi < floaters.length; fdi++) {
+          var fl = floaters[fdi];
+          ctx.save();
+          ctx.globalAlpha = clamp(fl.t / 1.1, 0, 1);
+          ctx.fillStyle = "#7a4d00";
+          ctx.font = "800 14px Trebuchet MS, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(fl.text, fl.x, fl.y);
+          ctx.restore();
+        }
+
         // wave toast
         if (waveToast) {
           waveToast.t -= 1 / 60;
@@ -1295,7 +1630,7 @@
 
         // dodge meter: full gold = dash ready, refills in under a second
         if (state === "play" || state === "boss") {
-          var dReady = clamp(1 - player.dodgeCd / 0.50, 0, 1);
+          var dReady = clamp(1 - player.dodgeCd / dodgeCdFor(upgrades.boots), 0, 1);
           ctx.fillStyle = "rgba(30,16,8,.6)";
           ctx.fillRect(10, H - 24, 62, 7);
           ctx.fillStyle = player.dodgeCd <= 0 ? "#f2c53d" : "#c9a35f";
@@ -1338,6 +1673,9 @@
       /* ---------------- HUD ---------------- */
       function updateHUD() {
         hudScore.textContent = score.toLocaleString();
+        document.getElementById("hudCoins").textContent = coins.toLocaleString();
+        var lc = document.getElementById("lobbyCoins");
+        if (lc) lc.textContent = coins.toLocaleString();
         hudLevelLabel.textContent = "Level " + (levelIdx + 1) + " · " + LEVELS[levelIdx].name;
         if (state === "boss") hudWave.textContent = "⚠ BOSS: " + LEVELS[levelIdx].boss.name;
         else if (state === "play") hudWave.textContent = "Wave " + (waveIdx + 1) + " of " + LEVELS[levelIdx].waves.length;
@@ -1352,6 +1690,204 @@
         hudLives.innerHTML = hearts;
         bombCountEl.textContent = bombs;
         btnBomb.disabled = bombs <= 0;
+      }
+
+      /* ---------------- Lobby ---------------- */
+      var lobbyPanel = document.getElementById("lobbyPanel");
+      var lobbyBanner = document.getElementById("lobbyBanner");
+      var lobbyStats = document.getElementById("lobbyStats");
+      var upgradeGrid = document.getElementById("upgradeGrid");
+      var levelChips = document.getElementById("levelChips");
+      var lobbyFrom = "menu";
+
+      function showLobby(from) {
+        lobbyFrom = from || state;
+        if (lobbyFrom === "over") lobbyTarget = levelIdx;
+        state = "lobby";
+        msgOverlay.hidden = true;
+        menuOverlay.hidden = true;
+        stage.style.display = "none";
+        document.getElementById("controlsRow").style.display = "none";
+        document.getElementById("hintText").style.display = "none";
+        lobbyPanel.hidden = false;
+        if (coinsThisRun > 0) {
+          lobbyBanner.hidden = false;
+          lobbyBanner.textContent = "🪙 That run banked " + coinsThisRun + " coins. Bank total: " + coins.toLocaleString() + " coins · " + totalCoinsEarned.toLocaleString() + " earned all session.";
+        } else if (totalCoinsEarned > 0) {
+          lobbyBanner.hidden = false;
+          lobbyBanner.textContent = "🪙 Bank total: " + coins.toLocaleString() + " coins · " + totalCoinsEarned.toLocaleString() + " earned all session.";
+        } else {
+          lobbyBanner.hidden = true;
+        }
+        renderLobby();
+        updateHUD();
+        lobbyPanel.scrollIntoView({ block: "start" });
+      }
+
+      function hideLobby() {
+        lobbyPanel.hidden = true;
+        stage.style.display = "";
+        document.getElementById("controlsRow").style.display = "";
+        document.getElementById("hintText").style.display = "";
+      }
+
+      function startFromLobby(idx) {
+        hideLobby();
+        if (lobbyFrom === "over") score = scoreAtLevelStart;
+        if (lobbyFrom === "victory" || lobbyFrom === "menu") { score = 0; bombs = 2; }
+        if (lives <= 0) lives = 3;
+        bombs = Math.max(bombs, 1);
+        resetPlayer();
+        startLevel(idx);
+      }
+
+      function renderLobby() {
+        document.getElementById("lobbyCoins").textContent = coins.toLocaleString();
+        // current cannon stats
+        var rows = [
+          ["Damage per shot", getDamage()],
+          ["Fire rate", Math.round(1 / getFireRate()) + " / sec"],
+          ["Barrels firing", getBaseShots()],
+          ["Berry size", ["Normal", "Large", "Extra large", "Jumbo", "Feast-size"][upgrades.big]],
+          ["Piercing", upgrades.pierce === 0 ? "No" : "Through " + (upgrades.pierce + 1) + " turkeys"],
+          ["Gravy Bomb", "Damage " + getBombDamage() + " · boss hit " + getBossBombDamage()],
+          ["Move / dodge", Math.round(player.speed / 345 * 100) + "% · " + dodgeCdFor(upgrades.boots).toFixed(2) + "s recharge"]
+        ];
+        lobbyStats.textContent = "";
+        rows.forEach(function (r) {
+          var div = document.createElement("div");
+          var label = document.createElement("span"); label.textContent = r[0] + ": ";
+          var val = document.createElement("b"); val.textContent = r[1];
+          div.appendChild(label); div.appendChild(val);
+          lobbyStats.appendChild(div);
+        });
+        drawLobbyPreview();
+
+        // upgrade cards
+        upgradeGrid.textContent = "";
+        UPGRADES.forEach(function (u) {
+          var lv = upgrades[u.id];
+          var maxed = lv >= u.max;
+          var cost = maxed ? null : u.costs[lv];
+          var card = document.createElement("div");
+          card.className = "upgrade-card" + (maxed ? " maxed" : "");
+          var top = document.createElement("div"); top.className = "upgrade-top";
+          var icon = document.createElement("div"); icon.className = "upgrade-icon"; icon.textContent = u.icon;
+          var nameWrap = document.createElement("div");
+          var h4 = document.createElement("h4"); h4.textContent = u.name;
+          var pips = document.createElement("div"); pips.className = "pips";
+          var pipStr = "";
+          for (var pi = 0; pi < u.max; pi++) pipStr += pi < lv ? "●" : "○";
+          pips.textContent = pipStr;
+          nameWrap.appendChild(h4); nameWrap.appendChild(pips);
+          top.appendChild(icon); top.appendChild(nameWrap);
+          var desc = document.createElement("p"); desc.textContent = u.desc;
+          var eff = document.createElement("div"); eff.className = "upgrade-effect";
+          eff.textContent = "Now: " + u.now(lv);
+          if (!maxed) {
+            var nx = document.createElement("span"); nx.className = "next";
+            nx.textContent = "  →  Next: " + u.next(lv);
+            eff.appendChild(nx);
+          }
+          var btn = document.createElement("button");
+          btn.type = "button"; btn.className = "buy-btn" + (maxed ? " maxed-btn" : "");
+          if (maxed) { btn.textContent = "✓ MAXED OUT"; btn.disabled = true; }
+          else if (coins >= cost) { btn.textContent = "Upgrade — 🪙 " + cost; }
+          else { btn.textContent = "Need 🪙 " + cost + " (have " + coins + ")"; btn.disabled = true; }
+          btn.addEventListener("click", function () { buyUpgrade(u.id); });
+          card.appendChild(top); card.appendChild(desc); card.appendChild(eff); card.appendChild(btn);
+          upgradeGrid.appendChild(card);
+        });
+
+        // next-level card + replay chips
+        var L = LEVELS[lobbyTarget];
+        document.getElementById("lobbyNextTitle").textContent =
+          (lobbyFrom === "over" ? "Retry: " : "Next: ") + "Level " + (lobbyTarget + 1) + " — " + L.name;
+        document.getElementById("lobbyNextBody").textContent =
+          L.waves.length + " waves, then " + L.boss.name + ". Coins from any level you play land back here.";
+        document.getElementById("btnLobbyGo").textContent =
+          (lobbyFrom === "over" ? "Retry Level " : "Start Level ") + (lobbyTarget + 1);
+        levelChips.textContent = "";
+        for (var ci = 0; ci < LEVELS.length; ci++) {
+          (function (idx) {
+            var chip = document.createElement("button");
+            chip.type = "button";
+            chip.className = "chip" + (idx === lobbyTarget ? " current" : "");
+            chip.textContent = "Lv " + (idx + 1);
+            chip.disabled = idx > highestUnlocked;
+            chip.title = LEVELS[idx].name;
+            chip.addEventListener("click", function () { ac(); startFromLobby(idx); });
+            levelChips.appendChild(chip);
+          })(ci);
+        }
+      }
+
+      function buyUpgrade(id) {
+        var u = null;
+        for (var i = 0; i < UPGRADES.length; i++) if (UPGRADES[i].id === id) u = UPGRADES[i];
+        if (!u) return;
+        var lv = upgrades[id];
+        if (lv >= u.max) return;
+        var cost = u.costs[lv];
+        if (coins < cost) return;
+        coins -= cost;
+        upgrades[id]++;
+        if (id === "boots") player.speed = 345 + upgrades.boots * 28;
+        SFX.pickup(); SFX.clear();
+        renderLobby();
+        updateHUD();
+      }
+
+      function drawLobbyPreview() {
+        var c = document.getElementById("lobbyCanvas");
+        var g = c.getContext("2d");
+        g.clearRect(0, 0, c.width, c.height);
+        var grad = g.createLinearGradient(0, 0, 0, c.height);
+        grad.addColorStop(0, "#8ec9e8"); grad.addColorStop(1, "#f7dfae");
+        g.fillStyle = grad; g.fillRect(0, 0, c.width, c.height);
+        g.fillStyle = "#8a6a35"; g.fillRect(0, c.height - 22, c.width, 22);
+        var cx = 86, cy = c.height - 30;
+        // sample berries in flight, sized & colored by the upgrades
+        var col = BULLET_COLORS[upgrades.damage];
+        for (var s = 0; s < getBaseShots(); s++) {
+          for (var k = 0; k < 3; k++) {
+            var bx = cx + (s - (getBaseShots() - 1) / 2) * 16 + (s === 2 ? k * 5 : (s === 1 && getBaseShots() === 3 ? -k * 5 : 0));
+            var by = cy - 34 - k * 22;
+            if (upgrades.big >= 2) { g.fillStyle = "rgba(255,190,60,.35)"; g.beginPath(); g.arc(bx, by, getBulletR() + 4, 0, Math.PI * 2); g.fill(); }
+            g.fillStyle = col;
+            g.beginPath(); g.arc(bx, by, getBulletR(), 0, Math.PI * 2); g.fill();
+            if (upgrades.pierce > 0) { g.strokeStyle = "rgba(120,70,0,.85)"; g.lineWidth = 1.4; g.beginPath(); g.arc(bx, by, getBulletR() + 2, 0, Math.PI * 2); g.stroke(); }
+          }
+        }
+        // hay bale + cannon, mirroring the in-game look
+        g.fillStyle = "#d9a83f";
+        g.beginPath(); g.ellipse(cx, cy + 12, 27, 10, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#5d4632";
+        g.beginPath();
+        g.moveTo(cx - 15, cy + 10); g.lineTo(cx - 10, cy - 12); g.lineTo(cx + 10, cy - 12); g.lineTo(cx + 15, cy + 10);
+        g.closePath(); g.fill();
+        var bw = 10 + upgrades.damage * 1.1 + upgrades.big * 1.3;
+        if (upgrades.spread >= 1) {
+          g.fillStyle = "#3c2c1e"; g.fillRect(cx - 17, cy - 24, 7, 15); g.fillRect(cx + 10, cy - 24, 7, 15);
+          g.fillStyle = col; g.fillRect(cx - 18, cy - 26, 9, 4); g.fillRect(cx + 9, cy - 26, 9, 4);
+        }
+        g.fillStyle = "#3c2c1e"; g.fillRect(cx - bw / 2, cy - 30, bw, 20);
+        if (upgrades.rapid > 0) {
+          g.fillStyle = "#d9a83f";
+          for (var band = 0; band < upgrades.rapid; band++) g.fillRect(cx - bw / 2 - 1, cy - 26 + band * 4, bw + 2, 1.8);
+        }
+        g.fillStyle = col; g.fillRect(cx - bw / 2 - 1.5, cy - 32, bw + 3, 5);
+        g.fillStyle = "#2b2b30"; g.fillRect(cx - 13, cy - 18, 26, 9); g.fillRect(cx - 18, cy - 10, 36, 4);
+        g.fillStyle = "#d9a83f"; g.fillRect(cx - 4, cy - 17, 8, 7);
+        // labels
+        g.fillStyle = "#33231a";
+        g.font = "700 12.5px Trebuchet MS, sans-serif"; g.textAlign = "left";
+        g.fillText("Your cannon right now", 150, 30);
+        g.font = "12.5px Trebuchet MS, sans-serif";
+        g.fillText("Damage " + getDamage() + " · " + Math.round(1 / getFireRate()) + " shots/sec", 150, 50);
+        g.fillText(getBaseShots() + (getBaseShots() === 1 ? " barrel" : " barrels") + " · " + ["normal", "large", "extra-large", "jumbo", "feast-size"][upgrades.big] + " berries", 150, 68);
+        g.fillText(upgrades.pierce > 0 ? "Piercing rounds equipped" : "Standard rounds", 150, 86);
+        g.fillText("Bomb damage " + getBombDamage(), 150, 104);
       }
 
       /* ---------------- Main loop ---------------- */
@@ -1455,21 +1991,35 @@
         ac();
         score = 0; lives = 3; bombs = 2;
         resetPlayer();
-        startLevel(0);
+        lobbyTarget = 0;
+        showLobby("menu");
       });
 
       msgBtn.addEventListener("click", function () {
         ac();
         if (state === "intro") { waveIdx = 0; beginWave(); showWaveToast(); }
-        else if (state === "clear") { bombs += 1; startLevel(levelIdx + 1); }
+        else if (state === "clear" || state === "victory" || state === "over") { showLobby(state); }
+      });
+      msgBtn2.addEventListener("click", function () {
+        ac();
+        if (state === "clear") { startLevel(levelIdx + 1); }
         else if (state === "victory") { fullRestart(); }
         else if (state === "over") {
           score = scoreAtLevelStart; lives = 3; bombs = Math.max(bombs, 2);
           resetPlayer();
           startLevel(levelIdx);
         }
+        else { fullRestart(); }
       });
-      msgBtn2.addEventListener("click", function () { ac(); fullRestart(); });
+
+      document.getElementById("btnLobbyGo").addEventListener("click", function () { ac(); startFromLobby(lobbyTarget); });
+      document.getElementById("btnLobbyRestart").addEventListener("click", function () { ac(); lobbyFrom = "menu"; startFromLobby(0); });
+      document.getElementById("btnLobby").addEventListener("click", function () {
+        ac();
+        if (state === "menu") { lobbyTarget = 0; showLobby("menu"); }
+        else if (state === "intro") { lobbyTarget = levelIdx; showLobby("intro"); }
+        else if (state === "clear" || state === "victory" || state === "over") { showLobby(state); }
+      });
 
       var btnPause = document.getElementById("btnPause");
       function togglePause() {
