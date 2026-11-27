@@ -2507,6 +2507,137 @@
       }
       .trophy-panel .lb-row { background: rgba(38,20,8,.72); border-color: rgba(255,217,138,.45); color: #ffe9c2; border-width: 2px; border-radius: 12px; font-weight: 600; }
       .trophy-panel .cb-row .cb-best { color: #ffd968; }
+      /* ============================================================
+         CANNON SKINS — the hub rail grows a third icon (🎨 SKINS)
+         and the Skins page speaks the Lobby's exact design
+         language: sunset backdrop, dark amber cards, thick gold
+         borders, chunky display type. One card per skin with a
+         BIG live preview painted by drawSkinPreview() through
+         the canonical drawCannonOn(), so the preview cannon is
+         pixel-for-pixel the cannon that shows in the Lobby
+         stage and in a fight once equipped.
+         ============================================================ */
+      .icon-rail { grid-template-columns: 1fr 1fr 1fr; }
+      @media (max-width: 460px) {
+        .hub-btn { min-height: 78px; padding: 8px 4px 7px; }
+        .hub-btn .hub-ico { font-size: 26px; }
+        .hub-btn .hub-label { font-size: 13px; }
+        .hub-btn .hub-sub { font-size: 10px; }
+      }
+      .skins-wallet {
+        display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+        background: linear-gradient(180deg, #ffd968 0%, #e8a94c 55%, #c97b24 100%);
+        border: 3px solid #8a5a10; border-radius: 16px;
+        padding: 10px 16px; margin-top: 4px;
+        box-shadow: 0 5px 0 rgba(90,52,8,.5), inset 0 2px 0 rgba(255,255,255,.6);
+        color: #2e1a04; font-weight: 800; font-size: 15px;
+      }
+      .skins-wallet b { font-size: 22px; font-variant-numeric: tabular-nums; }
+      .skins-wallet span { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #6b3d08; display: block; }
+      .skin-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+      @media (min-width: 620px) { .skin-grid { grid-template-columns: 1fr 1fr; } }
+      .skin-card {
+        border: 3px solid var(--line); border-radius: 16px;
+        background: linear-gradient(180deg, rgba(84,50,20,.94), rgba(46,26,10,.96));
+        color: #fff3d6;
+        box-shadow: 0 4px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.22);
+        padding: 12px; display: flex; flex-direction: column; gap: 8px;
+      }
+      .skin-card.equipped { border-color: var(--gold); box-shadow: 0 4px 0 rgba(160,100,20,.4), 0 0 16px rgba(232,169,76,.45), inset 0 2px 0 rgba(255,217,138,.3); }
+      .skin-card canvas { width: 100%; height: auto; display: block; border-radius: 12px; border: 2px solid rgba(255,217,138,.45); }
+      .skin-card h4 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: .03em; font-size: 20px; color: #ffd968; text-shadow: 0 2px 0 rgba(90,20,8,.6); }
+      .skin-card p { margin: 0; font-size: 13.5px; line-height: 1.5; color: #ecd3a3; }
+      .skin-state { font-size: 13px; font-weight: 800; letter-spacing: .04em; color: #f3d9ae; }
+      .skin-card.equipped .skin-state { color: #b5e48c; }
+      .skin-btn {
+        margin-top: auto; min-height: 48px; padding: 10px 14px;
+        font-family: inherit; font-size: 16px; font-weight: 800; letter-spacing: .01em;
+        color: var(--accent-ink); background: linear-gradient(180deg, #e0684f, var(--accent) 55%, #93301f);
+        border: 2.5px solid #7e2418; border-radius: 13px; cursor: pointer;
+        box-shadow: 0 4px 0 #7e2418, inset 0 2px 0 rgba(255,255,255,.35);
+        text-shadow: 0 1px 0 rgba(90,20,8,.4); touch-action: manipulation;
+      }
+      .skin-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #7e2418; }
+      .skin-btn:disabled { background: var(--btn); color: var(--ink-soft); border-color: var(--btn-line); box-shadow: none; text-shadow: none; cursor: default; }
+      .skin-btn.equipped-btn { background: linear-gradient(180deg, #6da354, var(--good) 55%, #33591f); border-color: #33591f; box-shadow: 0 4px 0 #33591f, inset 0 2px 0 rgba(255,255,255,.3); color: #fff; }
+
+      /* ============================================================
+         DESKTOP FRAMING PASS (≥1024px only — phone and tablet
+         layouts below this width are LOCKED and untouched).
+         On PC the shell screens used to float as a ~470px phone
+         column on the flat cream page background, while the top
+         bar and tab bar stretched the full 860px wrap — dead
+         space everywhere and chrome that didn't line up with
+         the content. Now the shell gets the same treatment the
+         splash and the fight screen already have:
+         1) the whole window behind the shell is filled with the
+            game's warm sunset backdrop (the exact gradient stack
+            body.playing paints behind the field) — no flat cream;
+         2) top bar, screen content and bottom tab bar share ONE
+            centred 550px column, edge to edge;
+         3) the tab bar is pinned to the bottom of the window,
+            centred on the column, exactly as on phone, and the
+            stage / Lobby panels are height-fitted between the
+            pinned bars (their inner scroll areas keep working).
+         Inside the column every screen keeps its phone
+         proportions — framing only, no redesign.
+         ============================================================ */
+      @media (min-width: 1024px) {
+        body {
+          background-color: #2b1030;
+          background-image:
+            radial-gradient(120% 46% at 78% 6%, rgba(255,190,80,.34), rgba(255,190,80,0) 60%),
+            radial-gradient(90% 30% at 12% 22%, rgba(255,120,60,.18), rgba(255,120,60,0) 60%),
+            linear-gradient(180deg, #2b1030 0%, #6e2430 34%, #b23a2e 58%, #e8873a 78%, #3a1e0e 100%);
+          background-attachment: fixed;
+          min-height: 100vh;
+          min-height: 100dvh;
+        }
+        /* One column: 550px of content + the wrap's 2×20px padding. */
+        .wrap { max-width: 590px; padding-bottom: 132px; }
+        .stage, .lobby { max-width: 550px; }
+        /* Height-fit the Chapters stage between the sticky top bar
+           and the pinned tab bar; the field canvas behind the menu
+           overlay is simply clipped by the stage's rounded frame,
+           and open menu panels scroll inside the overlay as before.
+           body.playing takes the stage full-screen and is excluded,
+           so the fight screen is byte-for-byte untouched. */
+        body:not(.playing) .stage {
+          height: calc(100vh - 210px);
+          height: calc(100dvh - 210px);
+          min-height: 440px;
+        }
+        /* Lobby / Trophy / Skins panels: same height discipline —
+           header pinned, middle scrolls internally, nothing runs
+           under the fixed tab bar. */
+        .lobby {
+          max-height: calc(100vh - 210px);
+          max-height: calc(100dvh - 210px);
+        }
+        /* Tab bar pinned to the bottom of the window, centred on
+           the same 550px column as everything above it. */
+        .tab-bar {
+          position: fixed; left: 50%; z-index: 60;
+          transform: translateX(-50%);
+          width: min(550px, calc(100vw - 40px));
+          bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+          margin-top: 0;
+        }
+        /* The help line under the shell is hidden on desktop:
+           the stage is height-fitted exactly between the sticky
+           top bar and the pinned tab bar, so the long hint
+           paragraph had no room of its own and rendered as a
+           half-clipped sliver behind the tab bar. Hiding it here
+           (as phones already do below 700px) leaves the shell
+           clean edge to edge; the same help text stays available
+           in the How to Play panel. */
+        .hint { display: none; }
+        /* Floating bits that anchor to the window bottom step up
+           over the pinned tab bar while the shell is up (during a
+           run the tab bar is hidden and they keep their old spot). */
+        body:not(.playing) .ach-toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
+        body:not(.playing) .menu-scroll-cue { bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }
+      }
     </style>
   </head>
   <body>
@@ -2771,6 +2902,11 @@
             <span class="hub-sub">Open Harvest Chests</span>
             <span class="hub-count" id="hubChestCount" hidden>0</span>
           </button>
+          <button class="hub-btn" id="btnHubSkins" type="button" aria-label="Skins — cannon looks bought with feathers">
+            <span class="hub-ico" aria-hidden="true">🎨</span>
+            <span class="hub-label">SKINS</span>
+            <span class="hub-sub">Cannon Looks</span>
+          </button>
         </div>
 
         <!-- Next-Level card lives INSIDE the scroller, right after
@@ -2830,6 +2966,31 @@
           <h3>📖 Chapter Bests</h3>
           <div class="lb-list" id="trophyChapterBests"></div>
           <p class="shop-sub">🪶 One feather per chapter for each feat: clear with no damage · clear under the par time · clear without a Gravy Bomb. First-time feathers pay +1 🪶 into your wallet — replays never pay twice.</p>
+        </div>
+      </section>
+
+      <!-- Skins page (cannon skins step): one card per cannon
+           look, each with a BIG live preview drawn by the game's
+           own cannon art on a small farm stage. Skins are purely
+           cosmetic — bought with earned 🪶 feathers only — and
+           the equipped skin is the cannon everywhere: this page's
+           previews, the Lobby hero stage and every fight. -->
+      <section class="lobby skins-panel" id="skinsPanel" hidden aria-label="Skins — cannon looks">
+        <canvas class="lobby-bg" id="skinsBgCanvas" width="760" height="1150" aria-hidden="true"></canvas>
+        <div class="lobby-head">
+          <div>
+            <h2>🎨 Cannon Skins</h2>
+            <p>New looks for your cannon, bought with the 🪶 feathers you earn by playing. Purely cosmetic — same cannon, same power, brand-new style. The skin you equip shows on the Lobby stage and in every fight.</p>
+          </div>
+          <button class="ghost-dark trophy-back" id="btnSkinsBack" type="button">← Lobby</button>
+        </div>
+        <div class="lobby-scroll">
+          <div class="skins-wallet">
+            <div><span>🪶 Feather wallet</span><b id="skinsFeathers">0</b></div>
+            <div id="skinsEquippedLabel">Equipped: Farmhand</div>
+          </div>
+          <div class="skin-grid" id="skinGrid"></div>
+          <p class="shop-sub">Earn 🪶 feathers from chapter feats (no damage · under par · no Gravy Bombs) and achievements — see the 🏆 Trophy page. Feathers are earned by play only, never sold.</p>
         </div>
       </section>
 
@@ -3109,7 +3270,36 @@
       var chapterBests = LEVELS.map(function () { return { score: 0, time: 0 }; }); // best clear score + fastest clear time (s) per chapter; 0 = no clear yet
       var chapterFeathers = LEVELS.map(function () { return { nd: false, par: false, nb: false }; }); // nd = no damage · par = under par time · nb = no Gravy Bombs
       var chapterStars = LEVELS.map(function () { return 0; }); // best star rating per chapter: 1 per clear + 1 no-damage + 1 under-par (max 3)
-      var featherBalance = 0; // 🪶 WALLET — earned by play ONLY (chapter objectives + achievements), never sold; a later step spends it on cannon looks
+      var featherBalance = 0; // 🪶 WALLET — earned by play ONLY (chapter objectives + achievements), never sold; cannon skins are what it spends on
+      /* ---------------- Cannon skins (art-direction step 1) ----------------
+         Purely cosmetic looks for the player's cannon — NO stat
+         changes, ever. Bought with the earned-only 🪶 feather
+         wallet. `art` is the palette + extras drawCannonOn()
+         paints with, so the equipped skin is the SAME cannon in
+         the Lobby hero stage, in gameplay, on the cover and in
+         the trailer — one cannon, one consistent look. Both
+         designs are original to our warm sunset-farm style. */
+      var CANNON_SKINS = [
+        { id: "farmhand", name: "Farmhand", cost: 0,
+          desc: "The trusty farm cannon you start with — dark iron, warm wood and a pilgrim hat on the carriage.",
+          art: { barrel: "#3c2c1e", barrelHi: "#3c2c1e", trim: "#d9a83f", carriage: "#5d4632", carriageEdge: "#463322", wheel: "#6e4520", spoke: "#a5692f", hub: "#3c2c1e", hay: "#d9a83f", hayStroke: "#b4832a", side: "#3c2c1e", hat: "#2b2b30", hatBand: "#d9a83f", gem: "#b23a2e" } },
+        { id: "golden", name: "Golden Gobbler", cost: 10,
+          desc: "Polished gold barrel and trim, a turkey tail-feather fan crest behind the barrel, and cranberry-red gems set into the carriage.",
+          art: { barrel: "#d9a41f", barrelHi: "#ffd968", trim: "#fff0b3", carriage: "#7a5220", carriageEdge: "#54380f", wheel: "#8a5f16", spoke: "#e8c85a", hub: "#54380f", hay: "#eec95e", hayStroke: "#c39a2e", side: "#b8860b", hat: "#8a5f16", hatBand: "#b23a2e", gem: "#b23a2e", fan: ["#8a5a2a", "#c98a3d", "#e8b83a", "#c98a3d", "#8a5a2a"], fanTip: "#b23a2e" } }
+      ];
+      /* Scope note (designer, this build): ONLY Golden Gobbler
+         ships alongside Farmhand — one skin, proven end-to-end
+         on the Lobby stage and in gameplay, before the system
+         expands. Further skins join CANNON_SKINS in a later
+         build; the drawing, page and save are already built
+         generically around this list, so they will just work. */
+      var ownedSkins = ["farmhand"]; // skin ids the player owns — Farmhand is free and owned by default (additive save fields, key unchanged)
+      var equippedSkin = "farmhand"; // the skin drawCannonOn() paints when no explicit skin is requested
+      function skinById(id) {
+        for (var si = 0; si < CANNON_SKINS.length; si++) if (CANNON_SKINS[si].id === id) return CANNON_SKINS[si];
+        return CANNON_SKINS[0];
+      }
+      function isSkinOwned(id) { return ownedSkins.indexOf(id) !== -1; }
       var achievementsUnlocked = {}; // { achievementId: true } — the once-ever guard for both the unlock and its feather payout
       var achievementsSeen = 0; // how many earned achievements the player has SEEN on the Trophy page — earned > seen lights the 🏆 red dot (hub-and-spoke step 1; additive save field, key unchanged)
       var stats = { kills: 0, mutantKills: 0, bombKills: 0, chestsOpened: 0, feastChests: 0, wavesSurvived: 0, clears: 0, untouchableClears: 0 }; // lifetime counters, all fed by events the game already fires
@@ -3326,6 +3516,7 @@
             saveVersion: SAVE_VERSION,
             chapterBests: chapterBests, chapterFeathers: chapterFeathers, chapterStars: chapterStars,
             featherBalance: featherBalance,
+            ownedSkins: ownedSkins, equippedSkin: equippedSkin,
             achievementsUnlocked: achievementsUnlocked, achievementsSeen: achievementsSeen, stats: stats
           }));
         } catch (e) { /* storage unavailable — the session still plays normally */ }
@@ -3402,6 +3593,18 @@
           }
         }
         if (typeof data.featherBalance === "number") featherBalance = Math.max(0, Math.floor(data.featherBalance));
+        /* Cannon skins (migration: saves written before skins
+           existed have neither field — they start on the free
+           Farmhand skin with nothing owned but it, and everything
+           else in the save is untouched). */
+        if (Object.prototype.toString.call(data.ownedSkins) === "[object Array]") {
+          ownedSkins = data.ownedSkins.filter(function (sid) {
+            return typeof sid === "string" && CANNON_SKINS.some(function (sk) { return sk.id === sid; });
+          });
+        }
+        if (ownedSkins.indexOf("farmhand") === -1) ownedSkins.unshift("farmhand");
+        if (typeof data.equippedSkin === "string" && isSkinOwned(data.equippedSkin)) equippedSkin = data.equippedSkin;
+        else equippedSkin = "farmhand";
         // a chapter already cleared before records existed still counts as a clear
         if (stats.clears < distinctCleared()) stats.clears = distinctCleared();
         // …and a clear is worth at least its 1 star, even from a save made before stars existed
@@ -4851,41 +5054,79 @@
       }
       /* The one cannon. Local space: origin at carriage centre,
          barrel points UP; `rot` only aims that same cannon.
-         Returns the muzzle position in the caller's space. */
+         Returns the muzzle position in the caller's space.
+         SKINS: the palette + extras come from the equipped skin
+         (o.skin overrides it — the Skins page previews paint
+         each look this way). Farmhand's palette IS the original
+         cannon, colour for colour, so the default look never
+         changes. The muzzle ring keeps the current berry colour
+         on every skin — damage readability survives the paint
+         job — while barrel, carriage, wheels, hat and the
+         skin's signature extras carry the identity. */
       function drawCannonOn(c, x, y, sc, rot, o) {
         o = o || {};
         var dmg = (o.damage != null ? o.damage : upgrades.damage);
         var rap = (o.rapid != null ? o.rapid : upgrades.rapid);
         var big = (o.big != null ? o.big : upgrades.big);
         var spr = (o.spread != null ? o.spread : upgrades.spread);
+        var skin = skinById(o.skin || equippedSkin);
+        var A = skin.art;
         var kick = (o.recoil || 0) * 3.4;
         var bw = 10 + dmg * 1.1 + big * 1.3;
         c.save(); c.translate(x, y); c.scale(sc, sc); c.rotate(rot || 0);
         // ground shadow + hay-bale base (same in every screen)
         c.fillStyle = "rgba(30,16,6,.30)";
         c.beginPath(); c.ellipse(0, 19, 30, 6, 0, 0, Math.PI * 2); c.fill();
-        c.fillStyle = "#d9a83f";
+        c.fillStyle = A.hay;
         c.beginPath(); c.ellipse(0, 16, 26, 10, 0, 0, Math.PI * 2); c.fill();
-        c.strokeStyle = "#b4832a"; c.lineWidth = 2;
+        c.strokeStyle = A.hayStroke; c.lineWidth = 2;
         c.beginPath(); c.ellipse(0, 16, 18, 6.5, 0, 0, Math.PI * 2); c.stroke();
         // spoked wheels — the carriage the Lobby cannon rolls on
         [[-19, 13, 8], [19, 13, 8]].forEach(function (w) {
-          c.fillStyle = "#6e4520"; c.beginPath(); c.arc(w[0], w[1], w[2], 0, Math.PI * 2); c.fill();
-          c.strokeStyle = "#a5692f"; c.lineWidth = 1.8;
+          c.fillStyle = A.wheel; c.beginPath(); c.arc(w[0], w[1], w[2], 0, Math.PI * 2); c.fill();
+          c.strokeStyle = A.spoke; c.lineWidth = 1.8;
           for (var sp = 0; sp < 3; sp++) { var sa = sp * Math.PI / 3 + 0.4; c.beginPath(); c.moveTo(w[0] - Math.cos(sa) * (w[2] - 1.5), w[1] - Math.sin(sa) * (w[2] - 1.5)); c.lineTo(w[0] + Math.cos(sa) * (w[2] - 1.5), w[1] + Math.sin(sa) * (w[2] - 1.5)); c.stroke(); }
-          c.fillStyle = "#3c2c1e"; c.beginPath(); c.arc(w[0], w[1], 2.6, 0, Math.PI * 2); c.fill();
+          c.fillStyle = A.hub; c.beginPath(); c.arc(w[0], w[1], 2.6, 0, Math.PI * 2); c.fill();
         });
-        // wooden carriage
-        c.fillStyle = "#5d4632";
+        // wooden carriage (+ a trim line in the skin's metal)
+        c.fillStyle = A.carriage;
         c.beginPath(); c.moveTo(-15, 14); c.lineTo(-10, -8); c.lineTo(10, -8); c.lineTo(15, 14); c.closePath(); c.fill();
+        if (skin.id !== "farmhand") {
+          c.strokeStyle = A.carriageEdge; c.lineWidth = 1.4;
+          c.beginPath(); c.moveTo(-15, 14); c.lineTo(-10, -8); c.lineTo(10, -8); c.lineTo(15, 14); c.closePath(); c.stroke();
+        }
+        if (skin.id !== "farmhand") {
+          c.fillStyle = A.trim; c.fillRect(-11.5, 9.5, 23, 1.8);
+          // the skin's gem set into the carriage front
+          c.save(); c.translate(0, 3.5); c.rotate(Math.PI / 4);
+          c.fillStyle = A.gem; c.fillRect(-2.6, -2.6, 5.2, 5.2);
+          c.fillStyle = "rgba(255,255,255,.55)"; c.fillRect(-2.6, -2.6, 2.4, 2.4);
+          c.restore();
+        }
+        // Golden Gobbler's tail-feather fan crest — five turkey
+        // feathers fanning up behind the barrel, gold bodies with
+        // cranberry tips, drawn BEFORE the barrel so the barrel
+        // sits in front of its own crest.
+        if (skin.id === "golden" && A.fan) {
+          for (var fi = -2; fi <= 2; fi++) {
+            c.save(); c.translate(0, -10 + kick); c.rotate(fi * 0.42);
+            c.fillStyle = A.fan[fi + 2];
+            c.beginPath(); c.ellipse(0, -13, 3.6, 13, 0, 0, Math.PI * 2); c.fill();
+            c.fillStyle = A.fanTip;
+            c.beginPath(); c.ellipse(0, -23.5, 2.2, 3.4, 0, 0, Math.PI * 2); c.fill();
+            c.restore();
+          }
+        }
         // side barrels (Extra Barrels upgrade — same barrels everywhere)
         if (spr >= 1) {
-          c.fillStyle = "#3c2c1e"; c.fillRect(-17, -20 + kick, 7, 15); c.fillRect(10, -20 + kick, 7, 15);
+          c.fillStyle = A.side; c.fillRect(-17, -20 + kick, 7, 15); c.fillRect(10, -20 + kick, 7, 15);
           c.fillStyle = BULLET_COLORS[dmg]; c.fillRect(-18, -22 + kick, 9, 4); c.fillRect(9, -22 + kick, 9, 4);
         }
-        // main dark-iron barrel + gold Rapid-Fire bands
-        c.fillStyle = "#3c2c1e"; c.fillRect(-bw / 2, -26 + kick, bw, 20);
-        if (rap > 0) { c.fillStyle = "#d9a83f"; for (var band = 0; band < rap; band++) c.fillRect(-bw / 2 - 1, -22 + kick + band * 4, bw + 2, 1.8); }
+        // main barrel in the skin's metal + a polished highlight
+        // stripe, with Rapid-Fire bands in the skin's trim
+        c.fillStyle = A.barrel; c.fillRect(-bw / 2, -26 + kick, bw, 20);
+        c.fillStyle = A.barrelHi; c.fillRect(-bw / 2 + 1.5, -26 + kick, Math.max(2, bw * 0.26), 20);
+        if (rap > 0) { c.fillStyle = A.trim; for (var band = 0; band < rap; band++) c.fillRect(-bw / 2 - 1, -22 + kick + band * 4, bw + 2, 1.8); }
         // cranberry muzzle ring — its colour IS the current berry colour
         c.fillStyle = BULLET_COLORS[dmg]; c.fillRect(-bw / 2 - 1.5, -28 + kick, bw + 3, 5);
         c.fillStyle = "#1c1410"; c.fillRect(-bw * 0.22, -28.6 + kick, bw * 0.44, 2.2);
@@ -4894,9 +5135,10 @@
           c.fillStyle = "rgba(255,190,60,.95)"; c.beginPath(); c.ellipse(0, -36 + kick, 7, 11, 0, 0, Math.PI * 2); c.fill();
           c.fillStyle = "rgba(255,240,200,.95)"; c.beginPath(); c.ellipse(0, -33 + kick, 3.4, 6, 0, 0, Math.PI * 2); c.fill();
         }
-        // the crew's pilgrim hat — always on the carriage, same spot
-        c.fillStyle = "#2b2b30"; c.fillRect(-24, -12, 15, 6); c.fillRect(-27, -7, 21, 3);
-        c.fillStyle = "#d9a83f"; c.fillRect(-19.5, -11.5, 5, 5);
+        // the crew's pilgrim hat — always on the carriage, same
+        // spot, retrimmed in the skin's colours
+        c.fillStyle = A.hat; c.fillRect(-24, -12, 15, 6); c.fillRect(-27, -7, 21, 3);
+        c.fillStyle = A.hatBand; c.fillRect(-19.5, -11.5, 5, 5);
         c.restore();
         var mr = 30 * sc, rr = rot || 0;
         return { x: x + Math.sin(rr) * mr, y: y - Math.cos(rr) * mr };
@@ -5962,6 +6204,8 @@
       var lobbyPanel = document.getElementById("lobbyPanel");
       var trophyPanel = document.getElementById("trophyPanel");
       var trophyFrame = 0;
+      var skinsPanel = document.getElementById("skinsPanel");
+      var skinsFrame = 0;
       var lobbyBanner = document.getElementById("lobbyBanner");
       var lobbyStats = document.getElementById("lobbyStats");
       var selectedUpgradeId = "damage"; // the hero-stage slot shown in the detail bar
@@ -5970,6 +6214,7 @@
 
       function showLobby(from) {
         if (trophyPanel) trophyPanel.hidden = true;
+        if (skinsPanel) skinsPanel.hidden = true;
         lobbyFrom = from || state;
         if (lobbyFrom === "over") lobbyTarget = levelIdx;
         state = "lobby";
@@ -6001,6 +6246,7 @@
 
       function hideLobby() {
         lobbyPanel.hidden = true;
+        if (skinsPanel) skinsPanel.hidden = true;
         stage.style.display = "";
         document.getElementById("controlsRow").style.display = "";
         document.getElementById("hintText").style.display = "";
@@ -6016,6 +6262,7 @@
          because the Trophy is the Lobby's sub-page). */
       function openChestsPage() {
         if (trophyPanel) trophyPanel.hidden = true;
+        if (skinsPanel) skinsPanel.hidden = true;
         goShellMenu();
         showPanelForce("panelChests");
         setShellView("chapters");
@@ -6032,6 +6279,7 @@
         document.getElementById("controlsRow").style.display = "none";
         document.getElementById("hintText").style.display = "none";
         lobbyPanel.hidden = true;
+        if (skinsPanel) skinsPanel.hidden = true;
         trophyPanel.hidden = false;
         renderRecords(); // fills stars, achievements, bests + the strip, and clears the dot via updateTrophyBadge
         updateHUD();
@@ -6045,6 +6293,150 @@
       document.getElementById("btnHubChests").addEventListener("click", function () { ac(); openChestsPage(); });
       document.getElementById("btnTrophyBack").addEventListener("click", function () { ac(); showLobby("menu"); });
       document.getElementById("collectChestsRow").addEventListener("click", function () { ac(); openChestsPage(); });
+
+      /* ---------------- Skins page (cannon skins step) ----------------
+         Opened from the Lobby's 🎨 icon. One card per skin in
+         CANNON_SKINS, each preview painted live by drawSkinPreview
+         through the canonical drawCannonOn with that skin forced —
+         so what you see on the card is exactly what equips onto
+         the Lobby stage and into a fight. Buying deducts 🪶
+         feathers and equips immediately; equipping an owned skin
+         is free. Cosmetic only — nothing here touches a stat. */
+      function drawSkinPreview(cv, skinId, t) {
+        if (!cv) return;
+        var g = cv.getContext("2d");
+        var PW = cv.width, PH = cv.height, GY = PH - 30;
+        t = t || 0;
+        g.clearRect(0, 0, PW, PH);
+        // small farm stage — the Lobby stage's own recipe, shrunk:
+        // harvest sky, hills, the shared scene layer + barn, ground
+        var grad = g.createLinearGradient(0, 0, 0, PH);
+        grad.addColorStop(0, "#7fb6de"); grad.addColorStop(0.62, "#cfe3ee"); grad.addColorStop(0.8, "#f7dfae"); grad.addColorStop(1, "#f2c98a");
+        g.fillStyle = grad; g.fillRect(0, 0, PW, PH);
+        g.fillStyle = "rgba(255,236,180,.95)";
+        g.beginPath(); g.arc(PW - 44, 26, 16, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#a8bf74";
+        g.beginPath(); g.moveTo(0, GY);
+        g.quadraticCurveTo(PW * 0.28, GY - 38, PW * 0.55, GY - 16);
+        g.quadraticCurveTo(PW * 0.8, GY + 2, PW, GY - 24);
+        g.lineTo(PW, GY); g.closePath(); g.fill();
+        g.fillStyle = "#7d9b4e";
+        g.beginPath(); g.moveTo(0, GY);
+        g.quadraticCurveTo(PW * 0.32, GY - 18, PW * 0.64, GY - 6);
+        g.quadraticCurveTo(PW * 0.86, GY + 2, PW, GY - 10);
+        g.lineTo(PW, GY); g.closePath(); g.fill();
+        drawSceneLayer(g, 0, t, PW, GY, 0.72);
+        drawBarnShape(g, 8, GY, 0.66);
+        g.fillStyle = "rgba(93,58,26,.8)";
+        for (var fx = 64; fx < PW - 6; fx += 30) g.fillRect(fx, GY - 11, 3.5, 11);
+        g.fillRect(60, GY - 8.5, PW - 60, 2.4); g.fillRect(60, GY - 4, PW - 60, 2);
+        var lgrad = g.createLinearGradient(0, GY, 0, PH);
+        lgrad.addColorStop(0, "#96753e"); lgrad.addColorStop(1, "#6e5227");
+        g.fillStyle = lgrad; g.fillRect(0, GY, PW, PH - GY);
+        drawGroundDetail(g, 0, t, PW, PH, GY, 0.72);
+        // golden pedestal, like the Lobby hero stage
+        var pcx = PW / 2, pgy = GY + 7;
+        var pulse = 0.72 + Math.sin(t * 2.3) * 0.16;
+        var glow2 = g.createRadialGradient(pcx, pgy - 10, 8, pcx, pgy - 10, 110);
+        glow2.addColorStop(0, "rgba(255,205,90," + (0.5 * pulse) + ")"); glow2.addColorStop(1, "rgba(255,205,90,0)");
+        g.fillStyle = glow2; g.fillRect(pcx - 120, pgy - 120, 240, 135);
+        var pg = g.createLinearGradient(0, pgy - 8, 0, pgy + 9);
+        pg.addColorStop(0, "#f7dc7a"); pg.addColorStop(0.55, "#e8a94c"); pg.addColorStop(1, "#c97b24");
+        g.fillStyle = pg;
+        g.beginPath(); g.ellipse(pcx, pgy, 76, 11, 0, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = "#8a5a10"; g.lineWidth = 2;
+        g.beginPath(); g.ellipse(pcx, pgy, 76, 11, 0, 0, Math.PI * 2); g.stroke();
+        // THE cannon in this skin — fixed mid upgrades on every
+        // card so the SKIN is what differs, never the loadout
+        drawCannonOn(g, pcx, GY - 15, 1.9, Math.sin(t * 0.9) * 0.05, {
+          skin: skinId, damage: 1, rapid: 1, big: 1, spread: 1,
+          flash: (t % 1.8) < 0.09
+        });
+      }
+      function equipSkin(id) {
+        if (!isSkinOwned(id)) return;
+        equippedSkin = id;
+        saveGame();
+        renderSkins();
+      }
+      function buySkin(id) {
+        var def = skinById(id);
+        if (isSkinOwned(id) || featherBalance < def.cost) return;
+        featherBalance -= def.cost;
+        ownedSkins.push(id);
+        equippedSkin = id; // buying equips immediately
+        saveGame();
+        try { SFX.pickup(); SFX.clear(); } catch (e) {}
+        renderSkins();
+        renderRecords(); // keeps the Lobby feather wallet honest
+      }
+      function renderSkins() {
+        var wf = document.getElementById("skinsFeathers");
+        if (wf) wf.textContent = featherBalance.toLocaleString();
+        var el = document.getElementById("skinsEquippedLabel");
+        if (el) el.textContent = "Equipped: " + skinById(equippedSkin).name;
+        var grid = document.getElementById("skinGrid");
+        if (!grid) return;
+        grid.textContent = "";
+        CANNON_SKINS.forEach(function (def) {
+          var owned = isSkinOwned(def.id);
+          var equipped = equippedSkin === def.id;
+          var card = document.createElement("div");
+          card.className = "skin-card" + (equipped ? " equipped" : "");
+          var cv = document.createElement("canvas");
+          cv.width = 360; cv.height = 210;
+          cv.className = "skin-preview-canvas";
+          cv.setAttribute("data-skin", def.id);
+          cv.setAttribute("aria-label", "Preview of the " + def.name + " cannon skin on a farm stage");
+          card.appendChild(cv);
+          var h = document.createElement("h4"); h.textContent = def.name;
+          var p = document.createElement("p"); p.textContent = def.desc;
+          var st = document.createElement("div"); st.className = "skin-state";
+          st.textContent = equipped ? "✓ EQUIPPED — on your cannon now" :
+            owned ? "OWNED" :
+            (def.cost > 0 ? "🪶 " + def.cost + " feathers" : "FREE — yours from the start");
+          var btn = document.createElement("button");
+          btn.type = "button";
+          if (equipped) {
+            btn.className = "skin-btn equipped-btn";
+            btn.textContent = "✓ EQUIPPED";
+            btn.disabled = true;
+          } else if (owned) {
+            btn.className = "skin-btn";
+            btn.textContent = "EQUIP";
+            btn.addEventListener("click", function () { ac(); equipSkin(def.id); });
+          } else {
+            btn.className = "skin-btn";
+            btn.textContent = "BUY — 🪶 " + def.cost;
+            btn.disabled = featherBalance < def.cost;
+            if (!btn.disabled) btn.addEventListener("click", function () { ac(); buySkin(def.id); });
+          }
+          card.appendChild(h); card.appendChild(p); card.appendChild(st); card.appendChild(btn);
+          grid.appendChild(card);
+          drawSkinPreview(cv, def.id, 0);
+        });
+      }
+      function showSkins() {
+        state = "lobby";
+        msgOverlay.hidden = true;
+        menuOverlay.hidden = true;
+        updateMenuCue();
+        stage.style.display = "none";
+        document.getElementById("controlsRow").style.display = "none";
+        document.getElementById("hintText").style.display = "none";
+        lobbyPanel.hidden = true;
+        if (trophyPanel) trophyPanel.hidden = true;
+        skinsPanel.hidden = false;
+        renderSkins();
+        updateHUD();
+        document.body.classList.remove("playing");
+        syncShellChrome();
+        var bg = document.getElementById("skinsBgCanvas");
+        if (bg) drawLobbyBackdrop(0, bg);
+        skinsPanel.scrollIntoView({ block: "start" });
+      }
+      document.getElementById("btnHubSkins").addEventListener("click", function () { ac(); showSkins(); });
+      document.getElementById("btnSkinsBack").addEventListener("click", function () { ac(); showLobby("menu"); });
 
       function startFromLobby(idx) {
         hideLobby();
@@ -6669,6 +7061,8 @@
         chapterFeathers = LEVELS.map(function () { return { nd: false, par: false, nb: false }; });
         chapterStars = LEVELS.map(function () { return 0; });
         featherBalance = 0;
+        ownedSkins = ["farmhand"];
+        equippedSkin = "farmhand";
         achievementsUnlocked = {};
         achievementsSeen = 0;
         stats = { kills: 0, mutantKills: 0, bombKills: 0, chestsOpened: 0, feastChests: 0, wavesSurvived: 0, clears: 0, untouchableClears: 0 };
@@ -7004,6 +7398,11 @@
              glow, drifting turkeys — while the Lobby is open. */
           if (!lobbyPanel.hidden && (lobbyFrame++ % 2 === 0)) { drawLobbyBackdrop(time); drawLobbyPreview(time); }
           if (trophyPanel && !trophyPanel.hidden && (trophyFrame++ % 2 === 0)) { var tbg = document.getElementById("trophyBgCanvas"); if (tbg) drawLobbyBackdrop(time, tbg); }
+          if (skinsPanel && !skinsPanel.hidden && (skinsFrame++ % 2 === 0)) {
+            var sbg = document.getElementById("skinsBgCanvas"); if (sbg) drawLobbyBackdrop(time, sbg);
+            var spvs = skinsPanel.querySelectorAll(".skin-preview-canvas");
+            for (var spvi = 0; spvi < spvs.length; spvi++) drawSkinPreview(spvs[spvi], spvs[spvi].getAttribute("data-skin"), time);
+          }
         } catch (err) {
           /* Recover instead of staying frozen: clear any boss-ceremony
              timing state, and if the ceremony was mid-flight, finish it
@@ -7558,8 +7957,8 @@
       var shellChromeShown = null;
       var shellLobbyShown = null;
       function syncShellChrome() {
-        var show = !menuOverlay.hidden || !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden);
-        var inLobby = !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden);
+        var show = !menuOverlay.hidden || !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden) || (skinsPanel && !skinsPanel.hidden);
+        var inLobby = !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden) || (skinsPanel && !skinsPanel.hidden);
         /* Full-screen field: whenever the shell is down a run is
            on — the stage takes the whole screen (body.playing) and
            the on-field HUD + thumb pads are the only chrome. */
@@ -7642,6 +8041,7 @@
       function goShellMenu() {
         var trophyWasOpen = trophyPanel && !trophyPanel.hidden;
         if (trophyPanel) trophyPanel.hidden = true;
+        if (skinsPanel) skinsPanel.hidden = true;
         if (!lobbyPanel.hidden || trophyWasOpen) hideLobby();
         state = "menu";
         msgOverlay.hidden = true;
