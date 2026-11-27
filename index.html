@@ -1978,6 +1978,230 @@
         .feat-best { font-size: 12.5px; margin-top: 3px; }
       }
       @media (prefers-reduced-motion: reduce) { .ach-toast { animation: none; } }
+
+      /* ============================================================
+         FULL-SCREEN FIELD PASS (Q's call) — during a run NOTHING
+         sits above or below the play field: no top HUD bar, no
+         bottom touch-pad row. syncShellChrome() puts body.playing
+         on whenever the menu/Lobby shell is down; the stage then
+         IS the screen — full-bleed sunset backdrop (the menu's own
+         gradient) with the field centred on it — and everything
+         the player needs lives ON the field: score / coins / wave
+         / hearts as translucent pills along the top edge, Home /
+         sound / pause as small corner icons, and Dodge (bottom-
+         left) + Gravy Bomb (bottom-right) as big translucent
+         thumb pads right where thumbs rest while dragging to
+         move. The pads sit under the menu/message veils (z 4 < 5),
+         so they only ever show during actual play. Layout +
+         presentation only — no tuning, save or system changes.
+         ============================================================ */
+      .field { position: relative; }
+      /* Field overlays no longer follow the shell width formula. */
+      .hud, .controls { width: auto; max-width: none; margin: 0; }
+
+      /* --- HUD: translucent dark-walnut pills on the field --- */
+      .hud {
+        position: absolute; z-index: 4;
+        top: calc(8px + env(safe-area-inset-top, 0px));
+        left: 8px; right: 8px;
+        flex-wrap: nowrap; gap: 6px;
+        pointer-events: none;
+      }
+      .hud .stat, .hud .lives {
+        background: linear-gradient(180deg, rgba(84,50,20,.88), rgba(46,26,10,.92));
+        border: 2.5px solid rgba(255,217,138,.55);
+        color: #fff3d6;
+        box-shadow: 0 3px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.22);
+        text-shadow: 0 1px 2px rgba(20,6,2,.65);
+      }
+      .hud .stat span { color: #ffd98a; }
+      .hud .stat.coins b { color: #ffd968; }
+      .hud .lives { color: #ff8a75; }
+      .hud .icon-btn {
+        pointer-events: auto;
+        background: linear-gradient(180deg, rgba(84,50,20,.88), rgba(46,26,10,.92));
+        border: 2.5px solid rgba(255,217,138,.55);
+        color: #ffe9c2;
+        box-shadow: 0 3px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.22);
+        text-shadow: 0 1px 2px rgba(20,6,2,.65);
+      }
+      .hud .icon-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(20,6,2,.45); }
+
+      /* --- Thumb pads inside the field's bottom corners --- */
+      .controls {
+        position: absolute; z-index: 4;
+        left: 0; right: 0;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        padding: 0 14px;
+        display: flex; justify-content: space-between; align-items: flex-end;
+        pointer-events: none;
+      }
+      .controls .ctl-btn {
+        pointer-events: auto;
+        flex: 0 0 auto;
+        width: 88px; height: 88px; min-height: 88px;
+        border-radius: 26px;
+        font-size: 31px; gap: 1px;
+        position: relative;
+      }
+      .controls .ctl-btn small { font-size: 10.5px; letter-spacing: .05em; line-height: 1.15; }
+      .controls .ctl-btn.dodge {
+        background: linear-gradient(180deg, rgba(247,220,122,.93), rgba(247,227,189,.9));
+        border-color: rgba(217,142,43,.95);
+        color: #4a2c05;
+        box-shadow: 0 5px 0 rgba(90,52,8,.5), inset 0 2px 0 rgba(255,255,255,.65);
+      }
+      /* Dodge cooldown sweep: a dark wedge that drains as the dash
+         recharges (--cd = fraction of the cooldown still to go,
+         set every frame by the game loop — the old pad's cooling
+         fade, as a readable sweep). */
+      .controls .ctl-btn.dodge.cooling {
+        opacity: 1;
+        background:
+          conic-gradient(rgba(46,26,10,.55) calc(var(--cd, 0) * 1turn), rgba(46,26,10,0) 0),
+          linear-gradient(180deg, rgba(247,220,122,.93), rgba(247,227,189,.9));
+      }
+      .controls .ctl-btn.bomb {
+        background: linear-gradient(180deg, rgba(224,104,79,.93), rgba(178,58,46,.93) 55%, rgba(147,48,31,.95));
+        border-color: rgba(126,36,24,.95);
+        color: #fff;
+        box-shadow: 0 5px 0 rgba(90,20,8,.55), inset 0 2px 0 rgba(255,255,255,.35);
+      }
+      .controls .ctl-btn.bomb small { color: #ffd9c9; }
+      .controls .ctl-btn:active, .controls .ctl-btn.held { transform: translateY(3px); }
+      .controls .ctl-btn:disabled { opacity: .45; }
+      /* Bomb count as a gold badge on the pad's corner */
+      .bomb-n {
+        position: absolute; top: -9px; right: -9px;
+        min-width: 28px; height: 28px; padding: 0 6px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(180deg, #ffd968, #e8a94c);
+        border: 2.5px solid #8a5a10; border-radius: 999px;
+        color: #33200a; font-size: 15px; font-weight: 800; line-height: 1;
+        box-shadow: 0 2px 0 rgba(43,20,4,.55);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* --- The run: stage fills the whole screen --- */
+      body.playing { overflow: hidden; }
+      body.playing .stage {
+        position: fixed; inset: 0; z-index: 120;
+        width: auto; max-width: none; margin: 0;
+        border: none; border-radius: 0; box-shadow: none;
+        display: flex; align-items: center; justify-content: center;
+        background:
+          radial-gradient(120% 46% at 78% 6%, rgba(255,190,80,.34), rgba(255,190,80,0) 60%),
+          radial-gradient(90% 30% at 12% 22%, rgba(255,120,60,.18), rgba(255,120,60,0) 60%),
+          linear-gradient(180deg, #2b1030 0%, #6e2430 34%, #b23a2e 58%, #e8873a 78%, #3a1e0e 100%);
+      }
+      body.playing .field {
+        flex: 0 0 auto;
+        width: min(100vw, calc(100dvh * 0.65625));
+        border-radius: 8px; overflow: hidden;
+        box-shadow: 0 24px 60px rgba(10,4,2,.55), 0 0 0 3px rgba(232,135,58,.18);
+      }
+      @media (max-width: 480px) {
+        .hud { top: calc(6px + env(safe-area-inset-top, 0px)); left: 6px; right: 6px; }
+        .controls { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding: 0 12px; }
+        .controls .ctl-btn { width: 80px; height: 80px; min-height: 80px; border-radius: 24px; font-size: 28px; }
+      }
+
+      /* --- Menu backdrop: warmer, fuller sunset behind the shell
+         screens (Chapters / Ranks / How / Credits / Chests) — the
+         same gradient family, with ember glows low in the frame
+         so the lower half no longer falls off to flat dark. --- */
+      #menuOverlay {
+        background:
+          radial-gradient(120% 46% at 78% 6%, rgba(255,190,80,.34), rgba(255,190,80,0) 60%),
+          radial-gradient(90% 30% at 12% 22%, rgba(255,120,60,.18), rgba(255,120,60,0) 60%),
+          radial-gradient(64% 30% at 88% 96%, rgba(255,150,60,.20), rgba(255,150,60,0) 62%),
+          radial-gradient(58% 26% at 6% 88%, rgba(255,110,50,.16), rgba(255,110,50,0) 60%),
+          radial-gradient(90% 12% at 50% 100%, rgba(255,214,120,.14), rgba(255,214,120,0) 70%),
+          linear-gradient(180deg, #2b1030 0%, #6e2430 34%, #b23a2e 58%, #e8873a 78%, #3a1e0e 100%);
+      }
+
+      /* ============================================================
+         HUD READABILITY + TALL-FIELD PASS (Jasmine's 390×844
+         capture of the full-screen build)
+         1) The on-field pills truncated their own text — "SC… 0",
+            "C… 4,…", "LEVEL 1 ·… / Get r…" — because every pill
+            shared one nowrap row and the old review-pass rule
+            ellipsised whatever did not fit. The HUD is now two
+            short rows of content-sized pills, laid out to Nora's
+            spec: hearts top-LEFT, score top-CENTER (absolutely
+            centred on the field), corner icons top-right, and a
+            centred second row carrying the coin count (icon +
+            number only — the word "Coins" is gone) and the
+            level / wave pill. Nothing ellipsises any more: every
+            pill is exactly as wide as its text, at sizes picked
+            so even "⚠ BOSS: Emperor Gobblezilla Prime" and
+            "Level 12 · …" fit whole inside a 390px field.
+         2) Dead backdrop bands: on tall phones the fixed-aspect
+            field floated centred on the stage's sunset backdrop,
+            leaving big empty bands above and especially below.
+            While playing, fitFieldToScreen() (see the script)
+            now grows the canvas's internal height so the field's
+            OWN painted scene — sky, hills, ground — fills the
+            screen top to bottom; the backdrop survives only at
+            the extreme edges of screens wider than the field.
+            ============================================================ */
+      /* --- 1) HUD: two rows, pills sized to their content --- */
+      .hud {
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: 5px; row-gap: 5px;
+      }
+      .hud .lives { order: -1; margin-right: auto; }
+      .hud .icon-btn { order: 0; flex: 0 0 auto; }
+      /* Forced line break between the rows: without it flex
+         greedily pulls the coins pill up into row 1, where it
+         would collide with the centred score pill. */
+      .hud::after { content: ""; order: 9; flex: 0 0 100%; height: 0; }
+      .hud .stat {
+        flex: 0 0 auto;
+        flex-direction: row; align-items: baseline; gap: 6px;
+        min-height: 0; padding: 4px 10px;
+        border-radius: 999px;
+        overflow: visible;
+      }
+      .hud .stat b, .hud .stat span {
+        white-space: nowrap; overflow: visible;
+        text-overflow: clip; max-width: none;
+      }
+      /* Score: dead centre of the top row, label inline. */
+      .hud .stat.score {
+        position: absolute; top: 0; left: 50%;
+        transform: translateX(-50%);
+      }
+      .hud .stat.score span { font-size: 9px; letter-spacing: .08em; }
+      .hud .stat.score b { font-size: 15px; }
+      /* Second row: coins (icon + number) and the level/wave pill. */
+      .hud .stat.coins { order: 10; align-items: center; }
+      .hud .stat.coins span { font-size: 13px; line-height: 1; }
+      .hud .stat.coins b { font-size: 13.5px; }
+      .hud .stat.wave {
+        order: 11; flex: 0 0 auto;
+        flex-direction: column; align-items: center; gap: 0;
+        padding: 3px 12px 4px;
+      }
+      .hud .stat.wave span { font-size: 9.5px; letter-spacing: .05em; line-height: 1.15; }
+      .hud .stat.wave b { font-size: 12.5px; line-height: 1.15; }
+      .hud .lives {
+        min-height: 0; padding: 5px 11px;
+        font-size: 14.5px; letter-spacing: 1.5px;
+      }
+      .hud .icon-btn { width: 38px; height: 38px; }
+      @media (max-width: 360px) {
+        .hud .icon-btn { width: 34px; height: 34px; flex-basis: 34px; font-size: 16px; border-radius: 11px; }
+        .hud .stat { padding: 4px 8px; }
+        .hud .stat.wave { padding: 3px 10px 4px; }
+        .hud .stat.wave b { font-size: 11.5px; }
+        .hud .lives { padding: 5px 9px; font-size: 13.5px; }
+      }
+      /* --- 2) Field fills tall screens with its own scene --- */
+      body.playing .field {
+        width: min(100vw, calc(100dvh * var(--far, 0.65625)));
+      }
     </style>
   </head>
   <body>
@@ -2024,20 +2248,40 @@
         </div>
       </div>
 
-      <!-- HUD -->
-      <div class="hud" id="gameHud" aria-label="Game status" hidden>
-        <div class="stat"><span>Score</span><b id="hudScore">0</b></div>
-        <div class="stat coins"><span>🪙 Coins</span><b id="hudCoins">0</b></div>
-        <div class="stat grow"><span id="hudLevelLabel">Level 1</span><b id="hudWave">Get ready</b></div>
-        <div class="lives" id="hudLives" aria-label="Lives"></div>
-        <button class="icon-btn" id="btnLobby" type="button" aria-label="Go to lobby" title="Lobby">🏠</button>
-        <button class="icon-btn" id="btnSound" type="button" aria-label="Toggle sound">🔊</button>
-        <button class="icon-btn" id="btnPause" type="button" aria-label="Pause game">⏸</button>
-      </div>
-
       <!-- Stage -->
       <div class="stage" id="stage">
+        <!-- The play field: the canvas with the HUD and the thumb
+             controls layered ON it — score / coins / wave / hearts
+             as translucent pills along the field's top edge, Home /
+             sound / pause as small corner icons, and Dodge (bottom-
+             left) + Gravy Bomb (bottom-right) as big thumb pads
+             inside the field's bottom corners, right where thumbs
+             rest while dragging to move. During a run the stage
+             goes full-screen (body.playing) — nothing sits above
+             or below the field any more. -->
+        <div class="field" id="fieldBox">
         <canvas id="game" width="420" height="640" aria-label="Invasion of the Turkeys game field"></canvas>
+
+        <!-- HUD — overlay pills on the field itself -->
+        <div class="hud" id="gameHud" aria-label="Game status" hidden>
+          <div class="stat score"><span>Score</span><b id="hudScore">0</b></div>
+          <div class="stat coins"><span aria-hidden="true">🪙</span><b id="hudCoins">0</b></div>
+          <div class="stat grow wave"><span id="hudLevelLabel">Level 1</span><b id="hudWave">Get ready</b></div>
+          <div class="lives" id="hudLives" aria-label="Lives"></div>
+          <button class="icon-btn" id="btnLobby" type="button" aria-label="Go to lobby" title="Lobby">🏠</button>
+          <button class="icon-btn" id="btnSound" type="button" aria-label="Toggle sound">🔊</button>
+          <button class="icon-btn" id="btnPause" type="button" aria-label="Pause game">⏸</button>
+        </div>
+
+        <!-- Thumb controls — overlay pads inside the field's
+             bottom corners. Movement is drag on the field (plus
+             double-tap / flick to dodge), so there are no separate
+             ◀ ▶ pads to reach for any more. -->
+        <div class="controls" id="controlsRow">
+          <button class="ctl-btn dodge" id="btnDodge" type="button" aria-label="Dodge dash">💨<small>Dodge</small></button>
+          <button class="ctl-btn bomb" id="btnBomb" type="button" aria-label="Use gravy bomb">💣<small>Gravy Bomb</small><span class="bomb-n" id="bombCount">2</span></button>
+        </div>
+        </div>
 
         <!-- Chapters screen / start overlay — ONE clean screen:
              featured chapter hero + thumbnail strip + ONE big START
@@ -2101,10 +2345,10 @@
           <div class="menu-panel" id="panelHow" hidden>
           <h3>How to Play</h3>
           <div class="howto">
-            <div>🖐️ <b>Drag</b> on the field (or hold ◀ ▶) to move</div>
-            <div>💨 <b>Double-tap</b> ◀ ▶, flick sideways, or tap <b>Dodge</b> to dash — nothing can hit you mid-dash</div>
+            <div>🖐️ <b>Drag</b> on the field to move — your thumbs never leave the action</div>
+            <div>💨 <b>Double-tap</b> a side of the field, flick sideways, or tap the <b>Dodge</b> pad (bottom-left of the field) to dash — nothing can hit you mid-dash</div>
             <div>🔴 Your cranberry cannon <b>fires on its own</b> — fast, snappy shots; just aim by moving</div>
-            <div>💣 <b>Gravy Bomb</b> button blasts everything on screen</div>
+            <div>💣 The <b>Gravy Bomb</b> pad (bottom-right of the field) blasts everything on screen</div>
             <div>🌽 Grab corn for points and coins, cranberries for triple-shot, and pie heals a flat +1 ♥ — a missed pie lands and waits on the ground for you (max 2 at once, and no pie drops during a boss fight)</div>
             <div>🧬 <b>Mutated turkeys</b> creep in from Level 4, more every level — extra heads, extra tough, bonus coins. Every turkey bursts into feathers, potatoes &amp; gravy</div>
             <div>🪙 Turkeys drop <b>coins</b> — after each run you return to the <b>Lobby</b> to upgrade your cannon</div>
@@ -2255,14 +2499,6 @@
         <span><span class="at-kicker">ACHIEVEMENT UNLOCKED</span><br /><span class="at-name" id="achToastName">First Boss Plucked</span></span>
       </div>
 
-      <!-- Touch controls -->
-      <div class="controls" id="controlsRow">
-        <button class="ctl-btn" id="btnLeft" type="button" aria-label="Move left, double-tap to dodge left">◀<small>Move · 2×tap = dodge</small></button>
-        <button class="ctl-btn dodge" id="btnDodge" type="button" aria-label="Dodge dash">💨<small>Dodge</small></button>
-        <button class="ctl-btn bomb" id="btnBomb" type="button" aria-label="Use gravy bomb">💣<small>Gravy Bomb · <span id="bombCount">2</span></small></button>
-        <button class="ctl-btn" id="btnRight" type="button" aria-label="Move right, double-tap to dodge right">▶<small>Move · 2×tap = dodge</small></button>
-      </div>
-
       <!-- Official Trailer: a 32-second cinematic cut of the real game —
            same farm at sunset, same cranberry cannon, same turkeys and
            same Big Gobbler dive you play against. Every shot below is
@@ -2299,7 +2535,7 @@
         </div>
       </div>
 
-      <p class="hint" id="hintText">Dodge: double-tap ◀ or ▶, flick sideways on the field, or tap Dodge — you're untouchable mid-dash. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries. Your progress, coins and upgrades save automatically on this device — and your best finished runs land on the Leaderboard in the main menu.</p>
+      <p class="hint" id="hintText">Drag on the field to move. Dodge: double-tap a side of the field, flick sideways, or tap the Dodge pad in the field's bottom-left corner — you're untouchable mid-dash. The Gravy Bomb pad sits in the bottom-right corner. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries. Your progress, coins and upgrades save automatically on this device — and your best finished runs land on the Leaderboard in the main menu.</p>
     </main>
 
     <script>
@@ -3950,6 +4186,29 @@
          hills, BEFORE the fence/ground: distant treeline silhouettes
          give the horizon depth, then the biome's own landmarks sit on
          the hill line. `u` is the scene unit (field width / 420). */
+      /* Distant birds for the menu skies — tiny two-arc silhouettes
+         with a slow flap, drifting across on the wind. Shared by
+         the splash, the Lobby backdrop and the chapter dioramas so
+         every menu sky moves the same way. Positions are seeded
+         (det) so the flock is stable frame to frame. */
+      function drawBirdsOn(c, t, wd, top, n, col, sc) {
+        c.save();
+        c.strokeStyle = col;
+        c.lineWidth = Math.max(1.2, 1.7 * sc);
+        c.lineCap = "round";
+        for (var i = 0; i < n; i++) {
+          var bx = ((det(i * 31.7) * wd * 1.25 + t * (9 + det(i * 7.3) * 9)) % (wd + 90)) - 45;
+          var by = top + det(i * 17.9) * 54 * sc + Math.sin(t * 1.4 + i * 2.2) * 3.5 * sc;
+          var flap = 0.35 + 0.65 * Math.abs(Math.sin(t * 5 + i * 1.7));
+          var w = (7 + det(i * 3.1) * 5) * sc;
+          c.beginPath();
+          c.moveTo(bx - w, by - w * 0.34 * flap);
+          c.quadraticCurveTo(bx - w * 0.3, by + w * 0.16 * flap, bx, by);
+          c.quadraticCurveTo(bx + w * 0.3, by + w * 0.16 * flap, bx + w, by - w * 0.34 * flap);
+          c.stroke();
+        }
+        c.restore();
+      }
       function drawSceneLayer(c, idx, t, wd, gy, u) {
         var v = LEVELS[idx].variant;
         var dark = (v === "night" || v === "burnt" || v === "storm" || v === "prime");
@@ -4640,15 +4899,17 @@
             ctx.beginPath(); ctx.arc(boss.x, boss.y, boss.r + 5, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
           }
-          // boss HP bar
+          // boss HP bar — on the field, just under the HUD pills
+          // that now overlay the field's top edge (two pill rows
+          // since the readability pass, so the bar sits at y=100)
           ctx.fillStyle = "rgba(30,16,8,.72)";
-          ctx.fillRect(46, 12, W - 92, 17);
+          ctx.fillRect(46, 100, W - 92, 17);
           ctx.fillStyle = "#d95f4b";
-          ctx.fillRect(48, 14, (W - 96) * Math.max(0, boss.hp / boss.maxHp), 13);
+          ctx.fillRect(48, 102, (W - 96) * Math.max(0, boss.hp / boss.maxHp), 13);
           ctx.fillStyle = "#fdf3e0";
           ctx.font = "700 11.5px Trebuchet MS, sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText(boss.name.toUpperCase(), W / 2, 24.5);
+          ctx.fillText(boss.name.toUpperCase(), W / 2, 112.5);
           if (boss.divePhase === "warn") {
             // the telegraph: a dashed lane from the boss to the ground shows
             // exactly where the full-depth dive will land — dodge out of it
@@ -5542,6 +5803,7 @@
           var cx = ((ci * 300 + t * (6 + ci * 3)) % (BW + 220)) - 110, cy = 36 + ci * 44;
           g.beginPath(); g.ellipse(cx, cy, 64, 12, 0, 0, Math.PI * 2); g.ellipse(cx + 38, cy + 5, 44, 9, 0, 0, Math.PI * 2); g.fill();
         }
+        drawBirdsOn(g, t, BW, 96, 4, "rgba(30,14,10,.45)", 1.8);
         // hills — Level 1's own greens
         g.fillStyle = "#a8bf74";
         g.beginPath(); g.moveTo(0, GY);
@@ -5559,15 +5821,21 @@
         drawBarnShape(g, 26, GY, 1.6);
         drawSiloShape(g, BW * 0.24, GY, 1.35);
         drawWindmillShape(g, BW - 52, GY, 1.6, t * 0.7);
-        // fence line along the horizon
+        // fence line along the horizon — two rails, like the preview
         g.fillStyle = "rgba(93,58,26,.8)";
         for (var fx = BW * 0.42; fx < BW - 120; fx += 48) g.fillRect(fx, GY - 19, 5, 19);
         g.fillRect(BW * 0.41, GY - 14, BW * 0.47, 3.5);
+        g.fillRect(BW * 0.41, GY - 7, BW * 0.47, 3);
         // ground — shaded band + the shared ground texture
         var grd = g.createLinearGradient(0, GY, 0, BH);
         grd.addColorStop(0, "#96753e"); grd.addColorStop(1, "#5d4020");
         g.fillStyle = grd; g.fillRect(0, GY, BW, BH - GY);
         drawGroundDetail(g, 0, t, BW, BH, GY, 1.7);
+        // foreground dressing — hay bales and pumpkins in the yard
+        drawHayBaleOn(g, BW * 0.09, GY + 48, 15);
+        drawHayBaleOn(g, BW * 0.155, GY + 62, 10);
+        drawPumpkinOn(g, BW * 0.9, GY + 54, 16, 11);
+        drawPumpkinOn(g, BW * 0.83, GY + 70, 11, 8);
         // warm veil: deepens the scene so panels + light text read
         var veil = g.createLinearGradient(0, 0, 0, BH);
         veil.addColorStop(0, "rgba(43,16,8,.30)"); veil.addColorStop(0.55, "rgba(43,16,8,.22)"); veil.addColorStop(1, "rgba(30,12,4,.48)");
@@ -6275,6 +6543,7 @@
         try {
           if (state !== "paused") update(dt);
           btnDodge.classList.toggle("cooling", player.dodgeCd > 0);
+          btnDodge.style.setProperty("--cd", player.dodgeCd > 0 ? (player.dodgeCd / dodgeCdFor(upgrades.boots)).toFixed(3) : "0");
           draw();
           /* The cover poster stays gently alive while the menu is open
              (bobbing boss, turning windmill) — redrawn at ~30fps. */
@@ -6348,19 +6617,10 @@
         el.addEventListener("pointercancel", end);
         el.addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
       }
-      var lastBtnTap = { left: 0, right: 0 };
-      holdButton(document.getElementById("btnLeft"), function () {
-        keys.left = true; pointerX = null;
-        var now = performance.now();
-        if (now - lastBtnTap.left < 300) triggerDodge(-1);
-        lastBtnTap.left = now;
-      }, function () { keys.left = false; });
-      holdButton(document.getElementById("btnRight"), function () {
-        keys.right = true; pointerX = null;
-        var now = performance.now();
-        if (now - lastBtnTap.right < 300) triggerDodge(1);
-        lastBtnTap.right = now;
-      }, function () { keys.right = false; });
+      /* The old ◀ ▶ hold-pads are gone — movement on touch is drag
+         on the field itself (double-tap a side / flick to dodge),
+         and the keyboard keeps ← → / A / D. Only the two on-field
+         thumb pads remain: Dodge and Gravy Bomb. */
       btnBomb.addEventListener("click", function () { ac(); useBomb(); });
       btnDodge.addEventListener("pointerdown", function (ev) {
         ev.preventDefault(); ac();
@@ -6527,6 +6787,7 @@
           g.ellipse(clx + 28 * cls, cly + 3 * cls, 28 * cls, 10 * cls, 0, 0, Math.PI * 2);
           g.fill();
         }
+        drawBirdsOn(g, t, CW, 30, 4, "rgba(38,20,8,.38)", 1.1);
         // faint distant hills behind the chunk
         g.globalAlpha = 0.5;
         g.fillStyle = L.hillFar;
@@ -6534,6 +6795,18 @@
         g.quadraticCurveTo(CW * 0.27, CH * 0.66, CW * 0.55, CH * 0.74);
         g.quadraticCurveTo(CW * 0.8, CH * 0.8, CW, CH * 0.7);
         g.lineTo(CW, CH); g.lineTo(0, CH); g.closePath(); g.fill();
+        g.globalAlpha = 1;
+        // distant pine treeline along the hill line, faint behind
+        // the chunk — the horizon reads as a place now, not a wash
+        g.globalAlpha = 0.38;
+        g.fillStyle = L.hill;
+        for (var ti2 = 0; ti2 < 9; ti2++) {
+          var tx2 = (ti2 + 0.5) * (CW / 9) + (det(ti2 * 5.9) - 0.5) * 16;
+          var th2 = 20 + det(ti2 * 9.4) * 24;
+          var tby = CH * 0.82 - Math.abs(tx2 - CW / 2) / CW * 12;
+          g.beginPath(); g.moveTo(tx2 - th2 * 0.34, tby); g.lineTo(tx2, tby - th2); g.lineTo(tx2 + th2 * 0.34, tby); g.closePath(); g.fill();
+          g.beginPath(); g.arc(tx2 + th2 * 0.52, tby - th2 * 0.3, th2 * 0.3, 0, Math.PI * 2); g.fill();
+        }
         g.globalAlpha = 1;
 
         /* ============ THE DIORAMA CHUNK ============
@@ -6803,6 +7076,11 @@
       function syncShellChrome() {
         var show = !menuOverlay.hidden || !lobbyPanel.hidden;
         var inLobby = !lobbyPanel.hidden;
+        /* Full-screen field: whenever the shell is down a run is
+           on — the stage takes the whole screen (body.playing) and
+           the on-field HUD + thumb pads are the only chrome. */
+        document.body.classList.toggle("playing", !show);
+        fitFieldToScreen();
         var stEl = document.getElementById("shellTop");
         var tbEl = document.getElementById("tabBar");
         var hudEl = document.getElementById("gameHud");
@@ -6831,6 +7109,41 @@
         if (show && inLobby) setShellView("lobby");
         else if (show && shellView === "lobby") setShellView("chapters");
       }
+      /* ---------- Tall-field fit ----------
+         While a run is on (body.playing), grow the game canvas's
+         internal height so the field fills a tall phone screen
+         with its own painted scene instead of floating between
+         dead backdrop bands: at full viewport width the canvas
+         needs H = W × (viewport height ÷ viewport width) to
+         reach top and bottom exactly. Every part of the scene
+         already paints from the H / GROUND globals (sky gradient
+         0→H, hills and landmarks on GROUND, ground band GROUND→H,
+         vignette at H), and movement maps pointer X only, so the
+         taller field needs no other changes — the cannon simply
+         rides the new ground line. Capped so extreme aspect
+         ratios keep a sane amount of sky; on screens at or wider
+         than the classic 420:640 field nothing changes at all.
+         The field element's --far custom property carries the
+         live aspect (W ÷ H) to the body.playing width rule. */
+      var FIELD_BASE_H = 640, FIELD_MAX_H = 1024;
+      function fitFieldToScreen() {
+        var newH = FIELD_BASE_H;
+        if (document.body.classList.contains("playing") && window.innerWidth > 0 && window.innerHeight > 0) {
+          newH = Math.round(W * window.innerHeight / window.innerWidth);
+          if (newH < FIELD_BASE_H) newH = FIELD_BASE_H;
+          if (newH > FIELD_MAX_H) newH = FIELD_MAX_H;
+        }
+        if (newH !== H) {
+          H = newH;
+          GROUND = H - 46;
+          canvas.height = H;
+          if (player) player.y = GROUND - 26;
+        }
+        var fb = document.getElementById("fieldBox");
+        if (fb) fb.style.setProperty("--far", String(W / H));
+      }
+      window.addEventListener("resize", fitFieldToScreen);
+      window.addEventListener("orientationchange", fitFieldToScreen);
       function setShellView(v) {
         shellView = v;
         var tabs = document.querySelectorAll(".tab-bar .tab");
@@ -6954,6 +7267,7 @@
           var cx = ((ci * 340 + t * (7 + ci * 3)) % (CW + 240)) - 120, cy = 40 + ci * 46;
           g.beginPath(); g.ellipse(cx, cy, 74, 14, 0, 0, Math.PI * 2); g.ellipse(cx + 44, cy + 6, 50, 10, 0, 0, Math.PI * 2); g.fill();
         }
+        drawBirdsOn(g, t, CW, 130, 5, "rgba(30,14,10,.5)", 2.1);
         g.fillStyle = "#a8bf74";
         g.beginPath(); g.moveTo(0, GY);
         g.quadraticCurveTo(CW * 0.27, GY - 84, CW * 0.55, GY - 34);
@@ -6975,6 +7289,13 @@
         grd.addColorStop(0, "#96753e"); grd.addColorStop(1, "#5d4020");
         g.fillStyle = grd; g.fillRect(0, GY, CW, CH - GY);
         drawGroundDetail(g, 0, t, CW, CH, GY, 2);
+        /* foreground dressing in the corners — hay bales and a
+           pumpkin patch frame the cannon's stand */
+        drawHayBaleOn(g, 84, GY + 58, 21);
+        drawHayBaleOn(g, 152, GY + 78, 13);
+        drawPumpkinOn(g, CW - 96, GY + 66, 23, 15);
+        drawPumpkinOn(g, CW - 178, GY + 86, 14, 10);
+        drawPumpkinOn(g, 218, GY + 94, 12, 9);
         /* Big Gobbler — huge, front and centre, bobbing over the farm
            with his ember aura, exactly his in-game boss design. */
         var bossX = CW / 2, bossY = CH * 0.56 + Math.sin(t * 1.3) * 9;
