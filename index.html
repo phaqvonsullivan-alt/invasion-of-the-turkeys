@@ -1612,6 +1612,254 @@
         .chest-tier .chest-open-btn { order: 3; width: 100%; }
         .feat-heading .feat-name { font-size: 29px; }
       }
+
+      /* ============================================================
+         REVIEW FIX PASS (Chat's list, from Q's phone captures)
+         1) Chapter name + top-bar name clipping on narrow phones —
+            layout only; the diorama art is untouched.
+         2) FEAST chest card + chest art read gold-and-purple, the
+            grandest tier, clearly apart from EPIC / RARE / COMMON.
+         3) Chest reveal: burst + coin landing kept, but the panel
+            always fits inside the safe area, reward cards land with
+            a staggered pop, and a minimum hold (see JS) stops an
+            accidental tap vanishing it before it can be read.
+         4) Gameplay HUD: every pill's text stays inside the screen
+            (long boss names ellipsize inside their own pill), and
+            the touch controls stay low-profile in normal flow
+            below the field — never fixed over the action.
+         5) Lobby / menu / chapters show exactly ONE HUD — the
+            shell top bar. [hidden] always wins for shell chrome.
+         ============================================================ */
+      .shell-top[hidden], .tab-bar[hidden] { display: none !important; }
+      /* --- 1) Top bar: shrink chrome first, ellipsize last --- */
+      .shell-top { max-width: 100%; }
+      .player-badge { flex: 1 1 auto; min-width: 0; }
+      .player-meta { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+      .player-meta b {
+        overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+      }
+      .shell-right { flex: 0 1 auto; min-width: 0; }
+      .coins-pill { white-space: nowrap; flex: 0 1 auto; min-width: 0; overflow: hidden; }
+      @media (max-width: 430px) {
+        .shell-top { gap: 6px; padding: 6px 7px; border-radius: 14px; }
+        .player-badge { gap: 7px; }
+        .player-avatar { width: 34px; height: 34px; flex-basis: 34px; font-size: 19px; }
+        .player-meta b { font-size: 14px; letter-spacing: .02em; }
+        .shell-right { gap: 5px; }
+        .shell-icon { width: 34px; height: 34px; flex-basis: 34px; font-size: 16px; border-radius: 11px; }
+        .coins-pill { padding: 5px 8px; font-size: 13px; }
+        /* Credits also lives in the ⚙ settings pop — dropping its
+           top-bar icon at phone widths is what lets "WarKing" fit
+           in full at 360–390px instead of clipping to "Wark…". */
+        #btnShellCredits { display: none; }
+      }
+      @media (max-width: 374px) {
+        /* How to Play is in the ⚙ settings pop too. */
+        #btnShellHow { display: none; }
+        .player-meta b { font-size: 13px; }
+        .coins-pill { padding: 4px 7px; font-size: 12.5px; }
+      }
+      /* --- 1) Featured chapter heading: wrap, never squeeze off --- */
+      .feat-heading { width: 100%; max-width: 100%; }
+      .feat-heading .feat-name {
+        overflow-wrap: break-word; text-wrap: balance;
+        max-width: 100%;
+      }
+      .feat-heading .feat-meta { overflow-wrap: break-word; text-wrap: balance; }
+      .chapter-info { min-width: 0; }
+      .chapter-name { overflow-wrap: break-word; }
+      @media (max-width: 480px) {
+        .feat-heading { padding: 0 10px; margin-bottom: 7px; }
+        .feat-heading .feat-name {
+          font-size: clamp(21px, 6.1vw, 27px); line-height: 1.1;
+          -webkit-text-stroke: 1px #33160a;
+        }
+        .feat-heading .feat-kicker { font-size: 11px; letter-spacing: .18em; }
+        .feat-heading .feat-meta { font-size: 13px; line-height: 1.35; }
+      }
+      /* --- 2) FEAST tier card: vivid gold → purple, grandest glow --- */
+      .chest-tier.r-FEAST {
+        background: linear-gradient(135deg, #ffd968 0%, #ffb52e 24%, #c86ae0 55%, #8b3dff 80%, #a55eea 100%);
+        border-color: #ffe9a8;
+        box-shadow: 0 6px 0 rgba(70, 20, 90, .5), 0 0 26px rgba(255, 181, 46, .75), 0 0 20px rgba(168, 85, 247, .55), inset 0 2px 0 rgba(255, 255, 255, .55);
+      }
+      .chest-tier.r-FEAST .chest-tier-name {
+        color: #fff7e8;
+        text-shadow: 0 2px 0 #5e2a7d, 0 4px 0 rgba(43, 16, 8, .55), 0 6px 14px rgba(46, 10, 70, .45);
+      }
+      .chest-tier.r-FEAST .chest-tier-count,
+      .chest-tier.r-FEAST .chest-tier-odds,
+      .chest-tier.r-FEAST .chest-tier-from {
+        color: #fff7e8; text-shadow: 0 1px 3px rgba(46, 10, 70, .85), 0 1px 0 rgba(43, 16, 8, .5);
+      }
+      .chest-tier.r-FEAST .chest-tier-odds b { color: #ffe9a8; }
+      /* An unowned FEAST card stays gold-purple too — no grey-out
+         that used to drag it toward black. */
+      .chest-tier.r-FEAST.empty canvas { filter: saturate(1.05) brightness(1.1); }
+      .chest-tier.r-FEAST.empty .chest-tier-name { color: #fff7e8; }
+      .chest-row.r-FEAST {
+        background: linear-gradient(135deg, #e8a94c 0%, #a55eea 70%, #7d3ba8 100%);
+        border-color: #ffe9a8;
+        box-shadow: 0 4px 0 rgba(20, 6, 2, .45), 0 0 20px rgba(255, 181, 46, .65), 0 0 14px rgba(168, 85, 247, .5);
+      }
+      /* --- 3) Chest reveal: safe-area fit + staggered reward pop --- */
+      .chest-reveal {
+        justify-content: flex-start;
+        height: 100vh; height: 100dvh;
+        padding: calc(14px + env(safe-area-inset-top, 0px)) 14px calc(14px + env(safe-area-inset-bottom, 0px));
+      }
+      .chest-reveal[data-rarity="FEAST"] {
+        background: radial-gradient(90% 60% at 50% 34%, rgba(139, 61, 255, .5), rgba(16, 6, 2, 0) 62%),
+          radial-gradient(90% 60% at 50% 38%, rgba(120, 62, 10, .92), rgba(16, 6, 2, .97) 78%);
+      }
+      .chest-reveal canvas {
+        margin-top: auto; flex: 0 1 auto;
+        width: min(380px, 86vw);
+        animation: revealChestIn .55s cubic-bezier(.2, 1.4, .4, 1) both;
+      }
+      .reveal-tap { margin-bottom: auto; }
+      @keyframes revealChestIn { from { opacity: 0; transform: scale(.82) translateY(12px); } to { opacity: 1; transform: none; } }
+      .reveal-cards { width: 100%; max-width: 460px; }
+      .reveal-card {
+        flex: 1 1 128px; max-width: 204px; min-width: 0;
+        overflow-wrap: break-word;
+        animation: revealCardIn .5s cubic-bezier(.2, 1.5, .4, 1) both;
+      }
+      .reveal-card:nth-child(1) { animation-delay: .55s; }
+      .reveal-card:nth-child(2) { animation-delay: .72s; }
+      .reveal-card:nth-child(3) { animation-delay: .89s; }
+      @keyframes revealCardIn { from { opacity: 0; transform: translateY(16px) scale(.9); } to { opacity: 1; transform: none; } }
+      .reveal-close.locked { filter: saturate(.55) brightness(.94); }
+      .reveal-tap.nudge { color: #ffd968; animation: revealNudge .4s ease both; }
+      @keyframes revealNudge { 0%, 100% { transform: none; } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+      @media (max-width: 700px) and (max-height: 700px) {
+        .chest-reveal canvas { width: min(300px, 72vw); }
+        .reveal-rarity { font-size: clamp(30px, 8.4vw, 44px); }
+        .reveal-rarity.r-FEAST { font-size: clamp(36px, 10.5vw, 54px); }
+        .reveal-sub { margin-bottom: 9px; font-size: 14px; }
+        .reveal-card { padding: 9px 12px 8px; }
+        .reveal-card .rc-ico { font-size: 25px; }
+        .reveal-close { margin-top: 13px; min-height: 50px; padding: 10px 32px; font-size: 18px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .chest-reveal canvas, .reveal-card, .reveal-tap.nudge { animation: none; }
+      }
+      /* --- 4) Gameplay HUD + controls: inside safe bounds, off the action --- */
+      .hud { position: relative; z-index: 6; max-width: 100%; }
+      .hud .stat { min-width: 0; }
+      .hud .stat.grow { flex: 1 1 108px; min-width: 0; }
+      .hud .stat b, .hud .stat span {
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+      }
+      .hud .lives { flex: 0 0 auto; }
+      .controls { position: relative; z-index: 4; }
+      .ctl-btn { min-width: 0; overflow-wrap: break-word; }
+      @media (max-width: 480px) {
+        .hud { gap: 6px; margin-bottom: 7px; }
+        .hud .stat { padding: 4px 9px; border-radius: 14px; min-height: 38px; }
+        .hud .stat b { font-size: 15px; }
+        .hud .stat span { font-size: 10px; }
+        .hud .lives { font-size: 15px; letter-spacing: 1px; padding: 0 9px; min-height: 38px; }
+        .hud .icon-btn { width: 38px; height: 38px; flex: 0 0 38px; font-size: 17px; border-radius: 12px; }
+        .controls { gap: 7px; margin-top: 9px; }
+        .ctl-btn { min-height: 56px; font-size: 15px; padding: 7px 4px; border-radius: 14px; }
+        .ctl-btn small { font-size: 9.5px; letter-spacing: .02em; line-height: 1.3; text-transform: none; }
+        .wrap { padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+      }
+      @media (max-width: 360px) {
+        .hud .stat { padding: 4px 7px; }
+        .ctl-btn small { font-size: 9px; }
+      }
+
+      /* ============================================================
+         REVIEW ADDITIONS (Nora/Chat)
+         A) Coin flight: coins burst from the reveal to the top-bar
+            coin bank and the counter ticks up as they land.
+         B) Name-vs-gift overlap, explicit: the badge group reflows
+            as a grid — player side is minmax(0,1fr) so it can shrink
+            and ellipsize internally, the button side is auto and
+            can never slide over the name; the chest count badge
+            tucks INSIDE its button on narrow screens so it spills
+            over nothing.
+         ============================================================ */
+      .coin-fly {
+        position: fixed; z-index: 400; left: 0; top: 0;
+        font-size: 23px; line-height: 1; pointer-events: none;
+        filter: drop-shadow(0 3px 5px rgba(20, 6, 2, .45));
+        will-change: transform, opacity;
+      }
+      .coins-pill.pulse { animation: coinPillPulse .38s cubic-bezier(.2, 1.6, .4, 1) both; }
+      .coins-pill.pulse-big { animation: coinPillPulse .55s cubic-bezier(.2, 1.8, .4, 1) both; }
+      @keyframes coinPillPulse { 0% { transform: scale(1); } 45% { transform: scale(1.16); } 100% { transform: scale(1); } }
+      @media (prefers-reduced-motion: reduce) {
+        .coins-pill.pulse, .coins-pill.pulse-big { animation: none; }
+      }
+      .shell-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+      }
+      .player-badge { overflow: hidden; }
+      .shell-right { justify-self: end; }
+      .shell-right .shell-icon { flex: 0 0 auto; }
+      @media (max-width: 430px) {
+        .shell-top { column-gap: 6px; }
+        .chest-btn { flex: 0 0 34px; }
+        .chest-count { top: -4px; right: -4px; min-width: 19px; height: 19px; font-size: 11px; }
+        .chest-dot { top: -2px; left: -2px; width: 11px; height: 11px; }
+      }
+
+      /* ============================================================
+         REVIEW CHECKS C + D (Nora) — no new features.
+         C) Chapter dead space: on tall phones the chapters column
+            now stretches to the full overlay height and SPREADS —
+            heading, diorama hero, thumbnail strip and START row
+            distribute with breathing room (space-evenly + vh gaps)
+            instead of clustering at the top over one void. The
+            diorama canvas keeps its exact aspect (width-driven,
+            height auto) — the stage scales, the art never stretches.
+            Only applies when there IS spare height (min-height
+            720px); short screens keep the compact top flow.
+         D) Lobby scroll clearance: the Lobby scroller gets bottom
+            padding of tab-bar height + safe-area (and matching
+            scroll-padding), so the last chapter cards scroll FULLY
+            above the fixed tab bar — nothing hides behind it.
+         ============================================================ */
+      @media (max-width: 700px) and (min-height: 720px) {
+        #menuOverlay.chapters-clean .chapters-main {
+          flex: 1 1 auto; min-height: 0;
+          justify-content: space-evenly;
+          gap: clamp(10px, 2.6vh, 28px);
+          padding: 8px 0 4px;
+        }
+        #menuOverlay.chapters-clean .feat-heading { margin-bottom: 0; }
+        #menuOverlay.chapters-clean .feat-hero { margin-bottom: 0; }
+        #menuOverlay.chapters-clean .thumb-strip { padding-bottom: 2px; }
+        #menuOverlay.chapters-clean .feat-start-row { margin-top: 0; }
+      }
+      @media (max-width: 700px) and (min-height: 820px) {
+        /* Really tall phones: let the strip and START breathe more
+           (hero width is phone-limited, so growth goes to spacing,
+           chip size and the START row — never to stretching art). */
+        #menuOverlay.chapters-clean .thumb-chip { flex-basis: 108px; }
+        #menuOverlay.chapters-clean .feat-start-row .big-btn { min-height: 66px; }
+        #menuOverlay.chapters-clean .feat-nav-btn { min-height: 66px; }
+        #menuOverlay.chapters-clean .feat-heading .feat-meta { margin-top: 6px; }
+      }
+      .lobby-scroll {
+        padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+        scroll-padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+      }
+      @media (max-width: 700px) {
+        /* The pinned Next-Level card (with the replay chapter grid)
+           and the Play/Back actions sit below the scroller — give
+           the whole Lobby panel at least tab-bar height + safe-area
+           of clearance too, so nothing pinned hides behind it. */
+        .lobby { padding-bottom: calc(116px + env(safe-area-inset-bottom, 0px)); }
+      }
+      @media (min-width: 701px) {
+        .lobby-scroll { padding-bottom: 28px; scroll-padding-bottom: 28px; }
+      }
     </style>
   </head>
   <body>
@@ -4185,13 +4433,18 @@
       }
 
       /* ---------------- HUD ---------------- */
+      /* While a chest's coins are flying to the bank, this holds the
+         DISPLAYED coin total (the real `coins` is already final);
+         updateHUD() shows it instead so the counter can tick up as
+         the coins land. null = show the real total. */
+      var coinTickDisplay = null;
       function updateHUD() {
         hudScore.textContent = score.toLocaleString();
         document.getElementById("hudCoins").textContent = coins.toLocaleString();
         var lc = document.getElementById("lobbyCoins");
-        if (lc) lc.textContent = coins.toLocaleString();
+        if (lc) lc.textContent = (coinTickDisplay !== null ? coinTickDisplay : coins).toLocaleString();
         var sc2 = document.getElementById("shellCoins");
-        if (sc2) sc2.textContent = coins.toLocaleString();
+        if (sc2) sc2.textContent = (coinTickDisplay !== null ? coinTickDisplay : coins).toLocaleString();
         hudLevelLabel.textContent = "Level " + (levelIdx + 1) + " · " + LEVELS[levelIdx].name;
         if (state === "boss") hudWave.textContent = "⚠ BOSS: " + LEVELS[levelIdx].boss.name;
         else if (state === "play") hudWave.textContent = "Wave " + (waveIdx + 1) + " of " + LEVELS[levelIdx].waves.length;
@@ -4238,33 +4491,54 @@
           c.fillStyle = "rgba(255,217,104," + (0.55 * openAmt) + ")";
           c.beginPath(); c.ellipse(0, -52, 40 * openAmt + 6, 9 * openAmt + 2, 0, 0, Math.PI * 2); c.fill();
         }
-        // body — cranberry-red harvest crate
+        // body — cranberry-red harvest crate by default; EPIC goes
+        // purple and FEAST goes GOLD with purple trim (review fix:
+        // the grandest tier must read gold-and-purple at a glance,
+        // in the same flat-shape style as every other chest)
+        var isFeast = o.rarity === "FEAST", isEpic = o.rarity === "EPIC";
         var bodyGrad = c.createLinearGradient(0, -52, 0, 0);
-        bodyGrad.addColorStop(0, "#c04534"); bodyGrad.addColorStop(1, "#8e2a1e");
+        if (isFeast) { bodyGrad.addColorStop(0, "#ffd968"); bodyGrad.addColorStop(0.55, "#f0b73f"); bodyGrad.addColorStop(1, "#d98e2b"); }
+        else if (isEpic) { bodyGrad.addColorStop(0, "#a55eea"); bodyGrad.addColorStop(1, "#6d28a8"); }
+        else { bodyGrad.addColorStop(0, "#c04534"); bodyGrad.addColorStop(1, "#8e2a1e"); }
         c.fillStyle = bodyGrad;
         c.beginPath(); c.roundRect(-46, -52, 92, 52, 5); c.fill();
         // plank seams
-        c.strokeStyle = "rgba(70,20,10,.4)"; c.lineWidth = 2;
+        c.strokeStyle = isFeast ? "rgba(94,42,125,.4)" : "rgba(70,20,10,.4)"; c.lineWidth = 2;
         [-23, 0, 23].forEach(function (px) { c.beginPath(); c.moveTo(px, -50); c.lineTo(px, -2); c.stroke(); });
-        // gold straps + base trim
-        c.fillStyle = "#e8a94c";
+        // straps + base trim — gold normally, purple on the FEAST gold body
+        c.fillStyle = isFeast ? "#7d3ba8" : "#e8a94c";
         c.fillRect(-34, -52, 9, 52); c.fillRect(25, -52, 9, 52);
         c.fillRect(-46, -8, 92, 6);
         c.fillStyle = "rgba(255,236,180,.5)";
         c.fillRect(-34, -52, 3, 52); c.fillRect(25, -52, 3, 52);
-        // rarity gem on the front
+        // rarity gem on the front — FEAST wears a big purple gem in gold
         c.save(); c.translate(0, -27); c.rotate(Math.PI / 4);
-        c.fillStyle = R.gem; c.fillRect(-8.5, -8.5, 17, 17);
-        c.strokeStyle = "#ffd98a"; c.lineWidth = 2.4; c.strokeRect(-8.5, -8.5, 17, 17);
+        var gemSize = isFeast ? 21 : 17;
+        c.fillStyle = isFeast ? "#9b4dca" : R.gem; c.fillRect(-gemSize / 2, -gemSize / 2, gemSize, gemSize);
+        c.strokeStyle = "#ffd98a"; c.lineWidth = isFeast ? 3 : 2.4; c.strokeRect(-gemSize / 2, -gemSize / 2, gemSize, gemSize);
         c.fillStyle = "rgba(255,255,255,.55)"; c.fillRect(-5, -5, 5, 5);
         c.restore();
+        // FEAST sparkles — four-point stars riding the glow
+        if (isFeast) {
+          c.fillStyle = "#fff3d6";
+          [[-58, -64, 6], [56, -78, 7.5], [64, -30, 5], [-64, -22, 5]].forEach(function (sp) {
+            c.save(); c.translate(sp[0], sp[1]); c.globalAlpha = 0.9;
+            c.beginPath();
+            c.moveTo(0, -sp[2]); c.quadraticCurveTo(1.6, -1.6, sp[2], 0); c.quadraticCurveTo(1.6, 1.6, 0, sp[2]);
+            c.quadraticCurveTo(-1.6, 1.6, -sp[2], 0); c.quadraticCurveTo(-1.6, -1.6, 0, -sp[2]);
+            c.fill(); c.restore();
+          });
+          c.globalAlpha = 1;
+        }
         // lid — a domed crate lid that swings open from the back-left hinge
         c.save(); c.translate(-46, -50); c.rotate(-openAmt * 0.95); c.translate(0, -openAmt * 6);
         var lidGrad = c.createLinearGradient(0, -26, 0, 2);
-        lidGrad.addColorStop(0, "#d95f4b"); lidGrad.addColorStop(1, "#a33327");
+        if (isFeast) { lidGrad.addColorStop(0, "#c86ae0"); lidGrad.addColorStop(1, "#7d3ba8"); }
+        else if (isEpic) { lidGrad.addColorStop(0, "#b45be0"); lidGrad.addColorStop(1, "#7d3ba8"); }
+        else { lidGrad.addColorStop(0, "#d95f4b"); lidGrad.addColorStop(1, "#a33327"); }
         c.fillStyle = lidGrad;
         c.beginPath(); c.roundRect(0, -24, 92, 26, [12, 12, 4, 4]); c.fill();
-        c.fillStyle = "#e8a94c"; c.fillRect(11, -24, 9, 26); c.fillRect(70, -24, 9, 26);
+        c.fillStyle = isFeast ? "#ffd968" : "#e8a94c"; c.fillRect(11, -24, 9, 26); c.fillRect(70, -24, 9, 26);
         c.fillStyle = "rgba(255,236,180,.5)"; c.fillRect(11, -24, 3, 26); c.fillRect(70, -24, 3, 26);
         c.restore();
         // the lock — rides up with the lid as it opens
@@ -4328,6 +4602,7 @@
         if (at < 0) return;
         var chest = chests[at];
         chests.splice(at, 1);
+        var coinsBeforeChest = coins; // for the coin-flight tick-up (amounts unchanged)
         var rewards = rollChestRewards(chest);
         rewards.forEach(function (rw) {
           if (rw.type === "coins") { coins += rw.amount; totalCoinsEarned += rw.amount; }
@@ -4341,7 +4616,7 @@
         renderChestLists();
         updateHUD();
         if (!lobbyPanel.hidden) renderLobby();
-        showChestReveal(chest, rewards);
+        showChestReveal(chest, rewards, coinsBeforeChest);
         if (chest.rarity === "FEAST") { SFX.clear(); SFX.gobble(); } else SFX.clear();
       }
       /* Chest screen setup (Backpack-style): the player's chests
@@ -4404,7 +4679,7 @@
         var g = cv.getContext("2d");
         drawChestOn(g, cv.width / 2, cv.height - 12, big ? 1.32 : 1.02, {
           rarity: tier.rarity,
-          glow: tier.rarity === "FEAST" ? "rgba(255,181,46,.55)" : tier.rarity === "EPIC" ? "rgba(190,120,255,.4)" : tier.rarity === "RARE" ? "rgba(120,190,255,.3)" : null
+          glow: tier.rarity === "FEAST" ? "rgba(255,200,60,.85)" : tier.rarity === "EPIC" ? "rgba(190,120,255,.4)" : tier.rarity === "RARE" ? "rgba(120,190,255,.3)" : null
         });
         return card;
       }
@@ -4437,10 +4712,25 @@
       /* ---------- Chest reveal popup ---------- */
       var chestRevealOpen = false;
       var revealState = null;
-      function showChestReveal(chest, rewards) {
+      var revealUnlockTimer = 0;
+      function showChestReveal(chest, rewards, coinsBefore) {
         var ov = document.getElementById("chestReveal");
         if (!ov) return;
         chestRevealOpen = true;
+        ov.setAttribute("data-rarity", chest.rarity);
+        /* Coin-flight setup (addition A): if this chest paid coins,
+           hold the bank's DISPLAY back at the pre-chest total while
+           the reveal is up — the coins visibly fly over and tick it
+           up when the reveal closes. Reward amounts are untouched. */
+        var coinReward = 0;
+        rewards.forEach(function (rw) { if (rw.type === "coins") coinReward += rw.amount || 0; });
+        if (coinReward > 0 && typeof coinsBefore === "number") {
+          coinTickDisplay = coinsBefore;
+          var sc3 = document.getElementById("shellCoins");
+          if (sc3) sc3.textContent = coinsBefore.toLocaleString();
+          var lc3 = document.getElementById("lobbyCoins");
+          if (lc3) lc3.textContent = coinsBefore.toLocaleString();
+        }
         var R = CHEST_RARITIES[chest.rarity];
         var rar = document.getElementById("revealRarity");
         rar.className = "reveal-rarity r-" + chest.rarity;
@@ -4470,8 +4760,27 @@
             size: rand(3.5, 7), feather: Math.random() < 0.55
           });
         }
-        revealState = { chest: chest, parts: parts, startTs: performance.now(), lastTs: 0 };
+        /* Minimum hold (review fix): the burst lands at ~0.3s, the
+           rarity banner pops at 0.35s and the reward cards stagger
+           in by ~1.4s — the reveal cannot be dismissed before the
+           player has had a real beat to read it (FEAST, the jackpot
+           tier, holds longest). An early tap just nudges the hint. */
+        var minMs = reducedMotion ? 1600 : (chest.rarity === "FEAST" ? 3000 : chest.rarity === "EPIC" ? 2600 : 2200);
+        revealState = { chest: chest, parts: parts, startTs: performance.now(), lastTs: 0, minMs: minMs, unlocked: false,
+          coinReward: coinReward, coinFrom: (typeof coinsBefore === "number" ? coinsBefore : coins - coinReward), coinTo: coins };
         ov.hidden = false;
+        ov.scrollTop = 0;
+        var closeBtn = document.getElementById("btnRevealClose");
+        if (closeBtn) closeBtn.classList.add("locked");
+        var tapHint = ov.querySelector(".reveal-tap");
+        if (tapHint) { tapHint.textContent = "★ ENJOY YOUR LOOT! ★"; tapHint.classList.remove("nudge"); }
+        if (revealUnlockTimer) clearTimeout(revealUnlockTimer);
+        revealUnlockTimer = setTimeout(function () {
+          if (!chestRevealOpen || !revealState) return;
+          revealState.unlocked = true;
+          if (closeBtn) closeBtn.classList.remove("locked");
+          if (tapHint) tapHint.textContent = "TAP ANYWHERE TO CLOSE";
+        }, minMs);
         requestAnimationFrame(drawChestRevealFrame);
       }
       function drawChestRevealFrame(ts) {
@@ -4503,7 +4812,7 @@
         var sc = feast ? 1.78 : 1.6;
         drawChestOn(g, CW / 2, 258, sc, {
           rarity: revealState.chest.rarity, open: openAmt, bob: bob,
-          glow: feast ? "rgba(255,181,46,.55)" : "rgba(255,190,90,.35)"
+          glow: feast ? "rgba(255,200,60,.85)" : "rgba(255,190,90,.35)"
         });
         // burst particles
         for (var i = revealState.parts.length - 1; i >= 0; i--) {
@@ -4520,15 +4829,98 @@
         }
         g.globalAlpha = 1;
       }
+      /* Coin flight (addition A): coins arc from where the chest sat
+         to the top-bar coin bank; the bank counter ticks up as each
+         coin lands and the pill pulses — big reward, big feel. The
+         real `coins` total never changes here, only its display. */
+      function launchCoinFlight(origin, rs) {
+        var pill = document.querySelector(".coins-pill");
+        var target = pill ? pill.getBoundingClientRect() : null;
+        var canAnimate = !!(window.Element && Element.prototype && Element.prototype.animate);
+        if (!target || !target.width || reducedMotion || !canAnimate) {
+          coinTickDisplay = null;
+          updateHUD();
+          if (pill) { pill.classList.remove("pulse-big"); void pill.offsetWidth; pill.classList.add("pulse-big"); }
+          return;
+        }
+        var tx = target.left + target.width / 2, ty = target.top + target.height / 2;
+        var dx = tx - origin.x, dy = ty - origin.y;
+        var total = rs.chest.rarity === "FEAST" ? 16 : 11;
+        var landed = 0;
+        coinTickDisplay = rs.coinFrom;
+        updateHUD();
+        function onLand(el) {
+          if (el) el.remove();
+          landed++;
+          coinTickDisplay = rs.coinFrom + Math.round(rs.coinReward * landed / total);
+          var sc = document.getElementById("shellCoins");
+          if (sc) sc.textContent = coinTickDisplay.toLocaleString();
+          var lc4 = document.getElementById("lobbyCoins");
+          if (lc4) lc4.textContent = coinTickDisplay.toLocaleString();
+          if (pill) { pill.classList.remove("pulse"); void pill.offsetWidth; pill.classList.add("pulse"); }
+          if (landed >= total) {
+            coinTickDisplay = null;
+            updateHUD();
+            if (pill) { pill.classList.remove("pulse-big"); void pill.offsetWidth; pill.classList.add("pulse-big"); }
+          }
+        }
+        for (var ci2 = 0; ci2 < total; ci2++) {
+          var el = document.createElement("span");
+          el.className = "coin-fly"; el.textContent = "🪙"; el.setAttribute("aria-hidden", "true");
+          el.style.left = (origin.x - 12) + "px"; el.style.top = (origin.y - 12) + "px";
+          document.body.appendChild(el);
+          var jx = rand(-26, 26), jy = rand(-14, 14);
+          var anim = null;
+          try {
+            anim = el.animate([
+              { transform: "translate(0px, 0px) scale(1)", opacity: 1 },
+              { transform: "translate(" + (dx * 0.5 + jx) + "px, " + (dy * 0.45 - 110) + "px) scale(1.12)", opacity: 1, offset: 0.55 },
+              { transform: "translate(" + (dx + jx * 0.3) + "px, " + (dy + jy * 0.3) + "px) scale(.5)", opacity: .95 }
+            ], { duration: 780 + ci2 * 65, delay: ci2 * 55, easing: "cubic-bezier(.3,.7,.4,1)", fill: "forwards" });
+          } catch (e) { anim = null; }
+          if (anim && anim.finished) { (function (elm) { anim.finished.then(function () { onLand(elm); }, function () { onLand(elm); }); })(el); }
+          else { (function (elm, d) { setTimeout(function () { onLand(elm); }, d); })(el, 780 + ci2 * 120); }
+        }
+      }
       function closeChestReveal() {
         if (!chestRevealOpen) return;
+        var rs = revealState;
+        // capture where the chest sits BEFORE the overlay hides
+        var cvEl = document.getElementById("chestRevealCanvas");
+        var origin = { x: window.innerWidth / 2, y: window.innerHeight * 0.42 };
+        if (cvEl) {
+          var cr = cvEl.getBoundingClientRect();
+          if (cr.width) origin = { x: cr.left + cr.width / 2, y: cr.top + cr.height * 0.62 };
+        }
         chestRevealOpen = false;
         revealState = null;
+        if (revealUnlockTimer) { clearTimeout(revealUnlockTimer); revealUnlockTimer = 0; }
         var ov = document.getElementById("chestReveal");
         if (ov) ov.hidden = true;
+        if (rs && rs.coinReward > 0) launchCoinFlight(origin, rs);
+        else if (coinTickDisplay !== null) { coinTickDisplay = null; updateHUD(); }
       }
-      document.getElementById("btnRevealClose").addEventListener("click", function (ev) { ev.stopPropagation(); ac(); closeChestReveal(); });
-      document.getElementById("chestReveal").addEventListener("click", function () { closeChestReveal(); });
+      /* Dismissal goes through here so the minimum hold above is
+         honoured by every route — COLLECT button, tap-anywhere and
+         Escape alike. Early attempts nudge the hint instead of
+         vanishing the rewards. */
+      function tryCloseChestReveal() {
+        if (!chestRevealOpen) return;
+        if (revealState && !revealState.unlocked) {
+          var ov = document.getElementById("chestReveal");
+          var tapHint = ov ? ov.querySelector(".reveal-tap") : null;
+          if (tapHint) {
+            tapHint.textContent = "ONE SEC — SAVOR THAT LOOT! ★";
+            tapHint.classList.remove("nudge");
+            void tapHint.offsetWidth; // restart the nudge animation
+            tapHint.classList.add("nudge");
+          }
+          return;
+        }
+        closeChestReveal();
+      }
+      document.getElementById("btnRevealClose").addEventListener("click", function (ev) { ev.stopPropagation(); ac(); tryCloseChestReveal(); });
+      document.getElementById("chestReveal").addEventListener("click", function () { tryCloseChestReveal(); });
       document.getElementById("btnShellChests").addEventListener("click", function () {
         ac();
         var pop = document.getElementById("settingsPop");
@@ -4550,7 +4942,7 @@
         showMenuPanel("panelChests");
       });
       window.addEventListener("keydown", function (ev) {
-        if (ev.key === "Escape" && chestRevealOpen) closeChestReveal();
+        if (ev.key === "Escape" && chestRevealOpen) tryCloseChestReveal();
       });
 
       /* ---------------- Lobby ---------------- */
@@ -4584,6 +4976,7 @@
         renderLobby();
         renderBoard();
         updateHUD();
+        syncShellChrome(); // single HUD: shell bar only, no gameplay row in the Lobby
         lobbyPanel.scrollIntoView({ block: "start" });
       }
 
@@ -5895,11 +6288,21 @@
       function syncShellChrome() {
         var show = !menuOverlay.hidden || !lobbyPanel.hidden;
         var inLobby = !lobbyPanel.hidden;
-        if (show === shellChromeShown && inLobby === shellLobbyShown) return;
-        shellChromeShown = show;
-        shellLobbyShown = inLobby;
         var stEl = document.getElementById("shellTop");
         var tbEl = document.getElementById("tabBar");
+        var hudEl = document.getElementById("gameHud");
+        /* Single-HUD guarantee (review fix): never trust the cache
+           alone — if any element's actual visibility disagrees with
+           the desired state (a transition frame, a direct hidden
+           flip elsewhere), fall through and re-apply, so narrow
+           screens can never settle with BOTH the shell top bar and
+           the gameplay HUD row on screen in menu / Lobby / chapters. */
+        var domAgrees = (!stEl || stEl.hidden === !show) &&
+          (!tbEl || tbEl.hidden === !show) &&
+          (!hudEl || hudEl.hidden === show);
+        if (show === shellChromeShown && inLobby === shellLobbyShown && domAgrees) return;
+        shellChromeShown = show;
+        shellLobbyShown = inLobby;
         if (stEl) stEl.hidden = !show;
         if (tbEl) tbEl.hidden = !show;
         /* Double-HUD fix: the old gameplay HUD row (Score / Coins /
@@ -5907,7 +6310,6 @@
            WarKing top bar in the shell — it belongs to gameplay
            only, so hide it whenever the menu/Lobby shell is up and
            restore it the moment a run starts. */
-        var hudEl = document.getElementById("gameHud");
         if (hudEl) hudEl.hidden = show;
         if (!show) { var pop = document.getElementById("settingsPop"); if (pop) pop.hidden = true; }
         // keep the tab highlight honest however the Lobby was reached
