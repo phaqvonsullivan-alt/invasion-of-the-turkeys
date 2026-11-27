@@ -1438,6 +1438,79 @@
       .chapter-card.st-locked .chapter-name { color: #cbb894; }
       .chapter-card.st-locked .chapter-meta { color: #a68d64; }
       .chapter-card.st-locked .chapter-kicker { color: #a68d64; }
+
+      /* ============================================================
+         CHAPTERS CLEAN-SCREEN PASS (Q: "still the same — I don't
+         like it"). The phase-1 shell had been stacked ON TOP of the
+         legacy menu, so the Chapters screen showed the hero AND the
+         whole old menu underneath: duplicate title, welcome-back
+         block, story paragraph, second START, trailer and All
+         Chapters buttons. That legacy block is now parked in a
+         never-rendered container (.legacy-park) and the Chapters
+         screen is exactly ONE clean screen, Backpack-style:
+         top bar + featured chapter hero + thumbnail strip + one
+         big START flanked by prev/next chevrons + tab bar. It is
+         sized to fit a phone/tablet screen with no scrolling
+         (overflow is locked while no panel is open).
+         ============================================================ */
+      .legacy-park { display: none !important; }
+      #menuOverlay.chapters-clean { overflow-y: hidden; }
+      .chapters-main {
+        display: flex; flex-direction: column; align-items: center;
+        width: 100%; max-width: 520px; margin: 0 auto;
+      }
+      .chapters-main[hidden] { display: none !important; }
+      /* Hero: vivid frame; title text lives in its own scrim zone at
+         the bottom — nothing overlaps it (no arrows inside the hero
+         any more; the chevrons sit under the strip, flanking START). */
+      .feat-hero {
+        margin-bottom: 8px;
+        border: 3px solid #ffd98a;
+        box-shadow: 0 10px 26px rgba(20,6,2,.5), 0 0 0 4px rgba(232,135,58,.22), inset 0 0 0 2px rgba(51,22,10,.35);
+      }
+      .feat-info {
+        padding: 44px 16px 12px;
+        background: linear-gradient(180deg, rgba(20,8,2,0) 0%, rgba(20,8,2,.52) 46%, rgba(14,5,2,.92) 100%);
+      }
+      .feat-kicker { font-size: 11.5px; letter-spacing: .22em; }
+      .feat-name { font-size: clamp(26px, 6.8vw, 36px); }
+      .feat-meta { font-size: 13.5px; margin-top: 3px; }
+      .thumb-strip {
+        margin-bottom: 0; padding-bottom: 6px;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+      }
+      .thumb-strip::-webkit-scrollbar { display: none; }
+      .thumb-chip { scroll-snap-align: start; }
+      /* START row: the ONE big start, chevrons under the strip */
+      .feat-start-row {
+        display: flex; align-items: stretch; gap: 10px;
+        width: 100%; max-width: 520px; margin-top: 8px;
+      }
+      .feat-start-row .big-btn {
+        flex: 1 1 auto; width: auto; max-width: none;
+        min-height: 62px; font-size: 23px;
+      }
+      .feat-nav-btn {
+        flex: 0 0 56px; min-height: 62px; border-radius: 16px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; font-weight: 800; color: #fff7e8; font-family: inherit;
+        background: linear-gradient(180deg, #e0684f, #b23a2e 60%, #93301f);
+        border: 3px solid #ffd98a;
+        box-shadow: 0 4px 0 rgba(90,20,8,.7), inset 0 2px 0 rgba(255,255,255,.35);
+        touch-action: manipulation;
+      }
+      .feat-nav-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(90,20,8,.7); }
+      .feat-nav-btn:disabled { opacity: .35; cursor: default; }
+      /* Panels (How / Board / Credits / Chests) become their own
+         clean full view when opened — the chapters hero hides
+         behind them instead of stacking above them. */
+      .menu-panel { max-width: 520px; margin-left: auto; margin-right: auto; }
+      @media (max-width: 700px) {
+        #menuOverlay.chapters-clean { padding-top: 70px; padding-bottom: 100px; }
+        .feat-start-row .big-btn { min-height: 58px; font-size: 21px; }
+        .feat-nav-btn { flex-basis: 52px; min-height: 58px; }
+      }
     </style>
   </head>
   <body>
@@ -1499,34 +1572,60 @@
       <div class="stage" id="stage">
         <canvas id="game" width="420" height="640" aria-label="Invasion of the Turkeys game field"></canvas>
 
-        <!-- Main menu / start overlay -->
-        <div class="overlay" id="menuOverlay">
+        <!-- Chapters screen / start overlay — ONE clean screen:
+             featured chapter hero + thumbnail strip + ONE big START
+             (chevrons under the strip). The legacy menu block that
+             used to stack underneath lives parked, never rendered,
+             in .legacy-park below. -->
+        <div class="overlay chapters-clean" id="menuOverlay">
+          <div class="chapters-main" id="chaptersMain">
           <!-- Featured chapter hero: ONE chapter big — its own scene
                art and boss front and centre (drawFeaturedHero, shared
-               art only), prev/next arrows, state badge, and the
-               chapter picker strip beneath. -->
+               art only), state badge top-left, chests pill top-right,
+               and the chapter title in its own scrim zone at the
+               bottom. No arrows inside the hero — they flank START. -->
           <div class="feat-hero">
             <canvas id="featuredCanvas" width="840" height="300" aria-label="Featured chapter scene with its boss turkey"></canvas>
             <span class="feat-badge" id="featBadge">★ NEXT UP</span>
             <button class="feat-chest" id="btnHeroChests" type="button" aria-label="Open your Harvest Chests">🎁 CHESTS <span class="feat-chest-n" id="heroChestCount">0</span></button>
-            <button class="feat-arrow left" id="btnFeatPrev" type="button" aria-label="Previous chapter">◀</button>
-            <button class="feat-arrow right" id="btnFeatNext" type="button" aria-label="Next chapter">▶</button>
             <div class="feat-info">
               <div class="feat-kicker" id="featKicker">CHAPTER 1 OF 12</div>
               <div class="feat-name" id="featName">Barnyard Landing</div>
               <div class="feat-meta" id="featMeta">🦃 Boss: Big Gobbler</div>
             </div>
           </div>
-          <div class="thumb-strip" id="thumbStrip" aria-label="Choose a chapter"></div>
-          <div class="cover-art" hidden>
-            <canvas id="coverCanvas" width="840" height="272" aria-label="Cover art: Big Gobbler the boss turkey looming over a farm at sunset while the cranberry cannon takes aim"></canvas>
-            <span class="cover-badge">★ COVER ART</span>
-            <span class="cover-badge right">12 LEVELS · 12 BOSSES</span>
+          <div class="thumb-strip" id="thumbStrip" aria-label="Choose a chapter — swipe for all 12 chapters"></div>
+          <div class="feat-start-row">
+            <button class="feat-nav-btn" id="btnFeatPrev" type="button" aria-label="Previous chapter">◀</button>
+            <button class="big-btn" id="btnStart" type="button">▶ Start — Chapter 1</button>
+            <button class="feat-nav-btn" id="btnFeatNext" type="button" aria-label="Next chapter">▶</button>
           </div>
-          <h2>Invasion of the Turkeys</h2>
-          <p class="sub">Thanksgiving will never be the same.</p>
-          <div class="save-summary" id="menuSaveSummary">💾 New save — progress, coins &amp; upgrades save automatically on this device as you play.</div>
-          <p>The turkeys have had enough — this year <b>they're</b> coming for <b>us</b>, wave after wave across <b>12 levels</b>, from the barnyard to the Final Feast, every flock stranger than the last. You're Earth's last line of defense. Man the cranberry cannon!</p>
+          </div>
+          <!-- LEGACY MENU — parked, never rendered on any screen.
+               Kept in the DOM only because older code still wires
+               these controls (trailer opener, save summary, cover
+               canvas); the trailer now lives on the top-bar clapper
+               icon and chapter picking lives on the thumbnail strip. -->
+          <div class="legacy-park" hidden aria-hidden="true">
+            <div class="cover-art">
+              <canvas id="coverCanvas" width="840" height="272" aria-label="Cover art: Big Gobbler the boss turkey looming over a farm at sunset while the cranberry cannon takes aim"></canvas>
+              <span class="cover-badge">★ COVER ART</span>
+              <span class="cover-badge right">12 LEVELS · 12 BOSSES</span>
+            </div>
+            <h2>Invasion of the Turkeys</h2>
+            <p class="sub">Thanksgiving will never be the same.</p>
+            <div class="save-summary" id="menuSaveSummary">💾 New save — progress, coins &amp; upgrades save automatically on this device as you play.</div>
+            <p>The turkeys have had enough — this year <b>they're</b> coming for <b>us</b>, wave after wave across <b>12 levels</b>, from the barnyard to the Final Feast, every flock stranger than the last. You're Earth's last line of defense. Man the cranberry cannon!</p>
+            <button class="ghost-btn trailer-open-btn wide" id="btnTrailer" type="button">▶ &nbsp;Watch the Official Trailer — 0:32</button>
+            <button class="ghost-btn" id="btnAllChapters" type="button">🗺️ All Chapters ▾</button>
+            <div class="menu-nav">
+              <button class="ghost-btn" id="btnMenuLevels" type="button">🗺️ Level Select</button>
+              <button class="ghost-btn" id="btnMenuHow" type="button">❓ How to Play</button>
+              <button class="ghost-btn" id="btnMenuBoard" type="button">🏆 Leaderboard</button>
+              <button class="ghost-btn" id="btnMenuCredits" type="button">🎬 Credits</button>
+              <button class="ghost-btn wide" id="btnMenuLobby" type="button">🏠 Lobby &amp; Weapon Workshop</button>
+            </div>
+          </div>
           <div class="menu-panel" id="panelHow" hidden>
           <h3>How to Play</h3>
           <div class="howto">
@@ -1540,16 +1639,6 @@
             <div>🦃 Clear every wave, then beat the <b>boss turkey</b></div>
             <div>⚠️ Bosses dive <b>all the way down</b> to your row — watch for the dashed red lane, then dodge out of it. Sometimes the boss and its flock dive <b>together</b> to trap you, and every fight gets meaner the longer it lasts and the lower the boss's health drops</div>
           </div>
-          </div>
-          <button class="big-btn" id="btnStart" type="button">Defend Earth!</button>
-          <button class="ghost-btn trailer-open-btn wide" id="btnTrailer" type="button" style="width:100%;max-width:380px;margin-top:10px;min-height:54px;font-size:17px;">▶ &nbsp;Watch the Official Trailer — 0:32</button>
-          <button class="ghost-btn" id="btnAllChapters" type="button">🗺️ All Chapters ▾</button>
-          <div class="menu-nav">
-            <button class="ghost-btn" id="btnMenuLevels" type="button">🗺️ Level Select</button>
-            <button class="ghost-btn" id="btnMenuHow" type="button">❓ How to Play</button>
-            <button class="ghost-btn" id="btnMenuBoard" type="button">🏆 Leaderboard</button>
-            <button class="ghost-btn" id="btnMenuCredits" type="button">🎬 Credits</button>
-            <button class="ghost-btn wide" id="btnMenuLobby" type="button">🏠 Lobby &amp; Weapon Workshop</button>
           </div>
 
           <div class="menu-panel" id="panelLevels" hidden>
@@ -4776,6 +4865,20 @@
       }
 
       var MENU_PANELS = ["panelLevels", "panelHow", "panelBoard", "panelCredits", "panelChests"];
+      /* Chapters clean-screen rule: the featured hero block shows
+         ONLY when no panel is open. Any open panel (How / Board /
+         Credits / Chests) becomes its own view, and the menu locks
+         its scrolling while the clean Chapters screen is up. */
+      function syncChaptersMain() {
+        var main = document.getElementById("chaptersMain");
+        if (!main) return;
+        var anyOpen = MENU_PANELS.some(function (pid) {
+          var el = document.getElementById(pid);
+          return el && !el.hidden;
+        });
+        main.hidden = anyOpen;
+        menuOverlay.classList.toggle("chapters-clean", !anyOpen);
+      }
       function showMenuPanel(id) {
         var target = document.getElementById(id);
         var willShow = target.hidden;
@@ -4787,6 +4890,7 @@
           if (id === "panelChests") renderChestLists();
           target.scrollIntoView({ block: "nearest" });
         }
+        syncChaptersMain();
         updateMenuCue();
       }
 
@@ -5382,13 +5486,19 @@
         var sky = g.createLinearGradient(0, 0, 0, GY);
         sky.addColorStop(0, L.skyTop); sky.addColorStop(1, L.skyBot);
         g.fillStyle = sky; g.fillRect(0, 0, CW, CH);
-        // sun + glow
-        var sx = CW * 0.8, sy = CH * 0.24;
-        var glow = g.createRadialGradient(sx, sy, 6, sx, sy, 210);
-        glow.addColorStop(0, "rgba(255,214,120,.5)"); glow.addColorStop(1, "rgba(255,160,60,0)");
+        /* Saturation pass: deepen the sky so the scene reads vivid
+           like the chapter thumbnails instead of washed/pale — a
+           rich top shade plus a warm colour wash over the sky band. */
+        var deepen = g.createLinearGradient(0, 0, 0, GY);
+        deepen.addColorStop(0, "rgba(24,8,36,.20)"); deepen.addColorStop(0.55, "rgba(120,26,8,.10)"); deepen.addColorStop(1, "rgba(120,26,8,0)");
+        g.fillStyle = deepen; g.fillRect(0, 0, CW, GY);
+        // sun + glow (kept tight so it can't bleach the boss)
+        var sx = CW * 0.84, sy = CH * 0.2;
+        var glow = g.createRadialGradient(sx, sy, 6, sx, sy, 150);
+        glow.addColorStop(0, "rgba(255,214,120,.30)"); glow.addColorStop(1, "rgba(255,160,60,0)");
         g.fillStyle = glow; g.fillRect(0, 0, CW, GY);
-        g.fillStyle = "rgba(255,236,180,.92)";
-        g.beginPath(); g.arc(sx, sy, 24, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(255,236,180,.95)";
+        g.beginPath(); g.arc(sx, sy, 19, 0, Math.PI * 2); g.fill();
         // hills in this chapter's own colours
         g.fillStyle = L.hillFar;
         g.beginPath(); g.moveTo(0, GY);
@@ -5413,29 +5523,36 @@
         grd.addColorStop(0, "#96753e"); grd.addColorStop(1, "#6e5227");
         g.fillStyle = grd; g.fillRect(0, GY, CW, CH - GY);
         drawGroundDetail(g, featuredIdx, t, CW, CH, GY, CW / 420);
-        // the flock trails in — this chapter's own turkey design
-        drawTurkeyOn(g, 190, 62 + Math.sin(t * 2.1) * 5, 17, t * 9, { variant: L.variant });
-        drawTurkeyOn(g, 300, 44 + Math.cos(t * 1.8) * 4, 13, t * 9 + 2, { variant: L.variant });
-        /* THE BOSS — front and centre at boss scale, exactly the
-           design its fight uses (bossOptsFor), with its ember aura. */
-        var bossX = CW * 0.7, bossY = GY - 92 + Math.sin(t * 1.3) * 6;
+        // the flock trails in high on the left — this chapter's own
+        // turkey design, kept clear of the boss so he owns the frame
+        drawTurkeyOn(g, 118, 56 + Math.sin(t * 2.1) * 5, 14, t * 9, { variant: L.variant });
+        drawTurkeyOn(g, 208, 38 + Math.cos(t * 1.8) * 4, 10.5, t * 9 + 2, { variant: L.variant });
+        /* THE BOSS — BIG and front-and-centre in full colour, exactly
+           the design its fight uses (bossOptsFor). A deep contrast
+           disc sits behind him so even pale/golden plumage pops off
+           the sky instead of ghosting into it. */
+        var bossX = CW * 0.6, bossY = GY - 86 + Math.sin(t * 1.3) * 5;
+        var disc = g.createRadialGradient(bossX, bossY - 8, 24, bossX, bossY - 8, 168);
+        disc.addColorStop(0, "rgba(26,8,4,.42)"); disc.addColorStop(0.72, "rgba(26,8,4,.26)"); disc.addColorStop(1, "rgba(26,8,4,0)");
+        g.fillStyle = disc; g.beginPath(); g.arc(bossX, bossY - 8, 168, 0, Math.PI * 2); g.fill();
         var aura = g.createRadialGradient(bossX, bossY, 20, bossX, bossY, 128 + Math.sin(t * 3) * 7);
-        aura.addColorStop(0, "rgba(255,120,40,.22)"); aura.addColorStop(1, "rgba(255,120,40,0)");
+        aura.addColorStop(0, "rgba(255,120,40,.14)"); aura.addColorStop(1, "rgba(255,120,40,0)");
         g.fillStyle = aura; g.beginPath(); g.arc(bossX, bossY, 138, 0, Math.PI * 2); g.fill();
-        g.fillStyle = "rgba(30,16,6,.32)";
-        g.beginPath(); g.ellipse(bossX, GY - 3, 52, 7, 0, 0, Math.PI * 2); g.fill();
-        drawTurkeyOn(g, bossX, bossY, 58, t * 7, bossOptsFor(featuredIdx));
-        /* THE cannon — the player's real upgraded cannon, aiming up
-           at the boss, berries in flight from its actual muzzle. */
-        var cGlow = g.createRadialGradient(238, GY - 30, 10, 238, GY - 30, 138);
-        cGlow.addColorStop(0, "rgba(255,214,120,.45)"); cGlow.addColorStop(1, "rgba(255,214,120,0)");
-        g.fillStyle = cGlow; g.fillRect(96, GY - 172, 284, 184);
-        var mz = drawCannonOn(g, 238, GY - 14, 2.35, 0.52, { flash: (t % 0.9) < 0.1 });
+        g.fillStyle = "rgba(30,16,6,.4)";
+        g.beginPath(); g.ellipse(bossX, GY - 3, 62, 8, 0, 0, Math.PI * 2); g.fill();
+        drawTurkeyOn(g, bossX, bossY, 71, t * 7, bossOptsFor(featuredIdx));
+        /* THE cannon — the player's real upgraded cannon, small in
+           the bottom-left corner, aiming up at the boss, berries in
+           flight from its actual muzzle. */
+        var cGlow = g.createRadialGradient(148, GY - 26, 10, 148, GY - 26, 104);
+        cGlow.addColorStop(0, "rgba(255,214,120,.30)"); cGlow.addColorStop(1, "rgba(255,214,120,0)");
+        g.fillStyle = cGlow; g.fillRect(36, GY - 138, 224, 148);
+        var mz = drawCannonOn(g, 148, GY - 12, 1.85, 0.62, { flash: (t % 0.9) < 0.1 });
         var col = BULLET_COLORS[upgrades.damage];
-        for (var k = 0; k < 3; k++) {
-          var tt = 0.22 + k * 0.27;
+        for (var k = 0; k < 2; k++) {
+          var tt = 0.3 + k * 0.34;
           var bx = mz.x + (bossX - 18 - mz.x) * tt;
-          var by = mz.y + (bossY + 8 - mz.y) * tt - Math.sin(tt * Math.PI) * 20;
+          var by = mz.y + (bossY + 8 - mz.y) * tt - Math.sin(tt * Math.PI) * 18;
           var br = getBulletR() * 1.8;
           g.fillStyle = col;
           g.beginPath(); g.arc(bx, by, br, 0, Math.PI * 2); g.fill();
@@ -5459,7 +5576,7 @@
           g.fillText("🔒", CW / 2, CH / 2 + 6);
         }
         var vg = g.createRadialGradient(CW / 2, CH * 0.46, CH * 0.34, CW / 2, CH * 0.5, CH * 1.05);
-        vg.addColorStop(0, "rgba(20,8,2,0)"); vg.addColorStop(1, "rgba(20,8,2,.3)");
+        vg.addColorStop(0, "rgba(20,8,2,0)"); vg.addColorStop(1, "rgba(20,8,2,.18)");
         g.fillStyle = vg; g.fillRect(0, 0, CW, CH);
       }
 
@@ -5567,6 +5684,7 @@
         msgOverlay.hidden = true;
         menuOverlay.hidden = false;
         renderMenu();
+        syncChaptersMain();
         updateHUD();
         updateMenuCue();
         window.scrollTo(0, 0);
@@ -5578,11 +5696,13 @@
         if (id === "panelBoard") renderBoard();
         if (id === "panelLevels") renderMenu();
         if (id === "panelChests") renderChestLists();
+        syncChaptersMain();
         updateMenuCue();
         try { target.scrollIntoView({ block: "nearest" }); } catch (e) {}
       }
       function closeMenuPanels() {
         MENU_PANELS.forEach(function (pid) { document.getElementById(pid).hidden = true; });
+        syncChaptersMain();
         updateMenuCue();
       }
       document.getElementById("tabBar").addEventListener("click", function (ev) {
@@ -5778,6 +5898,7 @@
       renderMenu();
       renderBoard();
       renderChestLists();
+      syncChaptersMain();
       updateMenuCue();
     </script>
   </body>
