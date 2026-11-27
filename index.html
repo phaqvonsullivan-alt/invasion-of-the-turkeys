@@ -1860,6 +1860,124 @@
       @media (min-width: 701px) {
         .lobby-scroll { padding-bottom: 28px; scroll-padding-bottom: 28px; }
       }
+      /* ============================================================
+         REPLAYABILITY STEP 1 — chapter records, achievements,
+         feather objectives. Display + tracking only: no gameplay,
+         tuning or art changes. All new surfaces reuse the shell's
+         dark walnut / gold / cream language so they sit naturally
+         on the sunset menu, the RANKS panel and the Lobby.
+         ============================================================ */
+      .feat-best {
+        margin-top: 5px; font-size: 13.5px; font-weight: 800; letter-spacing: .02em;
+        color: #ffd968; text-shadow: 0 1px 0 rgba(90,20,8,.6), 0 2px 8px rgba(20,6,2,.55);
+        font-variant-numeric: tabular-nums;
+      }
+      .feat-best:empty { display: none; }
+      .feat-objectives { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 7px; }
+      .feat-objectives:empty { display: none; }
+      .feat-obj {
+        font-size: 11.5px; font-weight: 800; letter-spacing: .02em;
+        padding: 4px 10px; border-radius: 999px;
+        color: #f3d9ae; background: rgba(38,20,8,.72);
+        border: 2px solid rgba(255,217,138,.4);
+      }
+      .feat-obj.earned { color: #33200a; background: linear-gradient(180deg,#ffd968,#e8a94c); border-color: #ffe9a8; }
+      .chapter-best {
+        font-size: 12.5px; font-weight: 800; letter-spacing: .01em;
+        color: #ffd968; font-variant-numeric: tabular-nums; line-height: 1.35;
+      }
+      .chapter-card.st-locked .chapter-best { color: #a68d64; }
+      .thumb-feathers { font-size: 10.5px; font-weight: 800; color: #8a5a10; white-space: nowrap; }
+      .records-h { margin-top: 20px !important; }
+      .records-summary {
+        text-align: center; font-size: 14px; font-weight: 800; color: #ffd968;
+        margin: 0 0 10px; letter-spacing: .02em;
+      }
+      .cb-row .cb-name { font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .cb-row .cb-best { margin-left: auto; text-align: right; font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .cb-row.locked { opacity: .55; }
+      .ach-grid { display: flex; flex-direction: column; gap: 7px; }
+      .ach-card {
+        display: flex; align-items: center; gap: 11px;
+        border: 2px solid rgba(255,217,138,.35); border-radius: 12px;
+        padding: 8px 12px; background: rgba(38,20,8,.55);
+        font-size: 14px; line-height: 1.35; color: #fbeed3;
+      }
+      .lobby .ach-card { background: rgba(38,20,8,.72); }
+      .ach-card .ach-ico {
+        flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; font-size: 20px;
+        background: linear-gradient(180deg,#a5692f,#7c4a1e); border: 2px solid rgba(255,217,138,.5);
+      }
+      .ach-card.unlocked { border-color: var(--gold); background: rgba(58,32,10,.78); }
+      .ach-card.unlocked .ach-ico { background: radial-gradient(circle at 35% 30%, #ffe9a8, #e8a94c 62%, #c97b24); border-color: #ffe9a8; }
+      .ach-card.locked .ach-ico { filter: grayscale(.8); opacity: .6; }
+      .ach-card .ach-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+      .ach-card .ach-name { font-weight: 800; color: #fff3d6; }
+      .ach-card.locked .ach-name { color: #d8c39a; }
+      .ach-card .ach-desc { font-size: 12.5px; color: #f3d9ae; }
+      .ach-card .ach-state {
+        flex: 0 0 auto; font-size: 11.5px; font-weight: 800; letter-spacing: .04em;
+        padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+        color: #f3d9ae; border: 1.5px solid rgba(255,217,138,.45);
+        font-variant-numeric: tabular-nums;
+      }
+      .ach-card.unlocked .ach-state { color: #33200a; background: linear-gradient(180deg,#ffd968,#e8a94c); border-color: #ffe9a8; }
+      /* Achievement unlock toast — floats above the tab bar, never
+         blocks play, queues when several land at once. */
+      .ach-toast {
+        position: fixed; left: 50%; z-index: 600;
+        bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+        transform: translateX(-50%);
+        display: flex; align-items: center; gap: 10px;
+        max-width: min(92vw, 430px);
+        background: linear-gradient(180deg, #54341a, #2e1a08);
+        border: 3px solid var(--gold); border-radius: 16px;
+        padding: 10px 16px 10px 11px;
+        color: #fff3d6; box-shadow: 0 8px 0 rgba(20,6,2,.45), 0 18px 38px rgba(20,6,2,.5);
+        pointer-events: none; text-align: left;
+        animation: achToastIn .38s cubic-bezier(.2,1.5,.4,1) both;
+      }
+      .ach-toast[hidden] { display: none; }
+      .ach-toast .at-ico {
+        flex: 0 0 42px; width: 42px; height: 42px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; font-size: 21px;
+        background: radial-gradient(circle at 35% 30%, #ffe9a8, #e8a94c 62%, #c97b24);
+        border: 2px solid #ffe9a8;
+      }
+      .ach-toast .at-kicker { font-size: 10.5px; font-weight: 800; letter-spacing: .16em; color: #ffd968; }
+      .ach-toast .at-name { font-family: var(--font-display); font-weight: 400; font-size: 17px; letter-spacing: .03em; line-height: 1.1; color: #fff7e8; }
+      @keyframes achToastIn { from { opacity: 0; transform: translate(-50%, 14px) scale(.94); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+      @media (max-width: 700px) {
+        .ach-toast { bottom: calc(102px + env(safe-area-inset-bottom, 0px)); }
+      }
+      /* Personal-best banner on the victory screen (Nora's spec):
+         chunky gold ribbon that pops when a chapter record breaks. */
+      .best-banner {
+        font-family: var(--font-display); font-weight: 400; letter-spacing: .04em;
+        font-size: clamp(19px, 5.4vw, 25px); line-height: 1.15;
+        color: #3a2002; text-align: center;
+        background: linear-gradient(180deg, #ffd968, #e8a94c 60%, #d98e2b);
+        border: 3px solid #8a5a10; border-radius: 14px;
+        padding: 10px 16px 9px; margin: 2px 0 12px; width: 100%;
+        box-shadow: 0 5px 0 rgba(90,52,8,.6), 0 12px 26px rgba(20,6,2,.4), inset 0 2px 0 rgba(255,255,255,.65);
+        text-shadow: 0 1px 0 rgba(255,246,214,.6);
+        animation: revealPop .55s cubic-bezier(.2,1.6,.4,1) both;
+      }
+      .best-banner[hidden] { display: none; }
+      .best-banner span { display: block; font-family: var(--font-ui); font-weight: 800; font-size: 13.5px; letter-spacing: .02em; margin-top: 3px; color: #6b3d08; text-shadow: none; }
+      #msgOverlay.stagger .best-banner { animation: revealPop .55s cubic-bezier(.2,1.6,.4,1) both .5s; }
+      @media (prefers-reduced-motion: reduce) { .best-banner { animation: none; } }
+      .coin-bank .bank-div { border-top: 2px dashed rgba(107,61,8,.45); margin-top: 7px; padding-top: 7px; }
+      /* Short phones: the Chapters screen must keep fitting on one
+         screen — the objective chips step aside (they still show on
+         the level intro, chapter cards and RANKS); the BEST line,
+         a single row, always stays. */
+      @media (max-width: 700px) and (max-height: 719px) {
+        .feat-objectives { display: none; }
+        .feat-best { font-size: 12.5px; margin-top: 3px; }
+      }
+      @media (prefers-reduced-motion: reduce) { .ach-toast { animation: none; } }
     </style>
   </head>
   <body>
@@ -1934,6 +2052,8 @@
             <div class="feat-kicker" id="featKicker">CHAPTER 1 OF 12</div>
             <div class="feat-name" id="featName">Barnyard Landing</div>
             <div class="feat-meta" id="featMeta">🦃 Boss: Big Gobbler</div>
+            <div class="feat-best" id="featBest"></div>
+            <div class="feat-objectives" id="featObjectives" aria-label="Feather objectives for this chapter"></div>
           </div>
           <!-- Featured chapter hero: ONE chapter big as a 3D-stylized
                DIORAMA — the boss standing on a floating farm chunk
@@ -2010,6 +2130,13 @@
             <div class="lb-list" id="leaderboardList"></div>
             <p class="panel-note">Your best finished runs, saved on this device. A run joins the board when it ends — game over or total victory.</p>
             <button class="ghost-btn danger-btn" id="btnClearBoard" type="button">Clear leaderboard</button>
+            <h3 class="records-h">📖 Chapter Bests</h3>
+            <p class="records-summary" id="recordsSummary"></p>
+            <div class="lb-list" id="chapterBestsList"></div>
+            <p class="panel-note">Your best score and fastest clear on every chapter you beat — plus its 🪶 feathers: clear with no damage, clear under the par time, and clear without a Gravy Bomb.</p>
+            <h3 class="records-h">🏅 Achievements</h3>
+            <div class="ach-grid" id="achievementsList"></div>
+            <p class="panel-note">Lifetime feats, tracked on this device. Progress counts everything the game already keeps score of — kills, chests, coins and waves. Every achievement pays 🪶 feathers into your wallet, once — earned by play only, never sold.</p>
           </div>
 
           <div class="menu-panel" id="panelCredits" hidden>
@@ -2032,6 +2159,7 @@
           <div class="boss-tag" id="msgTag" hidden></div>
           <h2 id="msgTitle">Level 1</h2>
           <p class="sub" id="msgSub"></p>
+          <div class="best-banner" id="msgBestBanner" hidden>🏆 NEW PERSONAL BEST!<span id="msgBestDetail"></span></div>
           <p id="msgBody"></p>
           <div class="final-score" id="msgScore" hidden></div>
           <button class="big-btn" id="msgBtn" type="button">Go!</button>
@@ -2048,7 +2176,7 @@
             <h2>The Lobby</h2>
             <p>Home base between runs. Every coin your cannon collects out there lands here — spend them on the guns and watch the cannon itself change.</p>
           </div>
-          <div class="coin-bank"><span>🪙 Coin bank</span><b id="lobbyCoins">0</b></div>
+          <div class="coin-bank"><span>🪙 Coin bank</span><b id="lobbyCoins">0</b><div class="bank-div"><span>🪶 Feather wallet</span><b id="lobbyFeathers">0</b></div></div>
         </div>
         <div class="lobby-banner" id="lobbyBanner" hidden></div>
 
@@ -2070,6 +2198,18 @@
           <h3>🏆 Leaderboard</h3>
           <p class="shop-sub">Your best finished runs — saved on this device along with your coins, upgrades and unlocked levels.</p>
           <div class="lb-list" id="lobbyLeaderboard"></div>
+        </div>
+
+        <div class="lobby-board">
+          <h3>📖 Chapter Bests &amp; Feathers</h3>
+          <p class="records-summary" id="lobbyRecordsSummary"></p>
+          <div class="lb-list" id="lobbyChapterBests"></div>
+          <p class="shop-sub">🪶 One feather per chapter for each feat: clear with no damage · clear under the par time · clear without a Gravy Bomb. First-time feathers pay +1 🪶 into your wallet (see the bank up top) — replays never pay twice. Stars: 1 per clear, +1 no damage, +1 under par.</p>
+        </div>
+
+        <div class="lobby-board">
+          <h3>🏅 Achievements</h3>
+          <div class="ach-grid" id="lobbyAchievements"></div>
         </div>
         </div>
 
@@ -2106,6 +2246,13 @@
         <div class="reveal-cards" id="revealCards"></div>
         <button class="reveal-close" id="btnRevealClose" type="button">🎉 COLLECT!</button>
         <p class="reveal-tap">TAP ANYWHERE TO CLOSE</p>
+      </div>
+
+      <!-- Achievement unlock toast (Step 1): pops when a feat lands,
+           mid-run or in the Lobby, then fades on its own. -->
+      <div class="ach-toast" id="achToast" hidden role="status" aria-live="polite">
+        <span class="at-ico" id="achToastIcon" aria-hidden="true">🏅</span>
+        <span><span class="at-kicker">ACHIEVEMENT UNLOCKED</span><br /><span class="at-name" id="achToastName">First Boss Plucked</span></span>
       </div>
 
       <!-- Touch controls -->
@@ -2189,6 +2336,8 @@
       var msgScore = document.getElementById("msgScore");
       var msgBtn = document.getElementById("msgBtn");
       var msgBtn2 = document.getElementById("msgBtn2");
+      var msgBestBanner = document.getElementById("msgBestBanner");
+      var msgBestDetail = document.getElementById("msgBestDetail");
 
       /* ---------------- Level definitions ---------------- */
       var LEVELS = [
@@ -2348,6 +2497,192 @@
          saved on this device and restored on load, so the grind survives
          closing the game. */
       var SAVE_KEY = "invasionOfTheTurkeysSaveV1";
+      /* ---------------- Replayability Step 1: records, achievements, feathers ----------------
+         Everything below is LOCAL TRACKING ONLY — it reads counters the
+         game already keeps and never touches gameplay, tuning or art.
+         The save KEY is unchanged on purpose: the save object simply
+         grows new fields, and loadSave() defaults any field an older
+         (v27-shape) save doesn't have, so scores, coins, upgrades,
+         cleared chapters and chests all survive updates untouched. */
+      var SAVE_VERSION = 2; // additive marker only — the key never changes
+      /* Par clear times per chapter (seconds of play/boss time — the
+         same clock `levelTime` already runs). Generous early, tighter
+         late; shown in the UI so the feather target is always fair. */
+      var PAR_TIMES = [120, 130, 150, 165, 180, 195, 210, 230, 250, 270, 290, 330];
+      var chapterBests = LEVELS.map(function () { return { score: 0, time: 0 }; }); // best clear score + fastest clear time (s) per chapter; 0 = no clear yet
+      var chapterFeathers = LEVELS.map(function () { return { nd: false, par: false, nb: false }; }); // nd = no damage · par = under par time · nb = no Gravy Bombs
+      var chapterStars = LEVELS.map(function () { return 0; }); // best star rating per chapter: 1 per clear + 1 no-damage + 1 under-par (max 3)
+      var featherBalance = 0; // 🪶 WALLET — earned by play ONLY (chapter objectives + achievements), never sold; a later step spends it on cannon looks
+      var achievementsUnlocked = {}; // { achievementId: true } — the once-ever guard for both the unlock and its feather payout
+      var stats = { kills: 0, mutantKills: 0, bombKills: 0, chestsOpened: 0, feastChests: 0, wavesSurvived: 0, clears: 0, untouchableClears: 0 }; // lifetime counters, all fed by events the game already fires
+      /* Achievements pay feathers across play styles — survival, skill,
+         bosses, chests, coins. The first four are deliberately EASY
+         (first kill, first wave, first boss, first chest) so a new
+         player is rewarded inside the first minutes. `feathers` is
+         paid exactly once, at unlock, guarded by the unlocked flag. */
+      var ACHIEVEMENTS = [
+        { id: "first_kill", icon: "🎯", name: "First Pluck", desc: "Pluck your very first turkey.", feathers: 1 },
+        { id: "first_wave", icon: "🌊", name: "First Wave Down", desc: "Survive your first wave.", feathers: 1 },
+        { id: "first_boss", icon: "🦃", name: "First Boss Plucked", desc: "Clear any chapter — pluck your first boss.", feathers: 2 },
+        { id: "first_chest", icon: "🎁", name: "First Chest Cracked", desc: "Open your first Harvest Chest.", feathers: 1 },
+        { id: "untouchable", icon: "🛡️", name: "Untouchable", desc: "Clear a chapter without losing a heart.", feathers: 3 },
+        { id: "flock_survivor", icon: "⛺", name: "Flock Survivor", desc: "Survive 25 waves.", feathers: 2 },
+        { id: "wave_rider", icon: "🏄", name: "Wave Rider", desc: "Survive 50 waves.", feathers: 4 },
+        { id: "boss_hunter", icon: "🏹", name: "Boss Hunter", desc: "Pluck 10 bosses — replays count.", feathers: 5 },
+        { id: "chapter_master", icon: "👑", name: "Chapter Master", desc: "Clear all 12 chapters.", feathers: 8 },
+        { id: "mutant_hunter", icon: "🧬", name: "Mutant Hunter", desc: "Pluck 25 mutated turkeys.", feathers: 4 },
+        { id: "chest_collector", icon: "🧰", name: "Chest Collector", desc: "Open 10 Harvest Chests.", feathers: 3 },
+        { id: "feast", icon: "🍗", name: "FEAST!", desc: "Open a FEAST Harvest Chest.", feathers: 4 },
+        { id: "bomb_squad", icon: "💣", name: "Bomb Squad", desc: "Score 50 Gravy Bomb kills.", feathers: 4 },
+        { id: "coin_baron", icon: "🪙", name: "Coin Baron", desc: "Earn 10,000 lifetime coins.", feathers: 5 },
+        { id: "feather_finder", icon: "🪶", name: "Feather Finder", desc: "Earn 12 chapter feathers across any chapters.", feathers: 5 }
+      ];
+      /* Per-attempt trackers for the chapter being played right now —
+         session-only, reset by startLevel(), read by levelClear(). */
+      var levelDamageTaken = false; // a heart was actually lost this chapter (a shield block does not count)
+      var levelBombsUsed = 0;        // Gravy Bombs fired this chapter
+      var achToastQueue = [];
+      var achToastBusy = false;
+      function fmtTime(sec) {
+        if (!sec || sec <= 0) return "—";
+        var s = Math.floor(sec);
+        return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
+      }
+      function featherCount(idx) {
+        var f = chapterFeathers[idx];
+        return f ? (f.nd ? 1 : 0) + (f.par ? 1 : 0) + (f.nb ? 1 : 0) : 0;
+      }
+      function totalFeathers() {
+        var n = 0;
+        for (var i = 0; i < chapterFeathers.length; i++) n += featherCount(i);
+        return n;
+      }
+      function totalStars() {
+        var n = 0;
+        for (var i = 0; i < chapterStars.length; i++) n += chapterStars[i];
+        return n;
+      }
+      function starStr(n) { return ["☆☆☆", "★☆☆", "★★☆", "★★★"][clamp(Math.floor(n) || 0, 0, 3)]; }
+      function distinctCleared() {
+        var n = 0;
+        clearedLevels.forEach(function (v) { if (v) n++; });
+        return n;
+      }
+      function achievementProgress(id) {
+        switch (id) {
+          case "first_kill": return Math.min(stats.kills, 1) + " / 1";
+          case "first_wave": return Math.min(stats.wavesSurvived, 1) + " / 1";
+          case "first_boss": return Math.min(1, distinctCleared()) + " / 1";
+          case "first_chest": return Math.min(stats.chestsOpened, 1) + " / 1";
+          case "chapter_master": return distinctCleared() + " / " + LEVELS.length;
+          case "boss_hunter": return Math.min(stats.clears, 10) + " / 10";
+          case "mutant_hunter": return Math.min(stats.mutantKills, 25) + " / 25";
+          case "chest_collector": return Math.min(stats.chestsOpened, 10) + " / 10";
+          case "feast": return Math.min(stats.feastChests, 1) + " / 1";
+          case "untouchable": return Math.min(stats.untouchableClears, 1) + " / 1";
+          case "bomb_squad": return Math.min(stats.bombKills, 50) + " / 50";
+          case "coin_baron": return Math.min(totalCoinsEarned, 10000).toLocaleString() + " / 10,000";
+          case "flock_survivor": return Math.min(stats.wavesSurvived, 25) + " / 25";
+          case "wave_rider": return Math.min(stats.wavesSurvived, 50) + " / 50";
+          case "feather_finder": return Math.min(totalFeathers(), 12) + " / 12";
+          default: return "";
+        }
+      }
+      function achievementMet(id) {
+        switch (id) {
+          case "first_kill": return stats.kills >= 1;
+          case "first_wave": return stats.wavesSurvived >= 1;
+          case "first_boss": return stats.clears >= 1 || distinctCleared() >= 1;
+          case "first_chest": return stats.chestsOpened >= 1;
+          case "chapter_master": return distinctCleared() >= LEVELS.length;
+          case "boss_hunter": return stats.clears >= 10;
+          case "mutant_hunter": return stats.mutantKills >= 25;
+          case "chest_collector": return stats.chestsOpened >= 10;
+          case "feast": return stats.feastChests >= 1;
+          case "untouchable": return stats.untouchableClears >= 1;
+          case "bomb_squad": return stats.bombKills >= 50;
+          case "coin_baron": return totalCoinsEarned >= 10000;
+          case "flock_survivor": return stats.wavesSurvived >= 25;
+          case "wave_rider": return stats.wavesSurvived >= 50;
+          case "feather_finder": return totalFeathers() >= 12;
+          default: return false;
+        }
+      }
+      function showAchievementToast(def) {
+        achToastQueue.push(def);
+        if (achToastBusy) return;
+        achToastBusy = true;
+        (function next() {
+          var d = achToastQueue.shift();
+          var el = document.getElementById("achToast");
+          if (!d || !el) { achToastBusy = false; return; }
+          document.getElementById("achToastIcon").textContent = d.icon;
+          document.getElementById("achToastName").textContent = d.name + (d.feathers ? " · +" + d.feathers + " 🪶" : "");
+          el.hidden = false;
+          SFX.clear();
+          setTimeout(function () {
+            el.hidden = true;
+            if (achToastQueue.length) setTimeout(next, 260);
+            else achToastBusy = false;
+          }, reducedMotion ? 1800 : 2900);
+        })();
+      }
+      function unlockAchievement(id, silent) {
+        if (achievementsUnlocked[id]) return false; // once ever — the flag guards the feather payout too, so replays can never re-pay
+        var def = null;
+        for (var i = 0; i < ACHIEVEMENTS.length; i++) if (ACHIEVEMENTS[i].id === id) def = ACHIEVEMENTS[i];
+        if (!def) return false;
+        achievementsUnlocked[id] = true;
+        if (def.feathers) featherBalance += def.feathers; // paid once, here, even for silent load-time grants — otherwise an already-earned feat would never pay
+        saveGame();
+        if (!silent) showAchievementToast(def);
+        return true;
+      }
+      /* Evaluate every achievement against current counters. Called at
+         the moments the game already records something (a kill, a bomb,
+         a chest, a wave, a clear, coins landing) — `silent` is used
+         once at load so a returning save is granted what it already
+         earned (e.g. Coin Baron from banked lifetime coins) without
+         a toast storm. */
+      function checkAchievements(silent) {
+        var any = false;
+        ACHIEVEMENTS.forEach(function (def) {
+          if (!achievementsUnlocked[def.id] && achievementMet(def.id)) {
+            if (unlockAchievement(def.id, silent)) any = true;
+          }
+        });
+        if (any) renderRecords();
+        return any;
+      }
+      /* Fold a finished chapter clear into the records: best score and
+         fastest time update independently, feathers latch on forever,
+         and the caller gets a summary to show on the clear screen. */
+      function recordChapterClear(idx, chapterScore, clearTime) {
+        var best = chapterBests[idx], f = chapterFeathers[idx];
+        var res = { newBestScore: false, newBestTime: false, newFeathers: [], stars: 0, newBestStars: false, feathersPaid: 0 };
+        stats.clears++;
+        if (chapterScore > best.score) { best.score = Math.floor(chapterScore); res.newBestScore = true; }
+        if (clearTime > 0 && (best.time <= 0 || clearTime < best.time)) { best.time = clearTime; res.newBestTime = true; }
+        var underPar = clearTime > 0 && clearTime <= PAR_TIMES[idx];
+        /* Star rating for THIS clear: 1 for clearing, +1 for no damage,
+           +1 for under par. The chapter keeps the best rating ever. */
+        res.stars = 1 + (!levelDamageTaken ? 1 : 0) + (underPar ? 1 : 0);
+        if (res.stars > chapterStars[idx]) { chapterStars[idx] = res.stars; res.newBestStars = true; }
+        /* Feather objectives pay +1 🪶 into the wallet the FIRST time
+           each is earned on this chapter — the per-chapter flags are
+           the guard, so a replay of an earned objective pays nothing. */
+        if (!levelDamageTaken) {
+          stats.untouchableClears++;
+          if (!f.nd) { f.nd = true; res.newFeathers.push("No Damage"); }
+        }
+        if (underPar && !f.par) { f.par = true; res.newFeathers.push("Under Par " + fmtTime(PAR_TIMES[idx])); }
+        if (levelBombsUsed === 0 && !f.nb) { f.nb = true; res.newFeathers.push("No Gravy Bombs"); }
+        if (res.newFeathers.length) { featherBalance += res.newFeathers.length; res.feathersPaid = res.newFeathers.length; }
+        saveGame();
+        checkAchievements(false);
+        renderRecords();
+        return res;
+      }
       var leaderboard = []; // [{score, level, result, date}] best first, top 10
       var clearedLevels = LEVELS.map(function () { return false; }); // chapters beaten — drives the ✓ CLEARED chapter badges
       /* Rarity tiers — defined up here because loadSave() validates
@@ -2369,7 +2704,11 @@
             coins: coins, totalCoinsEarned: totalCoinsEarned,
             highestUnlocked: highestUnlocked, clearedLevels: clearedLevels, upgrades: upgrades,
             bestScore: bestScore, leaderboard: leaderboard, muted: muted,
-            chests: chests, bonusBombs: bonusBombs, chestSeq: chestSeq
+            chests: chests, bonusBombs: bonusBombs, chestSeq: chestSeq,
+            saveVersion: SAVE_VERSION,
+            chapterBests: chapterBests, chapterFeathers: chapterFeathers, chapterStars: chapterStars,
+            featherBalance: featherBalance,
+            achievementsUnlocked: achievementsUnlocked, stats: stats
           }));
         } catch (e) { /* storage unavailable — the session still plays normally */ }
       }
@@ -2408,6 +2747,43 @@
         if (typeof data.bonusBombs === "number") bonusBombs = clamp(Math.floor(data.bonusBombs), 0, 9);
         if (typeof data.chestSeq === "number") chestSeq = Math.max(1, Math.floor(data.chestSeq));
         chests.forEach(function (ch) { if (ch.id >= chestSeq) chestSeq = ch.id + 1; if (!ch.id) ch.id = chestSeq++; });
+        /* Replayability Step 1 (migration: saves written before this
+           phase — the v27 shape — simply have none of these fields.
+           Every one defaults cleanly and nothing above is touched, so
+           an old save loads with all of its progress intact.) */
+        if (Object.prototype.toString.call(data.chapterBests) === "[object Array]") {
+          for (var cbi = 0; cbi < LEVELS.length; cbi++) {
+            var cb = data.chapterBests[cbi];
+            if (cb && typeof cb.score === "number") chapterBests[cbi].score = Math.max(0, Math.floor(cb.score));
+            if (cb && typeof cb.time === "number" && cb.time > 0) chapterBests[cbi].time = cb.time;
+          }
+        }
+        if (Object.prototype.toString.call(data.chapterFeathers) === "[object Array]") {
+          for (var cfi = 0; cfi < LEVELS.length; cfi++) {
+            var cf = data.chapterFeathers[cfi];
+            if (cf) { chapterFeathers[cfi].nd = !!cf.nd; chapterFeathers[cfi].par = !!cf.par; chapterFeathers[cfi].nb = !!cf.nb; }
+          }
+        }
+        if (data.achievementsUnlocked && typeof data.achievementsUnlocked === "object") {
+          ACHIEVEMENTS.forEach(function (def) {
+            if (data.achievementsUnlocked[def.id]) achievementsUnlocked[def.id] = true;
+          });
+        }
+        if (data.stats && typeof data.stats === "object") {
+          for (var sk in stats) {
+            if (typeof data.stats[sk] === "number") stats[sk] = Math.max(0, Math.floor(data.stats[sk]));
+          }
+        }
+        if (Object.prototype.toString.call(data.chapterStars) === "[object Array]") {
+          for (var csi = 0; csi < LEVELS.length; csi++) {
+            if (typeof data.chapterStars[csi] === "number") chapterStars[csi] = clamp(Math.floor(data.chapterStars[csi]), 0, 3);
+          }
+        }
+        if (typeof data.featherBalance === "number") featherBalance = Math.max(0, Math.floor(data.featherBalance));
+        // a chapter already cleared before records existed still counts as a clear
+        if (stats.clears < distinctCleared()) stats.clears = distinctCleared();
+        // …and a clear is worth at least its 1 star, even from a save made before stars existed
+        for (var csr = 0; csr < LEVELS.length; csr++) if (clearedLevels[csr] && chapterStars[csr] < 1) chapterStars[csr] = 1;
       }
       loadSave();
       function recordScore(resultLabel) {
@@ -2429,6 +2805,7 @@
         if (x !== undefined) floaters.push({ x: x, y: y, text: "+" + n + " 🪙", t: 1.1 });
         updateHUD();
         saveGame();
+        checkAchievements(false); // Coin Baron can land mid-run, the moment the 10,000th coin does
       }
 
       var player = null;
@@ -2627,6 +3004,7 @@
         levelIdx = idx;
         coinsThisRun = 0;
         runRecorded = false;
+        levelDamageTaken = false; levelBombsUsed = 0; // fresh feather attempt for this chapter
         ceremony = null; ceremonyFlash = 0; timeScale = 1; countUp = null;
         levelTime = 0; waveTrapTimer = rand(13, 19); trapToast = null;
         player.speed = 345 + upgrades.boots * 28;
@@ -2653,7 +3031,10 @@
         msgSub.textContent = L.sub;
         msgBody.textContent = "Survive " + L.waves.length + " wave" + (L.waves.length > 1 ? "s" : "") +
           " of invading turkeys — then face " + L.boss.name + "." +
-          (levelIdx >= 3 ? " Mutated turkeys stalk this level — extra heads, glowing spots, extra tough, bonus coins." : "");
+          (levelIdx >= 3 ? " Mutated turkeys stalk this level — extra heads, glowing spots, extra tough, bonus coins." : "") +
+          " 🪶 Feathers: no damage · under " + fmtTime(PAR_TIMES[levelIdx]) + " · no Gravy Bombs." +
+          (chapterBests[levelIdx].score > 0 ? " Your best: " + chapterBests[levelIdx].score.toLocaleString() + " · " + fmtTime(chapterBests[levelIdx].time) + " · " + starStr(chapterStars[levelIdx]) + " · 🪶 " + featherCount(levelIdx) + "/3." : "");
+        msgBestBanner.hidden = true;
         msgScore.hidden = true;
         msgBtn.textContent = "Start Level " + (levelIdx + 1);
         msgBtn2.hidden = true;
@@ -2803,6 +3184,9 @@
       function killEnemy(e, idx) {
         enemies.splice(idx, 1);
         score += 100;
+        stats.kills++;
+        if (e.mutated) stats.mutantKills++;
+        checkAchievements(false); // First Pluck lands on the very first kill (earnCoins below persists the counters)
         earnCoins(3 + Math.floor(levelIdx * 0.8) + (e.mutated ? 4 : 0), e.x, e.y - 14);
         addDeathBurst(e.x, e.y, false); // feathers + potatoes + gravy
         addParticles(e.x, e.y, ["#b23a2e", "#e35d6a", "#8e1f16"], 9, 165); // cranberry splat payoff
@@ -2823,6 +3207,7 @@
           return;
         }
         lives--;
+        levelDamageTaken = true; // a heart was lost — this chapter's No Damage feather is gone (shield blocks never reach here)
         player.power = Math.max(1, player.power - 1);
         player.invuln = 2;
         shake = 0.45;
@@ -2835,20 +3220,22 @@
       function useBomb() {
         if (bombs <= 0 || (state !== "play" && state !== "boss")) return;
         bombs--;
+        levelBombsUsed++; // this chapter's No Gravy Bombs feather is gone
         flash = 0.35; shake = 0.5;
         SFX.bomb();
         for (var i = enemies.length - 1; i >= 0; i--) {
           enemies[i].hp -= getBombDamage();
           addParticles(enemies[i].x, enemies[i].y, FEATHERS, 6, 120);
-          if (enemies[i].hp <= 0) { score += 100; earnCoins(3 + Math.floor(levelIdx * 0.8) + (enemies[i].mutated ? 4 : 0), enemies[i].x, enemies[i].y - 14); addDeathBurst(enemies[i].x, enemies[i].y, false); enemies.splice(i, 1); }
+          if (enemies[i].hp <= 0) { if (enemies[i].mutated) stats.mutantKills++; stats.bombKills++; stats.kills++; score += 100; earnCoins(3 + Math.floor(levelIdx * 0.8) + (enemies[i].mutated ? 4 : 0), enemies[i].x, enemies[i].y - 14); addDeathBurst(enemies[i].x, enemies[i].y, false); enemies.splice(i, 1); }
         }
         if (boss) {
           boss.hp -= getBossBombDamage();
           addDeathBurst(boss.x, boss.y, false);
-          if (boss.hp <= 0) bossDown();
+          if (boss.hp <= 0) { stats.bombKills++; stats.kills++; bossDown(); }
         }
         enemyBombs = [];
         updateHUD();
+        checkAchievements(false); // Bomb Squad / Mutant Hunter may have just landed
       }
 
       /* ---- Boss death ceremony (#4) ----
@@ -2929,6 +3316,11 @@
         clearedLevels[levelIdx] = true;
         var earnedChest = awardChest(levelIdx); // the boss drops a Harvest Chest on every clear
         bestScore = Math.max(bestScore, score);
+        /* Step 1 records: this chapter's own score is what the run
+           gained since the chapter started (scoreAtLevelStart), and
+           its clear time is the levelTime clock — waves + boss only. */
+        var chapterScore = score - scoreAtLevelStart;
+        var rec = recordChapterClear(levelIdx, chapterScore, levelTime);
         if (last) recordScore("🏆 Beat the Final Feast!");
         saveGame();
         lobbyTarget = last ? 0 : levelIdx + 1;
@@ -2938,8 +3330,22 @@
         msgSub.textContent = last
           ? LEVELS[levelIdx].boss.name + " has been plucked. Thanksgiving is back on the menu — ours."
           : LEVELS[levelIdx].boss.name + " has been plucked and stuffed.";
+        /* Personal-best banner (Nora's spec): shown only when this
+           clear actually broke the chapter's score or time record,
+           and it says which one. */
+        if (rec.newBestScore || rec.newBestTime) {
+          msgBestBanner.hidden = false;
+          msgBestDetail.textContent =
+            (rec.newBestScore && rec.newBestTime ? "Best score AND fastest clear — " :
+             rec.newBestScore ? "Best score — " : "Fastest clear — ") +
+            chapterBests[levelIdx].score.toLocaleString() + " pts · " + fmtTime(chapterBests[levelIdx].time) + " on Chapter " + (levelIdx + 1);
+        } else {
+          msgBestBanner.hidden = true;
+        }
         msgBody.textContent = "Survival bonus: +" + bonus + " points. This run banked 🪙 " + coinsThisRun + " coins — spend them in the Lobby before the next level." +
-          (earnedChest ? " 🎁 " + LEVELS[levelIdx].boss.name + " dropped a " + earnedChest.rarity + " Harvest Chest — open it with the 🎁 button up top!" : "");
+          (earnedChest ? " 🎁 " + LEVELS[levelIdx].boss.name + " dropped a " + earnedChest.rarity + " Harvest Chest — open it with the 🎁 button up top!" : "") +
+          " 📖 Chapter score " + chapterScore.toLocaleString() + " · clear time " + fmtTime(levelTime) + " · " + starStr(rec.stars) + " (" + rec.stars + " star" + (rec.stars > 1 ? "s" : "") + " this clear · best " + starStr(chapterStars[levelIdx]) + ")." +
+          (rec.newFeathers.length ? " 🪶 Feather" + (rec.newFeathers.length > 1 ? "s" : "") + " earned: " + rec.newFeathers.join(" · ") + " — +" + rec.feathersPaid + " 🪶 to your wallet (" + featherCount(levelIdx) + "/3 on this chapter)." : " 🪶 Feathers here: " + featherCount(levelIdx) + "/3 — replays only pay for feathers not yet earned.");
         msgScore.hidden = false;
         if (fromCeremony) {
           // victory screen rises in staggered, score & coins count up
@@ -2970,6 +3376,7 @@
           ", wave " + Math.min(waveIdx + 1, LEVELS[levelIdx].waves.length) + ". The 🪙 " + coinsThisRun +
           " coins from this run are still yours — bank them on upgrades in the Lobby, then retry stronger.";
         msgScore.hidden = false;
+        msgBestBanner.hidden = true;
         msgScore.textContent = "Final score: " + score.toLocaleString() + " · 🪙 " + coins.toLocaleString() + " coins banked";
         msgBtn.textContent = "🏠 Return to Lobby";
         msgBtn2.hidden = false;
@@ -3178,6 +3585,7 @@
 
         /* --- wave / boss flow --- */
         if (state === "play" && spawnQueue <= 0 && enemies.length === 0) {
+          stats.wavesSurvived++; saveGame(); checkAchievements(false); // one more wave survived (Wave Rider)
           if (waveIdx < L.waves.length - 1) {
             waveIdx++;
             wavePause = 0;
@@ -3370,6 +3778,9 @@
 
       function killEnemySilent(idx) {
         var e = enemies[idx];
+        stats.kills++;
+        if (e.mutated) stats.mutantKills++;
+        saveGame();
         addDeathBurst(e.x, e.y, false); // feathers + potatoes + gravy
         enemies.splice(idx, 1);
         SFX.boom();
@@ -4612,7 +5023,10 @@
           }
           else if (rw.type === "bombs") { bonusBombs = Math.min(9, bonusBombs + rw.amount); }
         });
+        stats.chestsOpened++;
+        if (chest.rarity === "FEAST") stats.feastChests++;
         saveGame();
+        checkAchievements(false); // Chest Collector / FEAST! / Coin Baron (chest coins count too)
         renderChestLists();
         updateHUD();
         if (!lobbyPanel.hidden) renderLobby();
@@ -5292,6 +5706,65 @@
       function renderBoard() {
         fillBoard(document.getElementById("leaderboardList"));
         fillBoard(document.getElementById("lobbyLeaderboard"));
+        renderRecords();
+      }
+
+      /* ---------------- Step 1 records: chapter bests, feathers, achievements ----------------
+         One renderer fills both homes — RANKS (under the top 10) and
+         the Lobby — from the same save fields, so the two can never
+         disagree. */
+      function fillChapterBests(el) {
+        if (!el) return;
+        el.textContent = "";
+        LEVELS.forEach(function (L, idx) {
+          var st = chapterState(idx);
+          var best = chapterBests[idx];
+          var row = document.createElement("div");
+          row.className = "lb-row cb-row" + (st === "locked" ? " locked" : "");
+          var rank = document.createElement("span"); rank.className = "rank";
+          rank.textContent = idx + 1 + ".";
+          var nm = document.createElement("span"); nm.className = "cb-name";
+          nm.textContent = st === "locked" ? "🔒 ???" : L.name;
+          var bd = document.createElement("span"); bd.className = "cb-best";
+          if (st === "locked") bd.textContent = "Beat Chapter " + idx + " to unlock";
+          else if (best.score > 0) bd.textContent = starStr(chapterStars[idx]) + " · 🏆 " + best.score.toLocaleString() + " · ⏱ " + fmtTime(best.time) + " · 🪶 " + featherCount(idx) + "/3";
+          else bd.textContent = "No clear yet · ☆☆☆ · 🪶 0/3 · Par " + fmtTime(PAR_TIMES[idx]);
+          row.appendChild(rank); row.appendChild(nm); row.appendChild(bd);
+          el.appendChild(row);
+        });
+      }
+      function fillAchievements(el) {
+        if (!el) return;
+        el.textContent = "";
+        ACHIEVEMENTS.forEach(function (def) {
+          var un = !!achievementsUnlocked[def.id];
+          var card = document.createElement("div");
+          card.className = "ach-card " + (un ? "unlocked" : "locked");
+          var ico = document.createElement("span"); ico.className = "ach-ico"; ico.textContent = def.icon;
+          var tx = document.createElement("span"); tx.className = "ach-text";
+          var nm = document.createElement("span"); nm.className = "ach-name"; nm.textContent = def.name;
+          var ds = document.createElement("span"); ds.className = "ach-desc"; ds.textContent = def.desc + (def.feathers ? " · +" + def.feathers + " 🪶" : "");
+          tx.appendChild(nm); tx.appendChild(ds);
+          var st = document.createElement("span"); st.className = "ach-state";
+          st.textContent = un ? "✓ GOT IT" : "🔒 " + achievementProgress(def.id);
+          card.appendChild(ico); card.appendChild(tx); card.appendChild(st);
+          el.appendChild(card);
+        });
+      }
+      function renderRecords() {
+        fillChapterBests(document.getElementById("chapterBestsList"));
+        fillChapterBests(document.getElementById("lobbyChapterBests"));
+        fillAchievements(document.getElementById("achievementsList"));
+        fillAchievements(document.getElementById("lobbyAchievements"));
+        var un = 0;
+        ACHIEVEMENTS.forEach(function (def) { if (achievementsUnlocked[def.id]) un++; });
+        var line = "⭐ Stars " + totalStars() + " / " + (LEVELS.length * 3) + " · 🪶 Chapter feathers " + totalFeathers() + " / " + (LEVELS.length * 3) + " · 🏅 " + un + " / " + ACHIEVEMENTS.length + " achievements";
+        var s1 = document.getElementById("recordsSummary");
+        if (s1) s1.textContent = line;
+        var s2 = document.getElementById("lobbyRecordsSummary");
+        if (s2) s2.textContent = line;
+        var lf = document.getElementById("lobbyFeathers");
+        if (lf) lf.textContent = featherBalance.toLocaleString();
       }
 
       /* ---------------- Chapter cards (2026 level select) ----------------
@@ -5365,6 +5838,11 @@
           ? "Beat Chapter " + idx + " to unlock"
           : "🦃 Boss: " + L.boss.name + (compact ? "" : " · " + L.waves.length + " waves + boss");
         info.appendChild(kick); info.appendChild(nm); info.appendChild(meta);
+        var bestLine = document.createElement("span"); bestLine.className = "chapter-best";
+        if (st === "locked") bestLine.textContent = "☆☆☆ · 🪶 —/3";
+        else if (chapterBests[idx].score > 0) bestLine.textContent = starStr(chapterStars[idx]) + " · 🏆 Best " + chapterBests[idx].score.toLocaleString() + " · " + fmtTime(chapterBests[idx].time) + " · 🪶 " + featherCount(idx) + "/3";
+        else bestLine.textContent = "☆☆☆ · 🪶 0/3 · Par " + fmtTime(PAR_TIMES[idx]);
+        info.appendChild(bestLine);
         var go = document.createElement("span"); go.className = "chapter-go";
         go.textContent = st === "locked" ? "🔒" : st === "cleared" ? "↻" : "▶";
         card.appendChild(thumb); card.appendChild(info); card.appendChild(go);
@@ -5469,6 +5947,12 @@
         coins = 0; coinsThisRun = 0; totalCoinsEarned = 0;
         highestUnlocked = 0; lobbyTarget = 0; bestScore = 0;
         leaderboard = [];
+        chapterBests = LEVELS.map(function () { return { score: 0, time: 0 }; });
+        chapterFeathers = LEVELS.map(function () { return { nd: false, par: false, nb: false }; });
+        chapterStars = LEVELS.map(function () { return 0; });
+        featherBalance = 0;
+        achievementsUnlocked = {};
+        stats = { kills: 0, mutantKills: 0, bombKills: 0, chestsOpened: 0, feastChests: 0, wavesSurvived: 0, clears: 0, untouchableClears: 0 };
         chests = []; bonusBombs = 0; chestSeq = 1;
         clearedLevels = LEVELS.map(function () { return false; });
         for (var k in upgrades) upgrades[k] = 0;
@@ -6231,8 +6715,16 @@
           var n = document.createElement("span"); n.textContent = "CH " + (idx + 1);
           var ic = document.createElement("span");
           ic.textContent = st2 === "cleared" ? "✓" : st2 === "locked" ? "🔒" : st2 === "next" ? "★" : "▶";
-          lab.appendChild(n); lab.appendChild(ic);
+          lab.appendChild(n);
+          if (st2 !== "locked") {
+            var fe = document.createElement("span"); fe.className = "thumb-feathers";
+            fe.textContent = "🪶" + featherCount(idx) + "/3";
+            fe.title = chapterBests[idx].score > 0 ? "Best " + chapterBests[idx].score.toLocaleString() + " · " + fmtTime(chapterBests[idx].time) : "No clear yet";
+            lab.appendChild(fe);
+          }
+          lab.appendChild(ic);
           chip.appendChild(lab);
+          chip.setAttribute("aria-label", "Chapter " + (idx + 1) + (st2 === "locked" ? " (locked)" : ": " + L2.name + (chapterBests[idx].score > 0 ? ", best " + chapterBests[idx].score.toLocaleString() + " in " + fmtTime(chapterBests[idx].time) : ", no clear yet") + ", " + featherCount(idx) + " of 3 feathers"));
           drawChapterThumb(cv, idx);
           chip.addEventListener("click", function () { ac(); featuredIdx = idx; renderFeatured(); });
           strip.appendChild(chip);
@@ -6264,6 +6756,29 @@
         var meta = document.getElementById("featMeta");
         if (st === "locked") meta.textContent = "🔒 Unlock in Chapter " + (featuredIdx + 1) + " — beat Chapter " + featuredIdx + " first";
         else meta.textContent = "🦃 Boss: " + L.boss.name + " · " + L.waves.length + " waves + boss" + (st === "cleared" ? " · ✓ Cleared" : "");
+        var fb = document.getElementById("featBest");
+        if (fb) {
+          if (st === "locked") fb.textContent = "";
+          else if (chapterBests[featuredIdx].score > 0) fb.textContent = "🏆 BEST " + chapterBests[featuredIdx].score.toLocaleString() + " · ⏱ " + fmtTime(chapterBests[featuredIdx].time) + " · " + starStr(chapterStars[featuredIdx]) + " · 🪶 " + featherCount(featuredIdx) + "/3";
+          else fb.textContent = "🏆 No clear yet — set this chapter's first record!";
+        }
+        var fo = document.getElementById("featObjectives");
+        if (fo) {
+          fo.textContent = "";
+          if (st !== "locked") {
+            var fobj = chapterFeathers[featuredIdx];
+            [
+              ["🪶 No damage", fobj.nd],
+              ["🪶 Under " + fmtTime(PAR_TIMES[featuredIdx]), fobj.par],
+              ["🪶 No Gravy Bombs", fobj.nb]
+            ].forEach(function (pair) {
+              var chip2 = document.createElement("span");
+              chip2.className = "feat-obj" + (pair[1] ? " earned" : "");
+              chip2.textContent = (pair[1] ? "✓ " : "") + pair[0];
+              fo.appendChild(chip2);
+            });
+          }
+        }
         var badge = document.getElementById("featBadge");
         badge.className = "feat-badge st-" + st;
         badge.textContent = st === "cleared" ? "✓ CLEARED" : st === "locked" ? "🔒 LOCKED" : st === "next" ? "★ NEXT UP" : "▶ PLAY";
@@ -6537,6 +7052,7 @@
         }
       }, true);
 
+      checkAchievements(true); // silently grant anything a returning save already earned (no toast storm on load)
       updateHUD();
       renderMenu();
       renderBoard();
