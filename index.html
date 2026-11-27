@@ -1511,6 +1511,107 @@
         .feat-start-row .big-btn { min-height: 58px; font-size: 21px; }
         .feat-nav-btn { flex-basis: 52px; min-height: 58px; }
       }
+      /* ============================================================
+         DIORAMA CHAPTER SCREEN + CHEST TIER CARDS (Q's Backpack
+         Heroes setup, in our art): the featured chapter is a
+         3D-stylized floating farm chunk — grass-top slab with
+         dirt/rock sides and a soft drop shadow — with the boss
+         standing big on top, the chapter name in chunky type
+         ABOVE the pedestal, ONE huge START under it, and CHESTS
+         as a round side-icon. The Chests panel becomes big tier
+         cards (FEAST master on top, then EPIC / RARE / COMMON),
+         each with its odds line in words and an OPEN button.
+         ============================================================ */
+      /* --- Chapter heading above the pedestal --- */
+      .feat-heading { text-align: center; margin-bottom: 9px; padding: 0 6px; }
+      .feat-heading .feat-kicker {
+        font-size: 12px; font-weight: 800; letter-spacing: .24em;
+        color: #ffd968; text-shadow: 0 2px 0 rgba(90,20,8,.65), 0 3px 10px rgba(20,6,2,.5);
+      }
+      .feat-heading .feat-name {
+        font-family: var(--font-display); font-weight: 400; line-height: 1.02;
+        font-size: clamp(30px, 7.6vw, 44px); color: #fff7e8;
+        -webkit-text-stroke: 1.5px #33160a;
+        text-shadow: 0 3px 0 #b23a2e, 0 6px 0 rgba(43,16,8,.55), 0 12px 24px rgba(0,0,0,.45);
+        margin-top: 2px;
+      }
+      .feat-heading .feat-meta {
+        font-size: 14.5px; font-weight: 800; color: #ffe9c2;
+        text-shadow: 0 1px 0 rgba(90,20,8,.6), 0 2px 8px rgba(20,6,2,.55);
+        margin-top: 4px;
+      }
+      /* --- Chests as a round side-icon on the hero's right edge --- */
+      .feat-chest {
+        top: 50%; right: 10px; transform: translateY(-50%);
+        width: 58px; height: 58px; padding: 0; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 26px; font-family: inherit; letter-spacing: 0;
+      }
+      .feat-chest:active { transform: translateY(-50%) scale(.92); box-shadow: 0 1px 0 rgba(43,20,4,.6); }
+      .feat-chest .feat-chest-n {
+        position: absolute; top: -7px; right: -7px;
+        border: 2px solid #fff3d6;
+        box-shadow: 0 2px 0 rgba(43,20,4,.55);
+      }
+      .feat-chest.has-dot::after { top: -5px; left: -5px; }
+      /* --- Chest tier cards --- */
+      .chest-tier {
+        position: relative;
+        display: flex; align-items: center; gap: 13px;
+        padding: 12px; text-align: left;
+        border: 3px solid var(--btn-line); border-radius: 18px;
+        box-shadow: 0 5px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,255,255,.22);
+        color: #fff3d6;
+      }
+      .chest-tier canvas { flex: 0 0 auto; display: block; height: auto; }
+      .chest-tier.r-COMMON { background: linear-gradient(180deg, #4d7c3a, #33591f); border-color: #9db87a; }
+      .chest-tier.r-RARE { background: linear-gradient(180deg, #2a6ea8, #1d4e79); border-color: #8ec9f2; box-shadow: 0 5px 0 rgba(20,6,2,.45), 0 0 14px rgba(74,144,196,.4), inset 0 2px 0 rgba(255,255,255,.22); }
+      .chest-tier.r-EPIC { background: linear-gradient(180deg, #7d3ba8, #552673); border-color: #d9a5f5; box-shadow: 0 5px 0 rgba(20,6,2,.45), 0 0 14px rgba(155,77,202,.5), inset 0 2px 0 rgba(255,255,255,.22); }
+      .chest-tier.r-FEAST {
+        background: linear-gradient(135deg, #8a3fa0 0%, #b23a2e 52%, #e8873a 100%);
+        border-color: #ffb52e;
+        box-shadow: 0 6px 0 rgba(20,6,2,.5), 0 0 22px rgba(255,181,46,.55), inset 0 2px 0 rgba(255,255,255,.3);
+        padding: 16px 14px;
+      }
+      .chest-tier-tag {
+        position: absolute; top: -13px; left: 14px; z-index: 2;
+        font-family: var(--font-display); font-weight: 400; font-size: 13px; letter-spacing: .07em;
+        color: #33200a; background: linear-gradient(180deg, #ffd968, #e8a94c);
+        border: 2.5px solid #8a5a10; border-radius: 999px; padding: 4px 13px;
+        box-shadow: 0 3px 0 rgba(43,20,4,.5);
+      }
+      .chest-tier-info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+      .chest-tier-name {
+        font-family: var(--font-display); font-weight: 400; letter-spacing: .05em;
+        font-size: 20px; line-height: 1.05; color: #fff7e8;
+        text-shadow: 0 2px 0 rgba(20,6,2,.55);
+      }
+      .chest-tier.r-FEAST .chest-tier-name { font-size: 27px; color: #ffd968; text-shadow: 0 2px 0 #7e2418, 0 4px 0 rgba(43,16,8,.6); }
+      .chest-tier-count { font-size: 14px; font-weight: 800; color: #ffe9c2; }
+      .chest-tier-count b {
+        display: inline-block; background: rgba(20,8,2,.45); border: 1.5px solid rgba(255,243,214,.55);
+        border-radius: 999px; padding: 1px 9px; margin-right: 5px; color: #fff7e8;
+        font-variant-numeric: tabular-nums;
+      }
+      .chest-tier-odds { font-size: 13px; line-height: 1.45; font-weight: 600; color: #fdf3e0; }
+      .chest-tier-odds b { color: #ffd968; }
+      .chest-tier-from { font-size: 12px; font-weight: 700; color: rgba(255,233,194,.85); }
+      .chest-tier .chest-open-btn { min-height: 54px; padding: 11px 20px; font-size: 18px; }
+      .chest-tier.r-FEAST .chest-open-btn { min-height: 60px; font-size: 21px; padding: 13px 26px; }
+      .chest-open-btn:disabled {
+        background: linear-gradient(180deg, #8a7a68, #6e5f4e);
+        border-color: #4a3d2e; box-shadow: 0 3px 0 #4a3d2e;
+        color: #e8dcc4; cursor: default; text-shadow: none;
+      }
+      .chest-open-btn:disabled:active { transform: none; box-shadow: 0 3px 0 #4a3d2e; }
+      .chest-tier.empty canvas { filter: grayscale(.65) brightness(.72); }
+      .chest-tier.empty .chest-tier-name { color: #e3d5b8; }
+      @media (max-width: 480px) {
+        .chest-tier { flex-wrap: wrap; justify-content: center; text-align: center; }
+        .chest-tier-info { align-items: center; flex-basis: 100%; order: 2; }
+        .chest-tier .chest-open-btn { order: 3; width: 100%; }
+        .feat-heading .feat-name { font-size: 29px; }
+      }
     </style>
   </head>
   <body>
@@ -1579,20 +1680,23 @@
              in .legacy-park below. -->
         <div class="overlay chapters-clean" id="menuOverlay">
           <div class="chapters-main" id="chaptersMain">
-          <!-- Featured chapter hero: ONE chapter big — its own scene
-               art and boss front and centre (drawFeaturedHero, shared
-               art only), state badge top-left, chests pill top-right,
-               and the chapter title in its own scrim zone at the
-               bottom. No arrows inside the hero — they flank START. -->
+          <!-- Chapter heading ABOVE the diorama, Backpack-style:
+               chapter name in chunky type, boss/waves line under it. -->
+          <div class="feat-heading">
+            <div class="feat-kicker" id="featKicker">CHAPTER 1 OF 12</div>
+            <div class="feat-name" id="featName">Barnyard Landing</div>
+            <div class="feat-meta" id="featMeta">🦃 Boss: Big Gobbler</div>
+          </div>
+          <!-- Featured chapter hero: ONE chapter big as a 3D-stylized
+               DIORAMA — the boss standing on a floating farm chunk
+               (grass-top slab, dirt/rock sides, soft drop shadow)
+               painted by drawFeaturedHero from the shared art only.
+               State badge top-left, chests as a round side-icon on
+               the right edge. No arrows inside — they flank START. -->
           <div class="feat-hero">
-            <canvas id="featuredCanvas" width="840" height="300" aria-label="Featured chapter scene with its boss turkey"></canvas>
+            <canvas id="featuredCanvas" width="840" height="440" aria-label="Featured chapter diorama: its boss turkey standing on a floating farm chunk"></canvas>
             <span class="feat-badge" id="featBadge">★ NEXT UP</span>
-            <button class="feat-chest" id="btnHeroChests" type="button" aria-label="Open your Harvest Chests">🎁 CHESTS <span class="feat-chest-n" id="heroChestCount">0</span></button>
-            <div class="feat-info">
-              <div class="feat-kicker" id="featKicker">CHAPTER 1 OF 12</div>
-              <div class="feat-name" id="featName">Barnyard Landing</div>
-              <div class="feat-meta" id="featMeta">🦃 Boss: Big Gobbler</div>
-            </div>
+            <button class="feat-chest" id="btnHeroChests" type="button" aria-label="Open your Harvest Chests">🎁<span class="feat-chest-n" id="heroChestCount">0</span></button>
           </div>
           <div class="thumb-strip" id="thumbStrip" aria-label="Choose a chapter — swipe for all 12 chapters"></div>
           <div class="feat-start-row">
@@ -4240,46 +4344,82 @@
         showChestReveal(chest, rewards);
         if (chest.rarity === "FEAST") { SFX.clear(); SFX.gobble(); } else SFX.clear();
       }
-      function buildChestRow(chest) {
-        var R = CHEST_RARITIES[chest.rarity];
-        var row = document.createElement("div");
-        row.className = "chest-row r-" + chest.rarity;
+      /* Chest screen setup (Backpack-style): the player's chests
+         grouped as BIG TIER CARDS — FEAST the master tier on top,
+         biggest, then EPIC, RARE, COMMON. Each card shows the chest
+         art big, how many of that tier the player owns, the odds
+         line in words, and one OPEN button (greyed out at zero).
+         Earned only — no prices, no gems, no buying. */
+      var CHEST_TIERS = [
+        { rarity: "FEAST", tag: "★ MASTER TIER", odds: "Coins, Gravy Bombs, or a free upgrade — plus a chance at the <b>FEAST coin jackpot!</b>" },
+        { rarity: "EPIC", tag: "", odds: "Fat coins or a free upgrade — Gravy Bombs in the mix too." },
+        { rarity: "RARE", tag: "", odds: "Bigger coins, Gravy Bombs, or a free upgrade." },
+        { rarity: "COMMON", tag: "", odds: "Coins or Gravy Bombs — with a small chance of a free upgrade." }
+      ];
+      function buildChestTierCard(tier) {
+        var R = CHEST_RARITIES[tier.rarity];
+        var list = chests.filter(function (ch) { return ch.rarity === tier.rarity; })
+          .sort(function (a, b) { return a.chapter - b.chapter; });
+        var n = list.length;
+        var card = document.createElement("div");
+        card.className = "chest-tier r-" + tier.rarity + (n ? "" : " empty");
+        if (tier.tag) {
+          var tag = document.createElement("span"); tag.className = "chest-tier-tag";
+          tag.textContent = tier.tag;
+          card.appendChild(tag);
+        }
         var cv = document.createElement("canvas");
-        cv.width = 192; cv.height = 132; cv.setAttribute("aria-hidden", "true");
-        row.appendChild(cv);
-        var info = document.createElement("div"); info.className = "chest-info";
-        var rar = document.createElement("span"); rar.className = "chest-rarity";
-        rar.textContent = R.label + " CHEST";
-        var from = document.createElement("span"); from.className = "chest-from";
-        from.textContent = "Chapter " + (chest.chapter + 1) + " · dropped by " + LEVELS[chest.chapter].boss.name;
-        info.appendChild(rar); info.appendChild(from);
+        var big = tier.rarity === "FEAST";
+        cv.width = big ? 320 : 250; cv.height = big ? 200 : 165;
+        cv.style.width = (big ? 150 : 118) + "px";
+        cv.setAttribute("aria-hidden", "true");
+        card.appendChild(cv);
+        var info = document.createElement("div"); info.className = "chest-tier-info";
+        var nm = document.createElement("span"); nm.className = "chest-tier-name";
+        nm.textContent = R.label + " CHEST";
+        info.appendChild(nm);
+        var cnt = document.createElement("span"); cnt.className = "chest-tier-count";
+        var cb = document.createElement("b"); cb.textContent = "× " + n;
+        cnt.appendChild(cb);
+        cnt.appendChild(document.createTextNode(n ? "in your stash" : "none yet"));
+        info.appendChild(cnt);
+        var odds = document.createElement("span"); odds.className = "chest-tier-odds";
+        odds.innerHTML = tier.odds;
+        info.appendChild(odds);
+        if (n) {
+          var seen = {}, chaps = [];
+          list.forEach(function (ch) { if (!seen[ch.chapter]) { seen[ch.chapter] = 1; chaps.push(ch.chapter + 1); } });
+          var from = document.createElement("span"); from.className = "chest-tier-from";
+          from.textContent = "Dropped by chapter boss" + (chaps.length > 1 ? "es" : "") + " · Chapter" + (chaps.length > 1 ? "s " : " ") + chaps.join(", ");
+          info.appendChild(from);
+        }
+        card.appendChild(info);
         var btn = document.createElement("button");
-        btn.type = "button"; btn.className = "chest-open-btn"; btn.textContent = "OPEN";
-        btn.setAttribute("aria-label", "Open " + R.label + " Harvest Chest from Chapter " + (chest.chapter + 1));
-        btn.addEventListener("click", function () { ac(); openChest(chest.id); });
-        row.appendChild(info); row.appendChild(btn);
+        btn.type = "button"; btn.className = "chest-open-btn";
+        btn.textContent = n ? "OPEN" : "NONE YET";
+        btn.disabled = !n;
+        btn.setAttribute("aria-label", n ? "Open a " + R.label + " Harvest Chest" : "No " + R.label + " Harvest Chests yet");
+        if (n) btn.addEventListener("click", function () { ac(); openChest(list[0].id); });
+        card.appendChild(btn);
         var g = cv.getContext("2d");
-        drawChestOn(g, 96, 118, 0.92, { rarity: chest.rarity, glow: chest.rarity === "FEAST" ? "rgba(255,181,46,.5)" : chest.rarity === "EPIC" ? "rgba(155,77,202,.35)" : null });
-        return row;
+        drawChestOn(g, cv.width / 2, cv.height - 12, big ? 1.32 : 1.02, {
+          rarity: tier.rarity,
+          glow: tier.rarity === "FEAST" ? "rgba(255,181,46,.55)" : tier.rarity === "EPIC" ? "rgba(190,120,255,.4)" : tier.rarity === "RARE" ? "rgba(120,190,255,.3)" : null
+        });
+        return card;
       }
       function renderChestLists() {
         ["menuChestList", "lobbyChestList"].forEach(function (elId) {
           var el = document.getElementById(elId);
           if (!el) return;
           el.textContent = "";
-          if (!chests.length) {
-            var empty = document.createElement("div");
-            empty.className = "chest-empty";
-            empty.textContent = bonusBombs > 0
-              ? "No chests waiting — but 💣 " + bonusBombs + " chest-won Gravy Bomb" + (bonusBombs > 1 ? "s are" : " is") + " loaded for your next run! Clear any chapter to earn another chest."
-              : "No chests yet. Clear any chapter — its boss drops a Harvest Chest right here.";
-            el.appendChild(empty);
-            return;
+          CHEST_TIERS.forEach(function (tier) { el.appendChild(buildChestTierCard(tier)); });
+          if (bonusBombs > 0) {
+            var note = document.createElement("div");
+            note.className = "chest-empty";
+            note.textContent = "💣 " + bonusBombs + " chest-won Gravy Bomb" + (bonusBombs > 1 ? "s are" : " is") + " loaded for your next run!";
+            el.appendChild(note);
           }
-          // rarest first, like a prize shelf
-          var order = { FEAST: 0, EPIC: 1, RARE: 2, COMMON: 3 };
-          var sorted = chests.slice().sort(function (a, b) { return order[a.rarity] - order[b.rarity] || b.chapter - a.chapter; });
-          sorted.forEach(function (ch) { el.appendChild(buildChestRow(ch)); });
         });
         updateChestBadge();
       }
@@ -5481,85 +5621,186 @@
         if (!cv) return;
         var g = cv.getContext("2d");
         var L = LEVELS[featuredIdx];
-        var CW = cv.width, CH = cv.height, GY = CH - 58;
+        var CW = cv.width, CH = cv.height;
         t = t || 0;
-        var sky = g.createLinearGradient(0, 0, 0, GY);
+        var v = L.variant;
+        /* Clean backdrop — this chapter's own sky, softly graded,
+           with the sun and a few seeded clouds. The diorama chunk
+           floats in the middle of it, Backpack-style. */
+        var sky = g.createLinearGradient(0, 0, 0, CH);
         sky.addColorStop(0, L.skyTop); sky.addColorStop(1, L.skyBot);
         g.fillStyle = sky; g.fillRect(0, 0, CW, CH);
-        /* Saturation pass: deepen the sky so the scene reads vivid
-           like the chapter thumbnails instead of washed/pale — a
-           rich top shade plus a warm colour wash over the sky band. */
-        var deepen = g.createLinearGradient(0, 0, 0, GY);
-        deepen.addColorStop(0, "rgba(24,8,36,.20)"); deepen.addColorStop(0.55, "rgba(120,26,8,.10)"); deepen.addColorStop(1, "rgba(120,26,8,0)");
-        g.fillStyle = deepen; g.fillRect(0, 0, CW, GY);
-        // sun + glow (kept tight so it can't bleach the boss)
-        var sx = CW * 0.84, sy = CH * 0.2;
-        var glow = g.createRadialGradient(sx, sy, 6, sx, sy, 150);
-        glow.addColorStop(0, "rgba(255,214,120,.30)"); glow.addColorStop(1, "rgba(255,160,60,0)");
-        g.fillStyle = glow; g.fillRect(0, 0, CW, GY);
+        var deepen = g.createLinearGradient(0, 0, 0, CH);
+        deepen.addColorStop(0, "rgba(24,8,36,.18)"); deepen.addColorStop(0.6, "rgba(120,26,8,.06)"); deepen.addColorStop(1, "rgba(120,26,8,0)");
+        g.fillStyle = deepen; g.fillRect(0, 0, CW, CH);
+        var sx = CW * 0.85, sy = CH * 0.16;
+        var glow = g.createRadialGradient(sx, sy, 6, sx, sy, 170);
+        glow.addColorStop(0, "rgba(255,214,120,.32)"); glow.addColorStop(1, "rgba(255,160,60,0)");
+        g.fillStyle = glow; g.fillRect(0, 0, CW, CH);
         g.fillStyle = "rgba(255,236,180,.95)";
-        g.beginPath(); g.arc(sx, sy, 19, 0, Math.PI * 2); g.fill();
-        // hills in this chapter's own colours
-        g.fillStyle = L.hillFar;
-        g.beginPath(); g.moveTo(0, GY);
-        g.quadraticCurveTo(CW * 0.27, GY - 62, CW * 0.55, GY - 26);
-        g.quadraticCurveTo(CW * 0.8, GY + 4, CW, GY - 42);
-        g.lineTo(CW, GY); g.closePath(); g.fill();
-        g.fillStyle = L.hill;
-        g.beginPath(); g.moveTo(0, GY);
-        g.quadraticCurveTo(CW * 0.32, GY - 30, CW * 0.64, GY - 10);
-        g.quadraticCurveTo(CW * 0.86, GY + 4, CW, GY - 17);
-        g.lineTo(CW, GY); g.closePath(); g.fill();
-        // the chapter's painted scenery + farm landmarks (shared art)
-        drawSceneLayer(g, featuredIdx, t, CW, GY, CW / 420);
-        drawBarnShape(g, 24, GY, 1.35);
-        drawSiloShape(g, 128, GY, 1.12);
-        drawWindmillShape(g, CW - 40, GY, 1.35, t * 0.7);
-        g.fillStyle = "rgba(93,58,26,.8)";
-        for (var fx = 236; fx < CW - 96; fx += 44) g.fillRect(fx, GY - 16, 5, 16);
-        g.fillRect(230, GY - 12, CW - 322, 3.2);
-        // ground + shared texture
-        var grd = g.createLinearGradient(0, GY, 0, CH);
-        grd.addColorStop(0, "#96753e"); grd.addColorStop(1, "#6e5227");
-        g.fillStyle = grd; g.fillRect(0, GY, CW, CH - GY);
-        drawGroundDetail(g, featuredIdx, t, CW, CH, GY, CW / 420);
-        // the flock trails in high on the left — this chapter's own
-        // turkey design, kept clear of the boss so he owns the frame
-        drawTurkeyOn(g, 118, 56 + Math.sin(t * 2.1) * 5, 14, t * 9, { variant: L.variant });
-        drawTurkeyOn(g, 208, 38 + Math.cos(t * 1.8) * 4, 10.5, t * 9 + 2, { variant: L.variant });
-        /* THE BOSS — BIG and front-and-centre in full colour, exactly
-           the design its fight uses (bossOptsFor). A deep contrast
-           disc sits behind him so even pale/golden plumage pops off
-           the sky instead of ghosting into it. */
-        var bossX = CW * 0.6, bossY = GY - 86 + Math.sin(t * 1.3) * 5;
-        var disc = g.createRadialGradient(bossX, bossY - 8, 24, bossX, bossY - 8, 168);
-        disc.addColorStop(0, "rgba(26,8,4,.42)"); disc.addColorStop(0.72, "rgba(26,8,4,.26)"); disc.addColorStop(1, "rgba(26,8,4,0)");
-        g.fillStyle = disc; g.beginPath(); g.arc(bossX, bossY - 8, 168, 0, Math.PI * 2); g.fill();
-        var aura = g.createRadialGradient(bossX, bossY, 20, bossX, bossY, 128 + Math.sin(t * 3) * 7);
-        aura.addColorStop(0, "rgba(255,120,40,.14)"); aura.addColorStop(1, "rgba(255,120,40,0)");
-        g.fillStyle = aura; g.beginPath(); g.arc(bossX, bossY, 138, 0, Math.PI * 2); g.fill();
-        g.fillStyle = "rgba(30,16,6,.4)";
-        g.beginPath(); g.ellipse(bossX, GY - 3, 62, 8, 0, 0, Math.PI * 2); g.fill();
-        drawTurkeyOn(g, bossX, bossY, 71, t * 7, bossOptsFor(featuredIdx));
-        /* THE cannon — the player's real upgraded cannon, small in
-           the bottom-left corner, aiming up at the boss, berries in
-           flight from its actual muzzle. */
-        var cGlow = g.createRadialGradient(148, GY - 26, 10, 148, GY - 26, 104);
-        cGlow.addColorStop(0, "rgba(255,214,120,.30)"); cGlow.addColorStop(1, "rgba(255,214,120,0)");
-        g.fillStyle = cGlow; g.fillRect(36, GY - 138, 224, 148);
-        var mz = drawCannonOn(g, 148, GY - 12, 1.85, 0.62, { flash: (t % 0.9) < 0.1 });
-        var col = BULLET_COLORS[upgrades.damage];
-        for (var k = 0; k < 2; k++) {
-          var tt = 0.3 + k * 0.34;
-          var bx = mz.x + (bossX - 18 - mz.x) * tt;
-          var by = mz.y + (bossY + 8 - mz.y) * tt - Math.sin(tt * Math.PI) * 18;
-          var br = getBulletR() * 1.8;
-          g.fillStyle = col;
-          g.beginPath(); g.arc(bx, by, br, 0, Math.PI * 2); g.fill();
-          g.fillStyle = "rgba(255,255,255,.65)";
-          g.beginPath(); g.arc(bx - br * 0.3, by - br * 0.3, Math.max(1.8, br * 0.3), 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.arc(sx, sy, 20, 0, Math.PI * 2); g.fill();
+        // soft drifting clouds, pinned by seed
+        g.fillStyle = "rgba(255,250,238,.55)";
+        for (var ci = 0; ci < 4; ci++) {
+          var clx = ((det(ci * 7.7) * CW + t * (4 + ci * 2)) % (CW + 180)) - 90;
+          var cly = 26 + det(ci * 13.1) * 74, cls = 0.7 + det(ci * 3.3) * 0.7;
+          g.beginPath();
+          g.ellipse(clx, cly, 44 * cls, 13 * cls, 0, 0, Math.PI * 2);
+          g.ellipse(clx - 26 * cls, cly + 4 * cls, 26 * cls, 9 * cls, 0, 0, Math.PI * 2);
+          g.ellipse(clx + 28 * cls, cly + 3 * cls, 28 * cls, 10 * cls, 0, 0, Math.PI * 2);
+          g.fill();
         }
-        // drifting feathers
+        // faint distant hills behind the chunk
+        g.globalAlpha = 0.5;
+        g.fillStyle = L.hillFar;
+        g.beginPath(); g.moveTo(0, CH * 0.78);
+        g.quadraticCurveTo(CW * 0.27, CH * 0.66, CW * 0.55, CH * 0.74);
+        g.quadraticCurveTo(CW * 0.8, CH * 0.8, CW, CH * 0.7);
+        g.lineTo(CW, CH); g.lineTo(0, CH); g.closePath(); g.fill();
+        g.globalAlpha = 1;
+
+        /* ============ THE DIORAMA CHUNK ============
+           A floating farm chunk: thick grass-top slab with beveled
+           dirt/rock sides tapering underneath, and a soft drop
+           shadow on the ground far below. Chunky shaded forms,
+           layered depth — the game's shared shapes sit on top. */
+        var cx = CW / 2, topY = CH * 0.58, halfW = CW * 0.335, topRy = 46;
+        var botY = topY + 122;
+        var bobY = reducedMotion ? 0 : Math.sin(t * 1.1) * 3;
+        // soft drop shadow under the floating chunk
+        g.fillStyle = "rgba(24,10,4,.16)";
+        g.beginPath(); g.ellipse(cx, CH - 26, halfW * 1.06, 20, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(24,10,4,.30)";
+        g.beginPath(); g.ellipse(cx, CH - 26, halfW * 0.88, 13, 0, 0, Math.PI * 2); g.fill();
+        g.save(); g.translate(0, bobY);
+        // dirt/rock underside — tapered island body
+        var dirt = g.createLinearGradient(0, topY, 0, botY);
+        dirt.addColorStop(0, "#96683a"); dirt.addColorStop(0.45, "#6e4a26"); dirt.addColorStop(1, "#452c14");
+        g.fillStyle = dirt;
+        g.beginPath();
+        g.moveTo(cx - halfW, topY);
+        g.quadraticCurveTo(cx - halfW * 0.97, topY + 62, cx - halfW * 0.36, botY - 18);
+        g.quadraticCurveTo(cx - halfW * 0.1, botY + 8, cx, botY + 6);
+        g.quadraticCurveTo(cx + halfW * 0.1, botY + 8, cx + halfW * 0.36, botY - 18);
+        g.quadraticCurveTo(cx + halfW * 0.97, topY + 62, cx + halfW, topY);
+        g.closePath(); g.fill();
+        // strata bands + embedded rocks, clipped inside the body
+        g.save();
+        g.beginPath();
+        g.moveTo(cx - halfW, topY);
+        g.quadraticCurveTo(cx - halfW * 0.97, topY + 62, cx - halfW * 0.36, botY - 18);
+        g.quadraticCurveTo(cx - halfW * 0.1, botY + 8, cx, botY + 6);
+        g.quadraticCurveTo(cx + halfW * 0.1, botY + 8, cx + halfW * 0.36, botY - 18);
+        g.quadraticCurveTo(cx + halfW * 0.97, topY + 62, cx + halfW, topY);
+        g.closePath(); g.clip();
+        g.fillStyle = "rgba(40,22,8,.28)";
+        g.fillRect(cx - halfW, topY + 34, halfW * 2, 7);
+        g.fillRect(cx - halfW, topY + 68, halfW * 2, 6);
+        g.fillStyle = "rgba(255,220,160,.10)";
+        g.fillRect(cx - halfW, topY + 14, halfW * 2, 5);
+        g.fillStyle = "#7d6c58";
+        for (var ri = 0; ri < 7; ri++) {
+          var rx = cx + (det(ri * 9.7) - 0.5) * halfW * 1.5;
+          var ry = topY + 22 + det(ri * 5.3) * 78;
+          g.beginPath(); g.ellipse(rx, ry, 7 + det(ri) * 8, 4.5 + det(ri * 2.1) * 5, det(ri * 4.4), 0, Math.PI * 2); g.fill();
+          g.fillStyle = "rgba(255,255,255,.14)";
+          g.beginPath(); g.ellipse(rx - 2, ry - 2, 3.4, 2, 0, 0, Math.PI * 2); g.fill();
+          g.fillStyle = "#7d6c58";
+        }
+        // a couple of roots dangling off the underside
+        g.strokeStyle = "rgba(46,28,12,.8)"; g.lineWidth = 3; g.lineCap = "round";
+        for (var di = 0; di < 3; di++) {
+          var dx = cx + (det(di * 17.3) - 0.5) * halfW * 0.9;
+          g.beginPath(); g.moveTo(dx, botY - 26); g.quadraticCurveTo(dx + 4, botY - 8, dx - 2, botY + 8 + det(di) * 8); g.stroke();
+        }
+        g.restore();
+        // side shading: darker left bevel, warm light on the right
+        g.fillStyle = "rgba(30,16,6,.16)";
+        g.beginPath();
+        g.moveTo(cx - halfW, topY);
+        g.quadraticCurveTo(cx - halfW * 0.97, topY + 62, cx - halfW * 0.36, botY - 18);
+        g.quadraticCurveTo(cx - halfW * 0.12, botY + 2, cx - halfW * 0.3, topY);
+        g.closePath(); g.fill();
+        // grass-top slab — colours follow the biome
+        var gTop = "#7fae4c", gEdge = "#4d7c3a";
+        if (v === "frost") { gTop = "#e4f0f6"; gEdge = "#a8c2d2"; }
+        else if (v === "burnt" || v === "prime") { gTop = "#71563a"; gEdge = "#47351f"; }
+        else if (v === "night") { gTop = "#40632f"; gEdge = "#2a4520"; }
+        else if (v === "cranberry") { gTop = "#71863f"; gEdge = "#475c28"; }
+        else if (v === "golden") { gTop = "#a8a03c"; gEdge = "#77702a"; }
+        var grass = g.createLinearGradient(0, topY - topRy, 0, topY + topRy);
+        grass.addColorStop(0, gTop); grass.addColorStop(1, gEdge);
+        g.fillStyle = grass;
+        g.beginPath(); g.ellipse(cx, topY, halfW, topRy, 0, 0, Math.PI * 2); g.fill();
+        // bevel: bright top crescent + dark rim under the lip
+        g.fillStyle = "rgba(255,255,255,.20)";
+        g.beginPath(); g.ellipse(cx, topY - topRy * 0.28, halfW * 0.82, topRy * 0.6, 0, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = "rgba(30,16,6,.35)"; g.lineWidth = 3;
+        g.beginPath(); g.ellipse(cx, topY, halfW, topRy, 0, 0, Math.PI * 2); g.stroke();
+        // grass fringe hanging over the front lip
+        g.strokeStyle = gEdge; g.lineWidth = 3; g.lineCap = "round";
+        for (var fi2 = 0; fi2 < 15; fi2++) {
+          var fx3 = cx - halfW * 0.92 + fi2 * (halfW * 1.84 / 14);
+          var fy3 = topY + Math.sqrt(Math.max(0, 1 - Math.pow((fx3 - cx) / halfW, 2))) * topRy * 0.92;
+          g.beginPath(); g.moveTo(fx3, fy3 - 2); g.lineTo(fx3 + (det(fi2 * 3.1) - 0.5) * 4, fy3 + 6 + det(fi2) * 5); g.stroke();
+        }
+        /* Mini farm of this chapter's biome ON the chunk, behind
+           the boss — the same shared shapes as everywhere else. */
+        var gy = topY - 2;
+        if (v === "forest" || v === "night" || v === "storm") {
+          drawPineOn(g, cx - halfW * 0.78, gy, 86, v === "night" ? "#22301f" : "#3d5a2a", false);
+          drawPineOn(g, cx - halfW * 0.5, gy, 58, v === "night" ? "#2b3d26" : "#4d7c3a", false);
+          drawPineOn(g, cx + halfW * 0.62, gy, 76, v === "night" ? "#22301f" : "#3d5a2a", false);
+          drawRoundTreeOn(g, cx + halfW * 0.9, gy, 42, v === "night" ? "#2e4226" : "#5d8a3a");
+        } else if (v === "frost") {
+          drawPineOn(g, cx - halfW * 0.72, gy, 78, "#5d84a0", true);
+          drawPineOn(g, cx + halfW * 0.66, gy, 88, "#527a96", true);
+          drawSiloShape(g, cx - halfW * 0.34, gy, 0.6);
+        } else if (v === "burnt" || v === "prime") {
+          drawCharredTreeOn(g, cx - halfW * 0.7, gy, 66);
+          drawCharredTreeOn(g, cx + halfW * 0.68, gy, 78);
+          if (v === "prime") drawFortressOn(g, cx, gy - 2, 118, "#2b1810", "#140c08");
+        } else if (v === "royal") {
+          drawFortressOn(g, cx, gy - 2, 128, "#4a2a5e", "#2c1838");
+          drawRoundTreeOn(g, cx - halfW * 0.8, gy, 40, "#6e3480");
+          drawRoundTreeOn(g, cx + halfW * 0.82, gy, 44, "#5a2a6e");
+        } else if (v === "cranberry") {
+          drawSiloShape(g, cx + halfW * 0.55, gy, 0.66);
+          drawBogReedsOn(g, cx - halfW * 0.72, gy, 32, "#5a7a3a");
+          drawBogReedsOn(g, cx - halfW * 0.4, gy, 24, "#4d6e32");
+          drawBarnShape(g, cx - halfW * 1.02, gy, 0.78);
+        } else if (v === "gravy") {
+          drawSiloShape(g, cx + halfW * 0.58, gy, 0.7);
+          drawRoundTreeOn(g, cx - halfW * 0.78, gy, 44, "#97793d");
+          drawHayBaleOn(g, cx - halfW * 0.42, gy - 8, 10);
+          drawBarnShape(g, cx - halfW * 1.04, gy, 0.8);
+        } else { // classic, pumpkin, golden — the home farm
+          drawBarnShape(g, cx - halfW * 1.03, gy, 0.92);
+          drawSiloShape(g, cx - halfW * 0.48, gy, 0.68);
+          drawRoundTreeOn(g, cx + halfW * 0.58, gy, 46, v === "golden" ? "#c98a2e" : v === "pumpkin" ? "#c96a24" : "#5d8a3a");
+          drawWindmillShape(g, cx + halfW * 0.88, gy, 0.85, t * 0.7);
+          drawHayBaleOn(g, cx + halfW * 0.3, gy - 8, 9.5);
+          if (v === "pumpkin") { drawPumpkinOn(g, cx - halfW * 0.2, gy - 6, 11, 8); drawPumpkinOn(g, cx + halfW * 0.78, gy - 5, 8.5, 6.5); }
+        }
+        // little fence along the chunk's front-left and front-right
+        g.fillStyle = "rgba(93,58,26,.9)";
+        [-0.94, -0.8, -0.66, 0.66, 0.8, 0.94].forEach(function (fp) {
+          var fxx = cx + fp * halfW;
+          var fyy = topY + Math.sqrt(Math.max(0, 1 - fp * fp)) * topRy * 0.55;
+          g.fillRect(fxx - 2, fyy - 13, 4.4, 13);
+        });
+        /* THE BOSS — standing BIG on the chunk, exactly the design
+           its fight uses (bossOptsFor), soft aura behind him and
+           his shadow pooled on the grass. */
+        var bossX = cx, bossY = topY - 54 + (reducedMotion ? 0 : Math.sin(t * 1.3) * 4);
+        var aura = g.createRadialGradient(bossX, bossY - 6, 18, bossX, bossY - 6, 132 + Math.sin(t * 3) * 7);
+        aura.addColorStop(0, "rgba(255,150,50,.20)"); aura.addColorStop(1, "rgba(255,120,40,0)");
+        g.fillStyle = aura; g.beginPath(); g.arc(bossX, bossY - 6, 140, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(30,16,6,.35)";
+        g.beginPath(); g.ellipse(bossX, topY + 8, 56, 7.5, 0, 0, Math.PI * 2); g.fill();
+        drawTurkeyOn(g, bossX, bossY, 63, t * 7, bossOptsFor(featuredIdx));
+        g.restore(); // end chunk bob
+        // drifting feathers over the whole scene
         g.fillStyle = "#e8e3d8";
         for (var fi = 0; fi < 9; fi++) {
           var fx2 = (fi * 197.3) % CW;
