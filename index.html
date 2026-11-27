@@ -1382,6 +1382,62 @@
         .chest-dot, .feat-chest.has-dot::after { animation: none; }
         .reveal-rarity, .reveal-sub, .reveal-cards, .reveal-close, .reveal-tap { animation: none; }
       }
+      /* ============================================================
+         LOBBY RICH-DARK PASS + DOUBLE-HUD FIX (Q's live screenshot)
+         1) The Lobby's last pale surfaces go rich and dark like the
+            rest of the shell: the Next-Level card — which wraps the
+            whole replay chapter grid, so its pale gold wash was the
+            big washed-out block in his shot — becomes a glossy deep
+            cranberry hero card with a gold START button and cream
+            text, and chapter cards become dark walnut with chunky
+            cream text. Scene thumbnails stay bright (they pop
+            harder on walnut) and CLEARED badges stay green.
+         2) The old gameplay HUD row (.hud) is gameplay-only chrome:
+            syncShellChrome() hides it whenever the menu/Lobby shell
+            is up (the WarKing top bar already carries coins and
+            player info there) and restores it for actual play.
+            The [hidden] rule below is required because .hud sets
+            display:flex, which would otherwise beat the attribute.
+         ============================================================ */
+      .hud[hidden] { display: none !important; }
+      /* --- Next-Level hero card: deep cranberry, light text --- */
+      .next-card {
+        background: linear-gradient(180deg, #b8452a 0%, #93301f 52%, #671d12 100%);
+        border: 3px solid #ffb52e;
+        border-radius: 18px;
+        box-shadow: 0 6px 0 rgba(43, 14, 4, .55), 0 16px 32px rgba(20, 6, 2, .4), inset 0 2px 0 rgba(255, 220, 160, .45);
+        color: #fff3d6;
+      }
+      .next-card h4 {
+        color: #fff7e8;
+        text-shadow: 0 2px 0 rgba(70, 16, 6, .65), 0 4px 12px rgba(20, 6, 2, .35);
+      }
+      .next-card p { color: #ffe3c0; }
+      .next-card .big-btn {
+        background: linear-gradient(180deg, #ffd968 0%, #e8a94c 58%, #c97b24 100%);
+        border-color: #8a5a10;
+        color: #3a2002;
+        box-shadow: 0 5px 0 #8a5a10, inset 0 2px 0 rgba(255, 255, 255, .65);
+        text-shadow: 0 1px 0 rgba(255, 246, 214, .55);
+      }
+      .next-card .big-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #8a5a10, inset 0 2px 0 rgba(255, 255, 255, .65); }
+      /* --- Chapter cards: dark walnut, chunky cream text --- */
+      .chapter-card {
+        background: linear-gradient(180deg, #54341a 0%, #38200c 58%, #2a1707 100%);
+        border-color: #8a5f2c;
+        color: #fff3d6;
+        box-shadow: 0 5px 0 rgba(20, 8, 2, .55), inset 0 2px 0 rgba(255, 217, 138, .22);
+      }
+      .chapter-card:active { box-shadow: 0 2px 0 rgba(20, 8, 2, .55); }
+      .chapter-card .chapter-name { color: #fff7e8; text-shadow: 0 2px 0 rgba(20, 8, 2, .55); }
+      .chapter-card .chapter-meta { color: #f0d3a0; }
+      .chapter-card .chapter-kicker { color: #ffb52e; }
+      .chapter-card.st-cleared { border-color: #6da354; box-shadow: 0 5px 0 rgba(20, 8, 2, .55), 0 0 0 2px rgba(109, 163, 84, .3), inset 0 2px 0 rgba(255, 217, 138, .18); }
+      .chapter-card.st-next { border-color: var(--gold); box-shadow: 0 5px 0 rgba(20, 8, 2, .55), 0 0 16px rgba(232, 169, 76, .55), inset 0 2px 0 rgba(255, 217, 138, .25); }
+      .chapter-card.st-locked { border-color: #5d4630; }
+      .chapter-card.st-locked .chapter-name { color: #cbb894; }
+      .chapter-card.st-locked .chapter-meta { color: #a68d64; }
+      .chapter-card.st-locked .chapter-kicker { color: #a68d64; }
     </style>
   </head>
   <body>
@@ -1429,7 +1485,7 @@
       </div>
 
       <!-- HUD -->
-      <div class="hud" aria-label="Game status">
+      <div class="hud" id="gameHud" aria-label="Game status" hidden>
         <div class="stat"><span>Score</span><b id="hudScore">0</b></div>
         <div class="stat coins"><span>🪙 Coins</span><b id="hudCoins">0</b></div>
         <div class="stat grow"><span id="hudLevelLabel">Level 1</span><b id="hudWave">Get ready</b></div>
@@ -5488,6 +5544,13 @@
         var tbEl = document.getElementById("tabBar");
         if (stEl) stEl.hidden = !show;
         if (tbEl) tbEl.hidden = !show;
+        /* Double-HUD fix: the old gameplay HUD row (Score / Coins /
+           Level / hearts / home / sound / pause) duplicates the
+           WarKing top bar in the shell — it belongs to gameplay
+           only, so hide it whenever the menu/Lobby shell is up and
+           restore it the moment a run starts. */
+        var hudEl = document.getElementById("gameHud");
+        if (hudEl) hudEl.hidden = show;
         if (!show) { var pop = document.getElementById("settingsPop"); if (pop) pop.hidden = true; }
         // keep the tab highlight honest however the Lobby was reached
         if (show && inLobby) setShellView("lobby");
