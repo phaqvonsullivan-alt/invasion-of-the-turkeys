@@ -2424,6 +2424,89 @@
           overflow-x: hidden;
         }
       }
+      /* ============================================================
+         HUB-AND-SPOKE STEP 1 — the Lobby is a HUB, not a long
+         scroll. The hero stage + slots (the workshop), the slot
+         detail bar and the bank bar stay on the hub; everything
+         else moved behind the icon rail: 🏆 TROPHY opens the
+         Trophy page (stars, achievements, chapter bests) and
+         🎁 CHESTS opens the existing Harvest Chests page. The
+         Trophy icon carries a red dot while earned achievements
+         are unseen; the Chests icon carries a count badge.
+         ============================================================ */
+      .icon-rail {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        margin-top: 12px;
+      }
+      .hub-btn {
+        position: relative; cursor: pointer; font-family: inherit;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+        min-height: 84px; padding: 10px 8px 9px; border-radius: 16px;
+        background: linear-gradient(180deg, rgba(84,50,20,.94), rgba(46,26,10,.96));
+        border: 3px solid #d9a83f; color: #fff3d6;
+        box-shadow: 0 5px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.25);
+        touch-action: manipulation;
+      }
+      .hub-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(20,6,2,.45); }
+      .hub-btn .hub-ico { font-size: 32px; line-height: 1.1; }
+      .hub-btn .hub-label {
+        font-family: var(--font-display); font-weight: 400; font-size: 16px; letter-spacing: .07em;
+        color: #ffd968; text-shadow: 0 2px 0 rgba(90,20,8,.6);
+      }
+      .hub-btn .hub-sub { font-size: 11.5px; font-weight: 700; color: #f3d9ae; }
+      .hub-dot {
+        position: absolute; top: -5px; right: -5px; z-index: 2;
+        width: 16px; height: 16px; border-radius: 50%;
+        background: #e02318; border: 3px solid #fff3d6;
+        box-shadow: 0 0 0 2px rgba(224,35,24,.35), 0 2px 6px rgba(20,6,2,.5);
+        animation: chestDotPulse 1.4s ease-in-out infinite;
+      }
+      .hub-dot[hidden] { display: none; }
+      .hub-count {
+        position: absolute; top: -9px; right: -9px; z-index: 2;
+        min-width: 26px; height: 26px; padding: 0 7px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: linear-gradient(180deg, #e0684f, #b23a2e);
+        border: 2.5px solid #ffd98a; border-radius: 999px;
+        color: #fff7e8; font-size: 14px; font-weight: 800; line-height: 1;
+        box-shadow: 0 2px 0 rgba(43,20,4,.6);
+        font-variant-numeric: tabular-nums;
+      }
+      .hub-count[hidden] { display: none; }
+      @media (prefers-reduced-motion: reduce) { .hub-dot { animation: none; } }
+      /* --- Trophy page: a full shell panel like the Lobby --- */
+      .trophy-panel .lobby-head { align-items: center; }
+      .trophy-back { flex: 0 0 auto; margin-top: 0 !important; }
+      .collect-strip {
+        display: flex; flex-direction: column; gap: 8px;
+        background: linear-gradient(180deg, #ffd968, #e8a94c 60%, #d98e2b);
+        border: 3px solid #8a5a10; border-radius: 16px;
+        padding: 11px 12px; margin-top: 4px;
+        box-shadow: 0 5px 0 rgba(90,52,8,.5), inset 0 2px 0 rgba(255,255,255,.6);
+        color: #33200a;
+      }
+      .collect-strip[hidden] { display: none; }
+      .collect-strip .cs-kicker {
+        font-family: var(--font-display); font-weight: 400; font-size: 16px; letter-spacing: .06em;
+        color: #7e2418; text-shadow: 0 1px 0 rgba(255,246,214,.6);
+      }
+      .collect-strip .cs-row {
+        display: flex; align-items: center; gap: 9px; text-align: left;
+        font-family: inherit; font-size: 14px; font-weight: 800; color: #33200a;
+        background: rgba(255,246,214,.55); border: 2px solid rgba(138,90,16,.55);
+        border-radius: 12px; padding: 8px 11px; cursor: pointer; touch-action: manipulation;
+        width: 100%;
+      }
+      .collect-strip .cs-row:active { transform: translateY(2px); }
+      .collect-strip .cs-row .cs-go { margin-left: auto; font-size: 16px; }
+      .collect-strip .cs-static { cursor: default; }
+      .stars-summary {
+        text-align: center; font-size: 15px; font-weight: 800; color: #ffd968;
+        margin: 0 0 10px; letter-spacing: .02em;
+        text-shadow: 0 1px 5px rgba(20,6,2,.5);
+      }
+      .trophy-panel .lb-row { background: rgba(38,20,8,.72); border-color: rgba(255,217,138,.45); color: #ffe9c2; border-width: 2px; border-radius: 12px; font-weight: 600; }
+      .trophy-panel .cb-row .cb-best { color: #ffd968; }
     </style>
   </head>
   <body>
@@ -2592,15 +2675,8 @@
           <div class="menu-panel" id="panelBoard" hidden>
             <h3>🏆 Leaderboard</h3>
             <div class="lb-list" id="leaderboardList"></div>
-            <p class="panel-note">Your best finished runs, saved on this device. A run joins the board when it ends — game over or total victory.</p>
+            <p class="panel-note">Your best finished runs, saved on this device. A run joins the board when it ends — game over or total victory. Stars, achievements and chapter bests live in the Lobby's 🏆 Trophy.</p>
             <button class="ghost-btn danger-btn" id="btnClearBoard" type="button">Clear leaderboard</button>
-            <h3 class="records-h">📖 Chapter Bests</h3>
-            <p class="records-summary" id="recordsSummary"></p>
-            <div class="lb-list" id="chapterBestsList"></div>
-            <p class="panel-note">Your best score and fastest clear on every chapter you beat — plus its 🪶 feathers: clear with no damage, clear under the par time, and clear without a Gravy Bomb.</p>
-            <h3 class="records-h">🏅 Achievements</h3>
-            <div class="ach-grid" id="achievementsList"></div>
-            <p class="panel-note">Lifetime feats, tracked on this device. Progress counts everything the game already keeps score of — kills, chests, coins and waves. Every achievement pays 🪶 feathers into your wallet, once — earned by play only, never sold.</p>
           </div>
 
           <div class="menu-panel" id="panelCredits" hidden>
@@ -2658,13 +2734,6 @@
           </div>
           <div class="slot-col" id="slotColRight" aria-label="Upgrade slots, right"></div>
         </div>
-        <div class="hero-stats">
-          <div class="coin-bank hero-bank">
-            <div class="bank-sec"><span>🪙 Coin bank</span><b id="lobbyCoins">0</b></div>
-            <div class="bank-sec bank-div"><span>🪶 Feather wallet</span><b id="lobbyFeathers">0</b></div>
-            <div class="bank-sec bank-div"><span>⭐ Total stars</span><b id="lobbyStars">0</b></div>
-          </div>
-        </div>
         <div class="slot-under" id="slotUnder" aria-label="Upgrade slot, bottom"></div>
         <div class="slot-detail" id="slotDetail">
           <div class="slot-detail-main">
@@ -2676,10 +2745,39 @@
         </div>
         <div class="stat-list" id="lobbyStats" style="display:none"></div>
 
-        <!-- Next-Level card lives INSIDE the scroller, immediately
-             after the bank bar / slot detail area and before the
-             chapter cards and boards below (see the LOBBY
-             SCROLL-CHAIN FIX in the stylesheet). -->
+        <div class="hero-stats">
+          <div class="coin-bank hero-bank">
+            <div class="bank-sec"><span>🪙 Coin bank</span><b id="lobbyCoins">0</b></div>
+            <div class="bank-sec bank-div"><span>🪶 Feather wallet</span><b id="lobbyFeathers">0</b></div>
+            <div class="bank-sec bank-div"><span>⭐ Total stars</span><b id="lobbyStars">0</b></div>
+          </div>
+        </div>
+
+        <!-- Icon rail (hub-and-spoke): progress lives behind the
+             Trophy, chests behind the gift. The workshop needs no
+             icon — the stage above IS the workshop. The Trophy
+             dot appears while earned achievements are unseen; the
+             Chests badge counts unopened chests. -->
+        <div class="icon-rail" aria-label="Lobby pages">
+          <button class="hub-btn" id="btnHubTrophy" type="button" aria-label="Trophy — progress, achievements and chapter bests">
+            <span class="hub-ico" aria-hidden="true">🏆</span>
+            <span class="hub-label">TROPHY</span>
+            <span class="hub-sub">Stars · Achievements · Bests</span>
+            <span class="hub-dot" id="trophyDot" hidden></span>
+          </button>
+          <button class="hub-btn" id="btnHubChests" type="button" aria-label="Chests — open your Harvest Chests">
+            <span class="hub-ico" aria-hidden="true">🎁</span>
+            <span class="hub-label">CHESTS</span>
+            <span class="hub-sub">Open Harvest Chests</span>
+            <span class="hub-count" id="hubChestCount" hidden>0</span>
+          </button>
+        </div>
+
+        <!-- Next-Level card lives INSIDE the scroller, right after
+             the icon rail (see the LOBBY SCROLL-CHAIN FIX in the
+             stylesheet). Everything that used to stack below it —
+             chests, leaderboard, chapter bests, achievements — now
+             lives on its own page behind the icon rail / tab bar. -->
         <div class="next-card">
           <h4 id="lobbyNextTitle">Next: Level 1</h4>
           <p id="lobbyNextBody"></p>
@@ -2687,33 +2785,51 @@
           <div class="chapter-select compact" id="levelChips" aria-label="Replay an unlocked level"></div>
         </div>
 
-        <h3>🎁 Harvest Chests</h3>
-        <p class="shop-sub">Bosses drop a Harvest Chest every time you clear a chapter — rarer chests from deeper chapters. Open one for coins, a free upgrade level, or Gravy Bombs for your next run.</p>
-        <div class="chest-list" id="lobbyChestList"></div>
-
-        <div class="lobby-board">
-          <h3>🏆 Leaderboard</h3>
-          <p class="shop-sub">Your best finished runs — saved on this device along with your coins, upgrades and unlocked levels.</p>
-          <div class="lb-list" id="lobbyLeaderboard"></div>
-        </div>
-
-        <div class="lobby-board">
-          <h3>📖 Chapter Bests &amp; Feathers</h3>
-          <p class="records-summary" id="lobbyRecordsSummary"></p>
-          <div class="lb-list" id="lobbyChapterBests"></div>
-          <p class="shop-sub">🪶 One feather per chapter for each feat: clear with no damage · clear under the par time · clear without a Gravy Bomb. First-time feathers pay +1 🪶 into your wallet (see the bank up top) — replays never pay twice. Stars: 1 per clear, +1 no damage, +1 under par.</p>
-        </div>
-
-        <div class="lobby-board">
-          <h3>🏅 Achievements</h3>
-          <div class="ach-grid" id="lobbyAchievements"></div>
-        </div>
-
         <div class="lobby-actions">
           <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
           <button class="ghost-dark" id="btnLobbyTrailer" type="button">▶ Watch Trailer</button>
           <button class="ghost-dark" id="btnLobbyMenu" type="button">🎬 Back to Main Menu</button>
         </div>
+        </div>
+      </section>
+
+      <!-- Trophy page (hub-and-spoke step 1): all progress in one
+           place — ready-to-collect strip, stars, achievements and
+           chapter bests. A full shell panel in the Lobby's style;
+           the top bar and tab bar stay reachable above/below it,
+           and Back returns to the Lobby hub. -->
+      <section class="lobby trophy-panel" id="trophyPanel" hidden aria-label="Trophy — progress, achievements and chapter bests">
+        <canvas class="lobby-bg" id="trophyBgCanvas" width="760" height="1150" aria-hidden="true"></canvas>
+        <div class="lobby-head">
+          <div>
+            <h2>🏆 Trophy Room</h2>
+            <p>Everything you've earned, all in one place — stars, achievements and your best run on every chapter.</p>
+          </div>
+          <button class="ghost-dark trophy-back" id="btnTrophyBack" type="button">← Lobby</button>
+        </div>
+        <div class="lobby-scroll">
+          <div class="collect-strip" id="collectStrip" hidden>
+            <span class="cs-kicker">★ READY TO COLLECT</span>
+            <button class="cs-row" id="collectChestsRow" type="button" hidden>
+              <span aria-hidden="true">🎁</span><span id="collectChestsText">Harvest Chests waiting</span><span class="cs-go" aria-hidden="true">▶</span>
+            </button>
+            <div class="cs-row cs-static" id="collectAchRow" hidden>
+              <span aria-hidden="true">🏅</span><span id="collectAchText">New achievements earned!</span>
+            </div>
+          </div>
+
+          <h3>⭐ Stars</h3>
+          <p class="stars-summary" id="trophyStarsSummary"></p>
+          <div class="lb-list" id="trophyStarsList"></div>
+          <p class="shop-sub">⭐ One star per chapter clear, +1 for no damage, +1 for clearing under par — 3 per chapter, 36 in all.</p>
+
+          <h3>🏅 Achievements</h3>
+          <div class="ach-grid" id="trophyAchievements"></div>
+          <p class="shop-sub">Lifetime feats, tracked on this device. Every achievement pays 🪶 feathers into your wallet, once — earned by play only, never sold.</p>
+
+          <h3>📖 Chapter Bests</h3>
+          <div class="lb-list" id="trophyChapterBests"></div>
+          <p class="shop-sub">🪶 One feather per chapter for each feat: clear with no damage · clear under the par time · clear without a Gravy Bomb. First-time feathers pay +1 🪶 into your wallet — replays never pay twice.</p>
         </div>
       </section>
 
@@ -2995,6 +3111,7 @@
       var chapterStars = LEVELS.map(function () { return 0; }); // best star rating per chapter: 1 per clear + 1 no-damage + 1 under-par (max 3)
       var featherBalance = 0; // 🪶 WALLET — earned by play ONLY (chapter objectives + achievements), never sold; a later step spends it on cannon looks
       var achievementsUnlocked = {}; // { achievementId: true } — the once-ever guard for both the unlock and its feather payout
+      var achievementsSeen = 0; // how many earned achievements the player has SEEN on the Trophy page — earned > seen lights the 🏆 red dot (hub-and-spoke step 1; additive save field, key unchanged)
       var stats = { kills: 0, mutantKills: 0, bombKills: 0, chestsOpened: 0, feastChests: 0, wavesSurvived: 0, clears: 0, untouchableClears: 0 }; // lifetime counters, all fed by events the game already fires
       /* Achievements pay feathers across play styles — survival, skill,
          bosses, chests, coins. The first four are deliberately EASY
@@ -3089,6 +3206,25 @@
           default: return false;
         }
       }
+      /* ---------- Trophy red dot (hub-and-spoke step 1) ----------
+         Earned-but-unseen achievements light the 🏆 dot on the
+         Lobby icon rail. `achievementsSeen` is a plain count in
+         the save: the unseen set is the earned achievements past
+         that count, in ACHIEVEMENTS order. Opening the Trophy
+         page raises seen to earned and the dot clears at once. */
+      function earnedAchievementCount() {
+        var n = 0;
+        ACHIEVEMENTS.forEach(function (def) { if (achievementsUnlocked[def.id]) n++; });
+        return n;
+      }
+      function unseenAchievements() {
+        var earned = ACHIEVEMENTS.filter(function (def) { return !!achievementsUnlocked[def.id]; });
+        return earned.slice(Math.min(achievementsSeen, earned.length));
+      }
+      function updateTrophyBadge() {
+        var dot = document.getElementById("trophyDot");
+        if (dot) dot.hidden = unseenAchievements().length === 0;
+      }
       function showAchievementToast(def) {
         achToastQueue.push(def);
         if (achToastBusy) return;
@@ -3116,6 +3252,7 @@
         achievementsUnlocked[id] = true;
         if (def.feathers) featherBalance += def.feathers; // paid once, here, even for silent load-time grants — otherwise an already-earned feat would never pay
         saveGame();
+        updateTrophyBadge();
         if (!silent) showAchievementToast(def);
         return true;
       }
@@ -3189,7 +3326,7 @@
             saveVersion: SAVE_VERSION,
             chapterBests: chapterBests, chapterFeathers: chapterFeathers, chapterStars: chapterStars,
             featherBalance: featherBalance,
-            achievementsUnlocked: achievementsUnlocked, stats: stats
+            achievementsUnlocked: achievementsUnlocked, achievementsSeen: achievementsSeen, stats: stats
           }));
         } catch (e) { /* storage unavailable — the session still plays normally */ }
       }
@@ -3250,6 +3387,10 @@
             if (data.achievementsUnlocked[def.id]) achievementsUnlocked[def.id] = true;
           });
         }
+        /* Trophy red-dot tracking (migration: saves written before
+           the Trophy page have no count — they start at 0 seen, so
+           anything already earned correctly shows as unseen). */
+        if (typeof data.achievementsSeen === "number") achievementsSeen = Math.max(0, Math.floor(data.achievementsSeen));
         if (data.stats && typeof data.stats === "object") {
           for (var sk in stats) {
             if (typeof data.stats[sk] === "number") stats[sk] = Math.max(0, Math.floor(data.stats[sk]));
@@ -5582,6 +5723,8 @@
         if (heroN) heroN.textContent = n;
         var heroBtn = document.getElementById("btnHeroChests");
         if (heroBtn) heroBtn.classList.toggle("has-dot", n > 0);
+        var hubN = document.getElementById("hubChestCount");
+        if (hubN) { hubN.textContent = n; hubN.hidden = n === 0; }
       }
       /* ---------- Chest reveal popup ---------- */
       var chestRevealOpen = false;
@@ -5799,15 +5942,11 @@
         ac();
         var pop = document.getElementById("settingsPop");
         if (pop) pop.hidden = true;
-        if (!lobbyPanel.hidden) {
-          renderChestLists();
-          var list = document.getElementById("lobbyChestList");
-          if (list) { try { list.scrollIntoView({ block: "center" }); } catch (e) {} }
-          return;
-        }
-        goShellMenu();
-        showPanelForce("panelChests");
-        setShellView("chapters");
+        /* The Chests page is the one home for chests now (the
+           Lobby's old in-scroll chest board is gone) — from the
+           Lobby, the Trophy page or the menu alike, the gift
+           opens that page. */
+        openChestsPage();
       });
       document.getElementById("btnHeroChests").addEventListener("click", function (ev) {
         ev.stopPropagation();
@@ -5821,6 +5960,8 @@
 
       /* ---------------- Lobby ---------------- */
       var lobbyPanel = document.getElementById("lobbyPanel");
+      var trophyPanel = document.getElementById("trophyPanel");
+      var trophyFrame = 0;
       var lobbyBanner = document.getElementById("lobbyBanner");
       var lobbyStats = document.getElementById("lobbyStats");
       var selectedUpgradeId = "damage"; // the hero-stage slot shown in the detail bar
@@ -5828,6 +5969,7 @@
       var lobbyFrom = "menu";
 
       function showLobby(from) {
+        if (trophyPanel) trophyPanel.hidden = true;
         lobbyFrom = from || state;
         if (lobbyFrom === "over") lobbyTarget = levelIdx;
         state = "lobby";
@@ -5863,6 +6005,46 @@
         document.getElementById("controlsRow").style.display = "";
         document.getElementById("hintText").style.display = "";
       }
+
+      /* ---------------- Trophy page (hub-and-spoke step 1) ----------------
+         Opened from the Lobby's 🏆 icon. Opening it marks every
+         earned achievement as seen — the red dot clears the moment
+         the page opens — while this visit's strip still lists what
+         was new. Back returns to the Lobby hub; the shell top bar
+         and tab bar stay up the whole time (syncShellChrome counts
+         the Trophy page as shell, and the Lobby tab stays lit
+         because the Trophy is the Lobby's sub-page). */
+      function openChestsPage() {
+        if (trophyPanel) trophyPanel.hidden = true;
+        goShellMenu();
+        showPanelForce("panelChests");
+        setShellView("chapters");
+      }
+      function showTrophy() {
+        trophyVisitNew = unseenAchievements(); // capture BEFORE marking seen, for the strip
+        achievementsSeen = earnedAchievementCount();
+        saveGame();
+        state = "lobby";
+        msgOverlay.hidden = true;
+        menuOverlay.hidden = true;
+        updateMenuCue();
+        stage.style.display = "none";
+        document.getElementById("controlsRow").style.display = "none";
+        document.getElementById("hintText").style.display = "none";
+        lobbyPanel.hidden = true;
+        trophyPanel.hidden = false;
+        renderRecords(); // fills stars, achievements, bests + the strip, and clears the dot via updateTrophyBadge
+        updateHUD();
+        document.body.classList.remove("playing");
+        syncShellChrome();
+        var bg = document.getElementById("trophyBgCanvas");
+        if (bg) drawLobbyBackdrop(0, bg);
+        trophyPanel.scrollIntoView({ block: "start" });
+      }
+      document.getElementById("btnHubTrophy").addEventListener("click", function () { ac(); showTrophy(); });
+      document.getElementById("btnHubChests").addEventListener("click", function () { ac(); openChestsPage(); });
+      document.getElementById("btnTrophyBack").addEventListener("click", function () { ac(); showLobby("menu"); });
+      document.getElementById("collectChestsRow").addEventListener("click", function () { ac(); openChestsPage(); });
 
       function startFromLobby(idx) {
         hideLobby();
@@ -6004,8 +6186,8 @@
          veil over the scene keeps the amber panels and light text
          on top of it readable. Animated gently (turning windmill,
          shared ground texture) from the main loop while open. */
-      function drawLobbyBackdrop(t) {
-        var c = document.getElementById("lobbyBgCanvas");
+      function drawLobbyBackdrop(t, targetCanvas) {
+        var c = targetCanvas || document.getElementById("lobbyBgCanvas");
         if (!c) return;
         var g = c.getContext("2d");
         var BW = c.width, BH = c.height, GY = Math.round(BH * 0.62); // ground line
@@ -6246,20 +6428,61 @@
           el.appendChild(card);
         });
       }
+      /* Per-chapter stars for the Trophy page: one row per chapter
+         with its star rating — locked chapters stay masked. */
+      function fillStarsList(el) {
+        if (!el) return;
+        el.textContent = "";
+        LEVELS.forEach(function (L, idx) {
+          var st = chapterState(idx);
+          var row = document.createElement("div");
+          row.className = "lb-row cb-row" + (st === "locked" ? " locked" : "");
+          var rank = document.createElement("span"); rank.className = "rank";
+          rank.textContent = idx + 1 + ".";
+          var nm = document.createElement("span"); nm.className = "cb-name";
+          nm.textContent = st === "locked" ? "🔒 ???" : L.name;
+          var bd = document.createElement("span"); bd.className = "cb-best";
+          bd.textContent = st === "locked" ? "☆☆☆" : starStr(chapterStars[idx]) + " · " + chapterStars[idx] + " / 3";
+          row.appendChild(rank); row.appendChild(nm); row.appendChild(bd);
+          el.appendChild(row);
+        });
+      }
+      /* The Trophy page's READY TO COLLECT strip: shown only while
+         something is waiting — unopened chests (the row taps
+         through to the Chests page) and/or the achievements that
+         were new when this Trophy visit began. */
+      var trophyVisitNew = [];
+      function renderCollectStrip() {
+        var strip = document.getElementById("collectStrip");
+        if (!strip) return;
+        var chRow = document.getElementById("collectChestsRow");
+        var achRow = document.getElementById("collectAchRow");
+        var hasChests = chests.length > 0;
+        var hasNew = trophyVisitNew.length > 0;
+        if (chRow) {
+          chRow.hidden = !hasChests;
+          if (hasChests) document.getElementById("collectChestsText").textContent =
+            chests.length + " Harvest Chest" + (chests.length > 1 ? "s" : "") + " waiting to open!";
+        }
+        if (achRow) {
+          achRow.hidden = !hasNew;
+          if (hasNew) document.getElementById("collectAchText").textContent =
+            "New: " + trophyVisitNew.map(function (d) { return d.icon + " " + d.name; }).join(" · ");
+        }
+        strip.hidden = !(hasChests || hasNew);
+      }
       function renderRecords() {
-        fillChapterBests(document.getElementById("chapterBestsList"));
-        fillChapterBests(document.getElementById("lobbyChapterBests"));
-        fillAchievements(document.getElementById("achievementsList"));
-        fillAchievements(document.getElementById("lobbyAchievements"));
-        var un = 0;
-        ACHIEVEMENTS.forEach(function (def) { if (achievementsUnlocked[def.id]) un++; });
-        var line = "⭐ Stars " + totalStars() + " / " + (LEVELS.length * 3) + " · 🪶 Chapter feathers " + totalFeathers() + " / " + (LEVELS.length * 3) + " · 🏅 " + un + " / " + ACHIEVEMENTS.length + " achievements";
-        var s1 = document.getElementById("recordsSummary");
-        if (s1) s1.textContent = line;
-        var s2 = document.getElementById("lobbyRecordsSummary");
-        if (s2) s2.textContent = line;
+        fillChapterBests(document.getElementById("trophyChapterBests"));
+        fillAchievements(document.getElementById("trophyAchievements"));
+        fillStarsList(document.getElementById("trophyStarsList"));
+        var ts = document.getElementById("trophyStarsSummary");
+        if (ts) ts.textContent = "⭐ " + totalStars() + " / " + (LEVELS.length * 3) + " stars · 🪶 " + totalFeathers() + " / " + (LEVELS.length * 3) + " chapter feathers · 🏅 " + earnedAchievementCount() + " / " + ACHIEVEMENTS.length + " achievements";
         var lf = document.getElementById("lobbyFeathers");
         if (lf) lf.textContent = featherBalance.toLocaleString();
+        var ls2 = document.getElementById("lobbyStars");
+        if (ls2) ls2.textContent = totalStars() + " / " + (LEVELS.length * 3);
+        renderCollectStrip();
+        updateTrophyBadge();
       }
 
       /* ---------------- Chapter cards (2026 level select) ----------------
@@ -6447,6 +6670,7 @@
         chapterStars = LEVELS.map(function () { return 0; });
         featherBalance = 0;
         achievementsUnlocked = {};
+        achievementsSeen = 0;
         stats = { kills: 0, mutantKills: 0, bombKills: 0, chestsOpened: 0, feastChests: 0, wavesSurvived: 0, clears: 0, untouchableClears: 0 };
         chests = []; bonusBombs = 0; chestSeq = 1;
         clearedLevels = LEVELS.map(function () { return false; });
@@ -6779,6 +7003,7 @@
           /* The Lobby hero stage stays alive too — pulsing pedestal
              glow, drifting turkeys — while the Lobby is open. */
           if (!lobbyPanel.hidden && (lobbyFrame++ % 2 === 0)) { drawLobbyBackdrop(time); drawLobbyPreview(time); }
+          if (trophyPanel && !trophyPanel.hidden && (trophyFrame++ % 2 === 0)) { var tbg = document.getElementById("trophyBgCanvas"); if (tbg) drawLobbyBackdrop(time, tbg); }
         } catch (err) {
           /* Recover instead of staying frozen: clear any boss-ceremony
              timing state, and if the ceremony was mid-flight, finish it
@@ -7333,8 +7558,8 @@
       var shellChromeShown = null;
       var shellLobbyShown = null;
       function syncShellChrome() {
-        var show = !menuOverlay.hidden || !lobbyPanel.hidden;
-        var inLobby = !lobbyPanel.hidden;
+        var show = !menuOverlay.hidden || !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden);
+        var inLobby = !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden);
         /* Full-screen field: whenever the shell is down a run is
            on — the stage takes the whole screen (body.playing) and
            the on-field HUD + thumb pads are the only chrome. */
@@ -7415,7 +7640,9 @@
         for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle("active", tabs[i].getAttribute("data-tab") === v);
       }
       function goShellMenu() {
-        if (!lobbyPanel.hidden) hideLobby();
+        var trophyWasOpen = trophyPanel && !trophyPanel.hidden;
+        if (trophyPanel) trophyPanel.hidden = true;
+        if (!lobbyPanel.hidden || trophyWasOpen) hideLobby();
         state = "menu";
         msgOverlay.hidden = true;
         menuOverlay.hidden = false;
