@@ -344,9 +344,6 @@
       .ctl-btn.bomb { background: var(--accent); border-color: #7e2418; color: #fff; }
       .ctl-btn.bomb small { color: #ffd9c9; }
       .ctl-btn.bomb:active, .ctl-btn.bomb.held { background: #93301f; }
-      .ctl-btn.dodge { background: var(--gold-soft); border-color: var(--gold); }
-      .ctl-btn.dodge:active, .ctl-btn.dodge.held { background: var(--gold); }
-      .ctl-btn.dodge.cooling { opacity: .5; }
       .ctl-btn:disabled { opacity: .45; }
 
       .hint {
@@ -701,7 +698,6 @@
       }
       .ctl-btn:active, .ctl-btn.held { transform: translateY(3px); box-shadow: 0 1px 0 rgba(90, 52, 18, .3); background: var(--gold-soft); }
       .ctl-btn.bomb { background: linear-gradient(180deg, #e0684f, var(--accent) 55%, #93301f); border-color: #7e2418; box-shadow: 0 4px 0 #7e2418, inset 0 2px 0 rgba(255, 255, 255, .35); }
-      .ctl-btn.dodge { background: linear-gradient(180deg, #f7dc7a, var(--gold-soft)); border-color: var(--gold); box-shadow: 0 4px 0 rgba(160, 100, 20, .45), inset 0 2px 0 rgba(255, 255, 255, .6); }
       /* Lobby: chunky coin bank, hero-stage frame, glossy tiles & cards */
       .lobby { border: 2.5px solid var(--line); border-radius: 18px; }
       .coin-bank {
@@ -2033,7 +2029,7 @@
         left: 0; right: 0;
         bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         padding: 0 14px;
-        display: flex; justify-content: space-between; align-items: flex-end;
+        display: flex; justify-content: flex-end; align-items: flex-end;
         pointer-events: none;
       }
       .controls .ctl-btn {
@@ -2045,22 +2041,6 @@
         position: relative;
       }
       .controls .ctl-btn small { font-size: 10.5px; letter-spacing: .05em; line-height: 1.15; }
-      .controls .ctl-btn.dodge {
-        background: linear-gradient(180deg, rgba(247,220,122,.93), rgba(247,227,189,.9));
-        border-color: rgba(217,142,43,.95);
-        color: #4a2c05;
-        box-shadow: 0 5px 0 rgba(90,52,8,.5), inset 0 2px 0 rgba(255,255,255,.65);
-      }
-      /* Dodge cooldown sweep: a dark wedge that drains as the dash
-         recharges (--cd = fraction of the cooldown still to go,
-         set every frame by the game loop — the old pad's cooling
-         fade, as a readable sweep). */
-      .controls .ctl-btn.dodge.cooling {
-        opacity: 1;
-        background:
-          conic-gradient(rgba(46,26,10,.55) calc(var(--cd, 0) * 1turn), rgba(46,26,10,0) 0),
-          linear-gradient(180deg, rgba(247,220,122,.93), rgba(247,227,189,.9));
-      }
       .controls .ctl-btn.bomb {
         background: linear-gradient(180deg, rgba(224,104,79,.93), rgba(178,58,46,.93) 55%, rgba(147,48,31,.95));
         border-color: rgba(126,36,24,.95);
@@ -2106,19 +2086,10 @@
         .controls .ctl-btn { width: 80px; height: 80px; min-height: 80px; border-radius: 24px; font-size: 28px; }
       }
 
-      /* --- Menu backdrop: warmer, fuller sunset behind the shell
-         screens (Chapters / Ranks / How / Credits / Chests) — the
-         same gradient family, with ember glows low in the frame
-         so the lower half no longer falls off to flat dark. --- */
-      #menuOverlay {
-        background:
-          radial-gradient(120% 46% at 78% 6%, rgba(255,190,80,.34), rgba(255,190,80,0) 60%),
-          radial-gradient(90% 30% at 12% 22%, rgba(255,120,60,.18), rgba(255,120,60,0) 60%),
-          radial-gradient(64% 30% at 88% 96%, rgba(255,150,60,.20), rgba(255,150,60,0) 62%),
-          radial-gradient(58% 26% at 6% 88%, rgba(255,110,50,.16), rgba(255,110,50,0) 60%),
-          radial-gradient(90% 12% at 50% 100%, rgba(255,214,120,.14), rgba(255,214,120,0) 70%),
-          linear-gradient(180deg, #2b1030 0%, #6e2430 34%, #b23a2e 58%, #e8873a 78%, #3a1e0e 100%);
-      }
+      /* Shell backdrop note: the layout pass's extra ember-glow
+         wash over #menuOverlay is REVERTED — the shell screens use
+         the sunset backdrop they shipped with (see the base
+         #menuOverlay rule), the look Q approved before that pass. */
 
       /* ============================================================
          HUD READABILITY + TALL-FIELD PASS (Jasmine's 390×844
@@ -2202,6 +2173,257 @@
       body.playing .field {
         width: min(100vw, calc(100dvh * var(--far, 0.65625)));
       }
+
+      /* ============================================================
+         LOBBY HERO-SCREEN RESTORE (Q, via his Backpack Heroes
+         reference — sent three times) + LOBBY SCROLL FIX
+         The Lobby is an EQUIP SCREEN again, in our dark sunset
+         art: the cannon BIG in the centre on its glowing stage,
+         the seven Workshop tracks as chunky square SLOTS around
+         it — three down the left, three down the right, the
+         seventh centred under the stats row. Tapping a slot
+         selects it; the detail bar under the stage carries its
+         name, level pips, current → next effect and the Upgrade
+         button (same costs and effects as the old card list,
+         which is gone). Coin bank, feather wallet and total
+         stars sit as chunky badges in the stats row directly
+         under the cannon. Everything below the stage (chests,
+         boards, achievements, chapter cards) keeps the restored
+         dark look and scrolls inside .lobby-scroll.
+         SCROLL FIX: the scroller is reaffirmed as the Lobby's one
+         touch-scroll surface at every width — pan-y touch action,
+         momentum scrolling, contain overscroll — and the panel
+         itself never locks it: .lobby clips only its own rounded
+         backdrop canvas, while .lobby-scroll owns the movement.
+         The gameplay no-scroll lock (body.playing) is shell-down
+         only; syncShellChrome already lifts it whenever the
+         Lobby is open, and showLobby now lifts it explicitly too.
+         ============================================================ */
+      .lobby { touch-action: pan-y; }
+      .lobby-scroll {
+        flex: 1 1 auto; min-height: 0;
+        overflow-y: auto; overflow-x: hidden;
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+      /* --- Hero stage: cannon centre, slots around --- */
+      .hero-kicker {
+        text-align: center; margin: 2px 0 8px;
+        font-size: 11.5px; font-weight: 800; letter-spacing: .22em;
+        color: #ffd968; text-shadow: 0 2px 0 rgba(90,20,8,.65), 0 3px 10px rgba(20,6,2,.5);
+      }
+      .hero-stage {
+        display: grid; grid-template-columns: 64px minmax(0, 1fr) 64px;
+        gap: 9px; align-items: stretch;
+      }
+      .slot-col { display: flex; flex-direction: column; gap: 9px; }
+      .slot-col .up-slot { flex: 1 1 0; }
+      .hero-preview { margin-top: 0; justify-content: center; }
+      /* The stage canvas is a TALL centerpiece (400×580 backing):
+         it fills the centre column edge to edge, so the stage row
+         stands ~300–340px tall on a phone and the slot columns
+         stretch to match it. On wide screens the card is capped
+         and centred so the stage never balloons. */
+      .hero-preview canvas { aspect-ratio: 400 / 580; }
+      @media (min-width: 700px) {
+        .hero-preview { justify-self: center; width: min(100%, 320px); }
+      }
+      .up-slot {
+        position: relative; cursor: pointer; font-family: inherit;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+        min-height: 62px; padding: 6px 3px 5px; border-radius: 15px;
+        background: linear-gradient(180deg, rgba(84,50,20,.94), rgba(46,26,10,.96));
+        border: 3px solid var(--btn-line); color: #fff3d6;
+        box-shadow: 0 4px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.22);
+        touch-action: manipulation;
+      }
+      .up-slot .slot-ico { font-size: 25px; line-height: 1.1; }
+      .up-slot .slot-pips { font-size: 8.5px; letter-spacing: 1.5px; color: #ffb52e; line-height: 1; }
+      .up-slot .slot-lv {
+        position: absolute; top: -8px; right: -7px;
+        background: var(--accent); color: #fff;
+        border: 2px solid #7e2418; border-radius: 999px;
+        font-size: 10px; font-weight: 800; line-height: 1; padding: 3px 6px;
+        box-shadow: 0 2px 0 rgba(20,6,2,.4);
+      }
+      .up-slot.rarity-1 { border-color: #c98a3d; }
+      .up-slot.rarity-2 { border-color: var(--gold); box-shadow: 0 4px 0 rgba(20,6,2,.45), 0 0 0 3px rgba(217,142,43,.18), inset 0 2px 0 rgba(255,217,138,.25); }
+      .up-slot.rarity-3 { border-color: var(--accent); box-shadow: 0 4px 0 rgba(20,6,2,.45), 0 0 0 3px rgba(178,58,46,.2), inset 0 2px 0 rgba(255,217,138,.25); }
+      .up-slot.rarity-4, .up-slot.maxed { border-color: var(--gold); box-shadow: 0 4px 0 rgba(20,6,2,.45), 0 0 16px rgba(232,169,76,.55), inset 0 2px 0 rgba(255,217,138,.3); }
+      .up-slot.selected {
+        border-color: #ffe9a8;
+        box-shadow: 0 4px 0 rgba(20,6,2,.45), 0 0 0 3px #ffd968, 0 0 18px rgba(255,217,104,.65), inset 0 2px 0 rgba(255,236,180,.4);
+      }
+      .up-slot:active { transform: translateY(2px); }
+      .up-slot.can-afford::after {
+        content: ""; position: absolute; top: -4px; left: -4px;
+        width: 11px; height: 11px; border-radius: 50%;
+        background: #7dd956; border: 2.5px solid #fff3d6;
+        box-shadow: 0 2px 5px rgba(20,6,2,.5);
+      }
+      /* --- Stats row under the cannon: bank badges side by side --- */
+      .hero-stats { margin-top: 10px; }
+      .coin-bank.hero-bank {
+        display: flex; align-items: stretch; justify-content: space-around;
+        width: 100%; min-width: 0; padding: 8px 10px; gap: 6px;
+      }
+      .hero-bank .bank-sec { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1 1 0; min-width: 0; }
+      .hero-bank .bank-div { border-top: none; border-left: 2px dashed rgba(107,61,8,.45); margin-top: 0; padding-top: 0; }
+      .hero-bank b { font-size: 24px; }
+      /* --- Seventh slot, centred under the stats row --- */
+      .slot-under { display: flex; justify-content: center; margin-top: 12px; }
+      .slot-under .up-slot { width: 76px; min-height: 60px; flex: 0 0 auto; }
+      /* --- Detail bar: the selected track, its effect, its price --- */
+      .slot-detail {
+        margin-top: 12px;
+        display: flex; align-items: center; gap: 12px;
+        background: linear-gradient(180deg, rgba(84,50,20,.94), rgba(46,26,10,.96));
+        border: 3px solid #d9a83f; border-radius: 16px;
+        box-shadow: 0 5px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.22);
+        padding: 11px 13px; color: #fff3d6;
+      }
+      .slot-detail-main { flex: 1 1 auto; min-width: 0; }
+      .slot-detail-main h4 { margin: 0; font-size: 17.5px; color: #fff7e8; display: inline; }
+      .slot-detail-main .pips { display: inline-block; margin-left: 8px; font-size: 13px; }
+      .slot-detail-main p { margin: 4px 0 5px; font-size: 13px; line-height: 1.45; color: #ecd3a3; }
+      .slot-detail .buy-btn { flex: 0 0 auto; margin-top: 0; min-width: 132px; }
+      @media (max-width: 480px) {
+        .hero-stage { grid-template-columns: 56px minmax(0, 1fr) 56px; gap: 7px; }
+        .up-slot { min-height: 56px; border-radius: 13px; }
+        .up-slot .slot-ico { font-size: 22px; }
+        .hero-bank b { font-size: 20px; }
+        .slot-detail { flex-direction: column; align-items: stretch; }
+        .slot-detail .buy-btn { width: 100%; }
+      }
+      /* ============================================================
+         LOBBY HERO-STAGE FLOW FIX (layout only — no art, no
+         behaviour changes). The tall stage canvas was painted at
+         its full size (206×299 at 390px wide) but the stage row
+         reserved only ~60px of layout height, so the following
+         content — ultimately the pinned Next-Level card — painted
+         OVER the stage and hid the cannon behind it. The stage
+         now reserves its full displayed height in normal document
+         flow inside .lobby-scroll:
+         · .hero-stage is a static grid row with a real minimum
+           height matching the slot columns (~321px at 390px), so
+           the row is exactly as tall as the stage it contains.
+         · .hero-preview is a plain block (not a flex column), so
+           nothing can flex-shrink the canvas out of the flow.
+         · The canvas itself sits statically in flow at width
+           100% / height auto with its 400×580 aspect — never
+           absolutely positioned, never overlapped.
+         · The stats row, seventh slot and detail bar follow the
+           stage row in flow, the scroller clips its own content,
+           and the Next-Level card stays a normal in-flow sibling
+           after the scroller — it can only ever start after the
+           stage (and everything under it) has ended.
+         ============================================================ */
+      .hero-stage {
+        position: relative;
+        min-height: 324px;
+      }
+      .hero-preview {
+        position: static;
+        display: block;
+        height: auto;
+        min-height: 0;
+      }
+      .hero-preview canvas {
+        position: static;
+        display: block;
+        width: 100%; max-width: 100%;
+        height: auto;
+        aspect-ratio: 400 / 580;
+        flex: none;
+      }
+      .slot-col { min-height: 0; }
+      .hero-stats, .slot-under, .slot-detail { position: relative; }
+      .lobby-scroll { overflow-y: auto; overflow-x: hidden; }
+      .next-card { position: relative; }
+      /* ============================================================
+         HUD BUTTON HARDENING (the stuck-player fix): the on-field
+         HUD rides ABOVE the message veil (z 6 over the overlays'
+         5), so Home / Sound / Pause stay visible and tappable
+         even while an intro / paused / clear veil is up — the
+         player can always get out. The buttons accept touches
+         directly (manipulation, no drag-surface interference),
+         and the thumb-pad row honours [hidden] like the HUD does
+         now that syncShellChrome toggles it explicitly.
+         ============================================================ */
+      .hud { z-index: 6; }
+      .hud .icon-btn { pointer-events: auto; touch-action: manipulation; }
+      .controls[hidden] { display: none !important; }
+      @media (max-width: 360px) {
+        .hero-stage { min-height: 288px; }
+      }
+      /* ============================================================
+         LOBBY SCROLL-CHAIN FIX (layout only — no art, no behaviour
+         changes; the hero stage, slots, cards and every button are
+         exactly as they were). Measured live at 390×844, the hero
+         stage was correct in flow (324px, cannon painted) yet
+         .lobby-scroll rendered only 96px tall, so the stage showed
+         as a sky-only slice and the pinned Next-Level card below
+         the sliver looked like it covered the cannon. Two breaks
+         in the chain caused it:
+         1) The panel's height was never definite — only a
+            max-height cap on an in-flow box (height:auto parent),
+            so the flex column had no real height to distribute.
+         2) The Next-Level card and the Lobby actions were pinned
+            flex:0 0 auto siblings AFTER the scroller. The card
+            holds the entire 12-chapter replay grid (~1,000px of
+            content) and can never shrink, so together with the
+            header and actions it claimed the whole panel and the
+            one shrinkable child — the scroller — collapsed to
+            whatever crumbs remained.
+         The fix: the panel is a full-height column with a definite
+         height at every width (the same numbers its max-height
+         caps already used; on phones the fixed panel takes the
+         full viewport height), the header/banner stay pinned at
+         flex:0 0 auto, .lobby-scroll flexes into ALL the height
+         left down to the tab bar (~550px at 390×844, not 96), and
+         the Next-Level card + actions moved inside the scroller
+         in the markup, so the chapter grid and everything below
+         the hero stage scrolls within it instead of starving it.
+         The stage (324px) and the detail bar under it sit at the
+         top of that viewport, fully visible before any scrolling.
+         This block sits last in the stylesheet so it wins the
+         cascade over every earlier Lobby rule, including the
+         phone block that once set the panel to display:block.
+         ============================================================ */
+      .lobby {
+        height: calc(100vh - 128px);
+        height: calc(100dvh - 128px);
+      }
+      @media (min-width: 700px) {
+        .lobby {
+          height: calc(100vh - 108px);
+          height: calc(100dvh - 108px);
+        }
+      }
+      .lobby-head, .lobby-banner { flex: 0 0 auto; }
+      .lobby-scroll {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      @media (max-width: 700px) {
+        .lobby {
+          height: 100vh;
+          height: 100dvh;
+          max-height: none;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        .lobby-scroll {
+          flex: 1 1 auto;
+          min-height: 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+      }
     </style>
   </head>
   <body>
@@ -2268,7 +2490,7 @@
           <div class="stat coins"><span aria-hidden="true">🪙</span><b id="hudCoins">0</b></div>
           <div class="stat grow wave"><span id="hudLevelLabel">Level 1</span><b id="hudWave">Get ready</b></div>
           <div class="lives" id="hudLives" aria-label="Lives"></div>
-          <button class="icon-btn" id="btnLobby" type="button" aria-label="Go to lobby" title="Lobby">🏠</button>
+          <button class="icon-btn" id="btnLobby" type="button" aria-label="Home — back to chapters" title="Home">🏠</button>
           <button class="icon-btn" id="btnSound" type="button" aria-label="Toggle sound">🔊</button>
           <button class="icon-btn" id="btnPause" type="button" aria-label="Pause game">⏸</button>
         </div>
@@ -2278,7 +2500,6 @@
              double-tap / flick to dodge), so there are no separate
              ◀ ▶ pads to reach for any more. -->
         <div class="controls" id="controlsRow">
-          <button class="ctl-btn dodge" id="btnDodge" type="button" aria-label="Dodge dash">💨<small>Dodge</small></button>
           <button class="ctl-btn bomb" id="btnBomb" type="button" aria-label="Use gravy bomb">💣<small>Gravy Bomb</small><span class="bomb-n" id="bombCount">2</span></button>
         </div>
         </div>
@@ -2346,14 +2567,13 @@
           <h3>How to Play</h3>
           <div class="howto">
             <div>🖐️ <b>Drag</b> on the field to move — your thumbs never leave the action</div>
-            <div>💨 <b>Double-tap</b> a side of the field, flick sideways, or tap the <b>Dodge</b> pad (bottom-left of the field) to dash — nothing can hit you mid-dash</div>
             <div>🔴 Your cranberry cannon <b>fires on its own</b> — fast, snappy shots; just aim by moving</div>
             <div>💣 The <b>Gravy Bomb</b> pad (bottom-right of the field) blasts everything on screen</div>
             <div>🌽 Grab corn for points and coins, cranberries for triple-shot, and pie heals a flat +1 ♥ — a missed pie lands and waits on the ground for you (max 2 at once, and no pie drops during a boss fight)</div>
             <div>🧬 <b>Mutated turkeys</b> creep in from Level 4, more every level — extra heads, extra tough, bonus coins. Every turkey bursts into feathers, potatoes &amp; gravy</div>
             <div>🪙 Turkeys drop <b>coins</b> — after each run you return to the <b>Lobby</b> to upgrade your cannon</div>
             <div>🦃 Clear every wave, then beat the <b>boss turkey</b></div>
-            <div>⚠️ Bosses dive <b>all the way down</b> to your row — watch for the dashed red lane, then dodge out of it. Sometimes the boss and its flock dive <b>together</b> to trap you, and every fight gets meaner the longer it lasts and the lower the boss's health drops</div>
+            <div>⚠️ Bosses dive <b>all the way down</b> to your row — watch for the dashed red lane, then move out of it. Sometimes the boss and its flock dive <b>together</b> to trap you, and every fight gets meaner the longer it lasts and the lower the boss's health drops</div>
           </div>
           </div>
 
@@ -2420,23 +2640,56 @@
             <h2>The Lobby</h2>
             <p>Home base between runs. Every coin your cannon collects out there lands here — spend them on the guns and watch the cannon itself change.</p>
           </div>
-          <div class="coin-bank"><span>🪙 Coin bank</span><b id="lobbyCoins">0</b><div class="bank-div"><span>🪶 Feather wallet</span><b id="lobbyFeathers">0</b></div></div>
         </div>
         <div class="lobby-banner" id="lobbyBanner" hidden></div>
 
         <div class="lobby-scroll">
-        <div class="preview-card">
-          <canvas id="lobbyCanvas" width="560" height="220" aria-label="Preview of your upgraded cranberry cannon in the barnyard"></canvas>
-          <div class="stat-list" id="lobbyStats"></div>
+        <!-- Hero / equip stage (Backpack-style, our sunset art): the
+             cannon big in the centre on its glowing pedestal, the
+             seven Workshop tracks as chunky slots around it — three
+             left, three right, Swift Boots centred under the stats
+             row. Tap a slot to select it; the detail bar under the
+             stage carries its effect and the Upgrade button. -->
+        <p class="hero-kicker">⚙ WEAPON WORKSHOP — TAP A SLOT TO UPGRADE</p>
+        <div class="hero-stage">
+          <div class="slot-col" id="slotColLeft" aria-label="Upgrade slots, left"></div>
+          <div class="preview-card hero-preview">
+            <canvas id="lobbyCanvas" width="400" height="580" aria-label="Preview of your upgraded cranberry cannon in the barnyard"></canvas>
+          </div>
+          <div class="slot-col" id="slotColRight" aria-label="Upgrade slots, right"></div>
+        </div>
+        <div class="hero-stats">
+          <div class="coin-bank hero-bank">
+            <div class="bank-sec"><span>🪙 Coin bank</span><b id="lobbyCoins">0</b></div>
+            <div class="bank-sec bank-div"><span>🪶 Feather wallet</span><b id="lobbyFeathers">0</b></div>
+            <div class="bank-sec bank-div"><span>⭐ Total stars</span><b id="lobbyStars">0</b></div>
+          </div>
+        </div>
+        <div class="slot-under" id="slotUnder" aria-label="Upgrade slot, bottom"></div>
+        <div class="slot-detail" id="slotDetail">
+          <div class="slot-detail-main">
+            <h4 id="slotDetailName">Cranberry Damage</h4><span class="pips" id="slotDetailPips"></span>
+            <p id="slotDetailDesc"></p>
+            <div class="upgrade-effect" id="slotDetailEffect"></div>
+          </div>
+          <button class="buy-btn" id="btnSlotUpgrade" type="button">Upgrade</button>
+        </div>
+        <div class="stat-list" id="lobbyStats" style="display:none"></div>
+
+        <!-- Next-Level card lives INSIDE the scroller, immediately
+             after the bank bar / slot detail area and before the
+             chapter cards and boards below (see the LOBBY
+             SCROLL-CHAIN FIX in the stylesheet). -->
+        <div class="next-card">
+          <h4 id="lobbyNextTitle">Next: Level 1</h4>
+          <p id="lobbyNextBody"></p>
+          <button class="big-btn" id="btnLobbyGo" type="button">Start Level 1</button>
+          <div class="chapter-select compact" id="levelChips" aria-label="Replay an unlocked level"></div>
         </div>
 
         <h3>🎁 Harvest Chests</h3>
         <p class="shop-sub">Bosses drop a Harvest Chest every time you clear a chapter — rarer chests from deeper chapters. Open one for coins, a free upgrade level, or Gravy Bombs for your next run.</p>
         <div class="chest-list" id="lobbyChestList"></div>
-
-        <h3>Weapon Workshop</h3>
-        <p class="shop-sub">Upgrades are permanent and stack with pickups. Stronger shots get bigger and change color, extra barrels really appear on the cannon, and piercing rounds fly straight through a turkey. Short on coins? Replay an earlier level to earn more.</p>
-        <div class="upgrade-grid" id="upgradeGrid"></div>
 
         <div class="lobby-board">
           <h3>🏆 Leaderboard</h3>
@@ -2455,18 +2708,12 @@
           <h3>🏅 Achievements</h3>
           <div class="ach-grid" id="lobbyAchievements"></div>
         </div>
-        </div>
 
-        <div class="next-card">
-          <h4 id="lobbyNextTitle">Next: Level 1</h4>
-          <p id="lobbyNextBody"></p>
-          <button class="big-btn" id="btnLobbyGo" type="button">Start Level 1</button>
-          <div class="chapter-select compact" id="levelChips" aria-label="Replay an unlocked level"></div>
-        </div>
         <div class="lobby-actions">
           <button class="ghost-dark" id="btnLobbyRestart" type="button">Start a fresh game (keeps coins &amp; upgrades)</button>
           <button class="ghost-dark" id="btnLobbyTrailer" type="button">▶ Watch Trailer</button>
           <button class="ghost-dark" id="btnLobbyMenu" type="button">🎬 Back to Main Menu</button>
+        </div>
         </div>
       </section>
 
@@ -2527,7 +2774,7 @@
           <div class="trailer-shots" id="trailerShots">
             <button type="button" data-t="0"><b>00:00 · THE INVASION</b><span>Sunset farm. Feathers on the wind. The flock arrives.</span></button>
             <button type="button" data-t="5"><b>00:05 · GAMEPLAY</b><span>Cranberry cannon vs. the waves — feathers, potatoes &amp; gravy.</span></button>
-            <button type="button" data-t="12"><b>00:12 · TURN IT UP</b><span>Dodge dash, triple-shot and a screen-clearing Gravy Bomb.</span></button>
+            <button type="button" data-t="12"><b>00:12 · TURN IT UP</b><span>Triple-shot and a screen-clearing Gravy Bomb.</span></button>
             <button type="button" data-t="18"><b>00:18 · BOSS FIGHT</b><span>Big Gobbler. Full-depth dive — all the way to your row.</span></button>
             <button type="button" data-t="27"><b>00:27 · FINAL FEAST</b><span>12 levels. 12 bosses. One last stand.</span></button>
           </div>
@@ -2535,7 +2782,7 @@
         </div>
       </div>
 
-      <p class="hint" id="hintText">Drag on the field to move. Dodge: double-tap a side of the field, flick sideways, or tap the Dodge pad in the field's bottom-left corner — you're untouchable mid-dash. The Gravy Bomb pad sits in the bottom-right corner. On a keyboard: ← → or A / D to move (double-tap to dodge), Space to dodge, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries. Your progress, coins and upgrades save automatically on this device — and your best finished runs land on the Leaderboard in the main menu.</p>
+      <p class="hint" id="hintText">Drag on the field to move. The Gravy Bomb pad sits in the bottom-right corner of the field. On a keyboard: ← → or A / D to move, B or Shift for a Gravy Bomb, P to pause. Twelve levels stand between Earth and the turkeys — each one has more waves than the last and ends with a boss. Coins you collect carry back to the Lobby, where the cannon gets its upgrades. This is a grind: expect retries. Your progress, coins and upgrades save automatically on this device — and your best finished runs land on the Leaderboard in the main menu.</p>
     </main>
 
     <script>
@@ -2561,7 +2808,6 @@
       var hudLives = document.getElementById("hudLives");
       var bombCountEl = document.getElementById("bombCount");
       var btnBomb = document.getElementById("btnBomb");
-      var btnDodge = document.getElementById("btnDodge");
 
       var menuOverlay = document.getElementById("menuOverlay");
       var msgOverlay = document.getElementById("msgOverlay");
@@ -2712,13 +2958,12 @@
           now: function (lv) { return "Blast damage " + (3 + lv * 2) + " · boss hit " + (10 + lv * 6); },
           next: function (lv) { return "Blast damage " + (5 + lv * 2) + " · boss hit " + (16 + lv * 6); } },
         { id: "boots", icon: "👢", name: "Swift Boots",
-          desc: "For the cannon crew: faster movement and a dodge that recharges sooner, so the dash is ready more often.",
+          desc: "For the cannon crew: faster movement, so you can reposition sooner and stay ahead of the flock.",
           max: 3, costs: [50, 120, 220],
-          now: function (lv) { return "Move speed " + Math.round((345 + lv * 28) / 345 * 100) + "% · dodge back in " + dodgeCdFor(lv).toFixed(2) + "s"; },
-          next: function (lv) { return "Move speed " + Math.round((345 + (lv + 1) * 28) / 345 * 100) + "% · dodge back in " + dodgeCdFor(lv + 1).toFixed(2) + "s"; } }
+          now: function (lv) { return "Move speed " + Math.round((345 + lv * 28) / 345 * 100) + "%"; },
+          next: function (lv) { return "Move speed " + Math.round((345 + (lv + 1) * 28) / 345 * 100) + "%"; } }
       ];
       function fireRateFor(lv) { return [0.12, 0.105, 0.092, 0.08, 0.069, 0.059][lv]; }
-      function dodgeCdFor(lv) { return [0.50, 0.44, 0.38, 0.32][lv]; }
       function getDamage() { return 1 + upgrades.damage; }
       function getFireRate() { return fireRateFor(upgrades.rapid); }
       function getBulletR() { return 5.5 + upgrades.big * 1.6; }
@@ -3116,8 +3361,7 @@
         player = {
           x: W / 2, y: GROUND - 26, r: 17,
           speed: 345 + upgrades.boots * 28, vx: 0, fireTimer: 0, power: 1, powerTimer: 0,
-          invuln: 0, shield: false, tilt: 0,
-          dodgeTime: 0, dodgeCd: 0, dodgeDir: 1, lastDir: 1, recoil: 0
+          invuln: 0, shield: false, tilt: 0, recoil: 0
         };
       }
       resetPlayer();
@@ -3160,7 +3404,6 @@
       var SFX = {
         shoot: function () { beep(980, 0.05, "square", 0.038, 210); beep(1500, 0.03, "triangle", 0.02, 700); },
         hit: function () { beep(260, 0.05, "square", 0.05, 130); noiseBurst(0.05, 0.05); },
-        dodge: function () { noiseBurst(0.12, 0.07); beep(520, 0.11, "sine", 0.045, 980); },
         boom: function () { noiseBurst(0.28, 0.14); beep(120, 0.25, "sawtooth", 0.05, 40); },
         gobble: function () {
           beep(420, 0.07, "square", 0.05, 300); setTimeout(function () { beep(460, 0.07, "square", 0.05, 290); }, 80);
@@ -3382,20 +3625,6 @@
           }
           SFX.shoot();
         }
-      }
-
-      /* Quick one-touch dodge: a short dash with i-frames. */
-      function triggerDodge(dir) {
-        if (!player || player.dodgeCd > 0 || player.dodgeTime > 0) return false;
-        if (state !== "play" && state !== "boss") return false;
-        player.dodgeDir = dir < 0 ? -1 : 1;
-        player.lastDir = player.dodgeDir;
-        player.dodgeTime = 0.15;
-        player.dodgeCd = dodgeCdFor(upgrades.boots);
-        player.invuln = Math.max(player.invuln, 0.30);
-        addParticles(player.x, player.y + 8, ["#fff2cf", "#f4bd76", "#e8873a"], 8, 90);
-        SFX.dodge();
-        return true;
       }
 
       function dropPickup(x, y) {
@@ -3667,7 +3896,6 @@
         if (shake > 0) shake -= dt;
         if (flash > 0) flash -= dt;
         if (player.invuln > 0) player.invuln -= dt;
-        if (player.dodgeCd > 0) player.dodgeCd -= dt;
         if (player.recoil > 0) player.recoil = Math.max(0, player.recoil - dt * 9);
         if (boss && boss.flash > 0) boss.flash -= dt;
         for (var fi = 0; fi < enemies.length; fi++) {
@@ -3708,32 +3936,16 @@
         if (state !== "play" && state !== "boss") return;
         levelTime += dt; // the match heats up the longer it runs
 
-        /* --- player movement: tight accel + dodge dash (tuned on Levels 1–2) --- */
+        /* --- player movement: drag on touch, tight accel on keys --- */
         var mv = 0;
         if (keys.left) mv -= 1;
         if (keys.right) mv += 1;
-        if (mv !== 0) player.lastDir = mv;
-        if (player.dodgeTime > 0) {
-          // the dash: fast, committed, untouchable
-          player.dodgeTime -= dt;
-          player.x += player.dodgeDir * 1100 * dt;
-          player.vx = player.dodgeDir * 1100;
-          player.tilt = player.dodgeDir * 0.34;
-          if (Math.random() < 0.75) {
-            particles.push({
-              x: player.x - player.dodgeDir * 16, y: player.y + rand(-8, 10),
-              vx: -player.dodgeDir * rand(30, 80), vy: rand(-14, 14),
-              life: 0.28, maxLife: 0.28, rot: rand(0, 6.28), vr: 0,
-              color: "rgba(255,242,207,.9)", size: rand(5, 9), feather: true
-            });
-          }
-        } else if (pointerX !== null) {
+        if (pointerX !== null) {
           var dxp = pointerX - player.x;
           var step = clamp(dxp * 22 * dt, -player.speed * 2.1 * dt, player.speed * 2.1 * dt);
           if (Math.abs(dxp) < Math.abs(step)) step = dxp;
           player.x += step;
           player.vx = dt > 0 ? step / dt : 0;
-          if (Math.abs(dxp) > 4) player.lastDir = dxp < 0 ? -1 : 1;
           player.tilt = clamp(player.vx * 0.00045, -0.3, 0.3);
         } else {
           // snappy acceleration, near-instant stop — no ice-skating
@@ -4696,7 +4908,7 @@
 
       function drawPlayer() {
         var p = player;
-        if (!(p.invuln > 0 && p.dodgeTime <= 0 && Math.floor(time * 14) % 2 === 0 && state !== "over")) {
+        if (!(p.invuln > 0 && Math.floor(time * 14) % 2 === 0 && state !== "over")) {
           drawCannonOn(ctx, p.x, p.y, 1, p.tilt * 0.5, {
             recoil: p.recoil,
             flash: p.fireTimer < 0.05 && (state === "play" || state === "boss")
@@ -5029,19 +5241,6 @@
           }
         }
 
-        // dodge meter: full gold = dash ready, refills in under a second
-        if (state === "play" || state === "boss") {
-          var dReady = clamp(1 - player.dodgeCd / dodgeCdFor(upgrades.boots), 0, 1);
-          ctx.fillStyle = "rgba(30,16,8,.6)";
-          ctx.fillRect(10, H - 24, 62, 7);
-          ctx.fillStyle = player.dodgeCd <= 0 ? "#f2c53d" : "#c9a35f";
-          ctx.fillRect(11, H - 23, 60 * dReady, 5);
-          ctx.fillStyle = "rgba(253,243,224,.92)";
-          ctx.font = "700 8.5px Trebuchet MS, sans-serif";
-          ctx.textAlign = "left";
-          ctx.fillText("DODGE", 11, H - 28);
-        }
-
         // power-up timer bar
         if (player.power === 3 && player.powerTimer > 0 && (state === "play" || state === "boss")) {
           ctx.fillStyle = "rgba(30,16,8,.6)";
@@ -5059,7 +5258,7 @@
           ctx.textAlign = "center";
           ctx.fillText("Paused", W / 2, H / 2 - 6);
           ctx.font = "15px Trebuchet MS, sans-serif";
-          ctx.fillText("Tap ⏸ to keep defending Earth", W / 2, H / 2 + 22);
+          ctx.fillText("Tap ▶ to resume · 🏠 for Chapters", W / 2, H / 2 + 22);
         }
 
         /* ===== TRAILER GRADE: warm sunset wash + cinematic vignette,
@@ -5624,7 +5823,7 @@
       var lobbyPanel = document.getElementById("lobbyPanel");
       var lobbyBanner = document.getElementById("lobbyBanner");
       var lobbyStats = document.getElementById("lobbyStats");
-      var upgradeGrid = document.getElementById("upgradeGrid");
+      var selectedUpgradeId = "damage"; // the hero-stage slot shown in the detail bar
       var levelChips = document.getElementById("levelChips");
       var lobbyFrom = "menu";
 
@@ -5651,6 +5850,9 @@
         renderLobby();
         renderBoard();
         updateHUD();
+        // the gameplay no-scroll lock must never ride into the
+        // Lobby: lift it explicitly, then let syncShellChrome agree
+        document.body.classList.remove("playing");
         syncShellChrome(); // single HUD: shell bar only, no gameplay row in the Lobby
         lobbyPanel.scrollIntoView({ block: "start" });
       }
@@ -5683,7 +5885,7 @@
           ["Berry size", ["Normal", "Large", "Extra large", "Jumbo", "Feast-size"][upgrades.big]],
           ["Piercing", upgrades.pierce === 0 ? "No" : "Through " + (upgrades.pierce + 1) + " turkeys"],
           ["Gravy Bomb", "Damage " + getBombDamage() + " · boss hit " + getBossBombDamage()],
-          ["Move / dodge", Math.round(player.speed / 345 * 100) + "% · " + dodgeCdFor(upgrades.boots).toFixed(2) + "s recharge"]
+          ["Move speed", Math.round(player.speed / 345 * 100) + "%"]
         ];
         lobbyStats.textContent = "";
         rows.forEach(function (r) {
@@ -5697,44 +5899,68 @@
         drawLobbyBackdrop();
         drawLobbyPreview();
 
-        // upgrade cards
-        upgradeGrid.textContent = "";
-        UPGRADES.forEach(function (u) {
+        // Hero-stage upgrade SLOTS (the equip-screen layout that
+        // replaces the old card list): three down the left of the
+        // cannon, three down the right, the seventh centred under
+        // the stats row. Tapping a slot selects it; the detail bar
+        // under the stage shows its name, pips, effect and price,
+        // and its Upgrade button buys through the same buyUpgrade()
+        // the cards used — same costs, same effects, and the cannon
+        // on the stage changes exactly as before.
+        var colL = document.getElementById("slotColLeft");
+        var colR = document.getElementById("slotColRight");
+        var colU = document.getElementById("slotUnder");
+        colL.textContent = ""; colR.textContent = ""; colU.textContent = "";
+        var selU = UPGRADES[0];
+        UPGRADES.forEach(function (u, ui) {
+          if (u.id === selectedUpgradeId) selU = u;
           var lv = upgrades[u.id];
           var maxed = lv >= u.max;
           var cost = maxed ? null : u.costs[lv];
-          var card = document.createElement("div");
           var tier = maxed ? 4 : (lv === 0 ? 0 : Math.ceil(lv / u.max * 3));
-          card.className = "upgrade-card rarity-" + tier + (maxed ? " maxed" : "");
-          var top = document.createElement("div"); top.className = "upgrade-top";
-          var icon = document.createElement("div"); icon.className = "upgrade-icon"; icon.textContent = u.icon;
-          var lvBadge = document.createElement("span"); lvBadge.className = "lv-badge"; lvBadge.textContent = "Lv " + lv;
-          icon.appendChild(lvBadge);
-          var nameWrap = document.createElement("div");
-          var h4 = document.createElement("h4"); h4.textContent = u.name;
-          var pips = document.createElement("div"); pips.className = "pips";
+          var slot = document.createElement("button");
+          slot.type = "button";
+          slot.className = "up-slot rarity-" + tier + (maxed ? " maxed" : "") +
+            (u.id === selectedUpgradeId ? " selected" : "") +
+            (!maxed && coins >= cost ? " can-afford" : "");
+          slot.setAttribute("aria-label", u.name + " — level " + lv + " of " + u.max + (u.id === selectedUpgradeId ? " (selected)" : ""));
+          var ico = document.createElement("span"); ico.className = "slot-ico"; ico.textContent = u.icon;
+          var pips = document.createElement("span"); pips.className = "slot-pips";
           var pipStr = "";
           for (var pi = 0; pi < u.max; pi++) pipStr += pi < lv ? "●" : "○";
           pips.textContent = pipStr;
-          nameWrap.appendChild(h4); nameWrap.appendChild(pips);
-          top.appendChild(icon); top.appendChild(nameWrap);
-          var desc = document.createElement("p"); desc.textContent = u.desc;
-          var eff = document.createElement("div"); eff.className = "upgrade-effect";
-          eff.textContent = "Now: " + u.now(lv);
-          if (!maxed) {
-            var nx = document.createElement("span"); nx.className = "next";
-            nx.textContent = "  →  Next: " + u.next(lv);
-            eff.appendChild(nx);
-          }
-          var btn = document.createElement("button");
-          btn.type = "button"; btn.className = "buy-btn" + (maxed ? " maxed-btn" : "");
-          if (maxed) { btn.textContent = "✓ MAXED OUT"; btn.disabled = true; }
-          else if (coins >= cost) { btn.textContent = "Upgrade — 🪙 " + cost; }
-          else { btn.textContent = "Need 🪙 " + cost + " (have " + coins + ")"; btn.disabled = true; }
-          btn.addEventListener("click", function () { buyUpgrade(u.id); });
-          card.appendChild(top); card.appendChild(desc); card.appendChild(eff); card.appendChild(btn);
-          upgradeGrid.appendChild(card);
+          var lvB = document.createElement("span"); lvB.className = "slot-lv"; lvB.textContent = "Lv " + lv;
+          slot.appendChild(ico); slot.appendChild(pips); slot.appendChild(lvB);
+          slot.addEventListener("click", function () { ac(); selectedUpgradeId = u.id; renderLobby(); });
+          if (ui < 3) colL.appendChild(slot);
+          else if (ui < 6) colR.appendChild(slot);
+          else colU.appendChild(slot);
         });
+        // Detail bar for the selected slot
+        var slv = upgrades[selU.id];
+        var sMaxed = slv >= selU.max;
+        var sCost = sMaxed ? null : selU.costs[slv];
+        document.getElementById("slotDetailName").textContent = selU.icon + " " + selU.name;
+        var sPips = "";
+        for (var spi = 0; spi < selU.max; spi++) sPips += spi < slv ? "●" : "○";
+        document.getElementById("slotDetailPips").textContent = sPips + "  Lv " + slv + " / " + selU.max;
+        document.getElementById("slotDetailDesc").textContent = selU.desc;
+        var sEff = document.getElementById("slotDetailEffect");
+        sEff.textContent = "Now: " + selU.now(slv);
+        if (!sMaxed) {
+          var snx = document.createElement("span"); snx.className = "next";
+          snx.textContent = "  →  Next: " + selU.next(slv);
+          sEff.appendChild(snx);
+        }
+        var sBtn = document.getElementById("btnSlotUpgrade");
+        sBtn.className = "buy-btn" + (sMaxed ? " maxed-btn" : "");
+        if (sMaxed) { sBtn.textContent = "✓ MAXED OUT"; sBtn.disabled = true; }
+        else if (coins >= sCost) { sBtn.textContent = "Upgrade — 🪙 " + sCost; sBtn.disabled = false; }
+        else { sBtn.textContent = "Need 🪙 " + sCost + " (have " + coins + ")"; sBtn.disabled = true; }
+        sBtn.onclick = function () { ac(); buyUpgrade(selU.id); };
+        // Stats row under the cannon: stars join coins + feathers
+        var ls = document.getElementById("lobbyStars");
+        if (ls) ls.textContent = totalStars() + " / " + (LEVELS.length * 3);
 
         // next-level card + replay chips
         var L = LEVELS[lobbyTarget];
@@ -5856,7 +6082,7 @@
       function drawLobbyPreview(t) {
         var c = document.getElementById("lobbyCanvas");
         var g = c.getContext("2d");
-        var PW = c.width, PH = c.height, GY = PH - 38; // ground line
+        var PW = c.width, PH = c.height, GY = PH - 46; // ground line
         t = t || 0;
         g.clearRect(0, 0, PW, PH);
         // harvest sky
@@ -5883,13 +6109,13 @@
         // same layer the game field paints for the home farm
         drawSceneLayer(g, 0, t, PW, GY, 1.1);
         // the barn — the shared shape, identical to gameplay & trailer
-        drawBarnShape(g, 26, GY, 1.18);
-        drawWindmillShape(g, PW - 30, GY, 0.82, t * 0.7);
+        drawBarnShape(g, 14, GY, 1.02);
+        drawWindmillShape(g, PW - 26, GY, 0.8, t * 0.7);
         // fence line along the horizon
         g.fillStyle = "rgba(93,58,26,.8)";
-        for (var fx = 138; fx < PW - 8; fx += 44) g.fillRect(fx, GY - 17, 5, 17);
-        g.fillRect(132, GY - 13, PW - 132, 3.5);
-        g.fillRect(132, GY - 6, PW - 132, 3);
+        for (var fx = 98; fx < PW - 8; fx += 44) g.fillRect(fx, GY - 17, 5, 17);
+        g.fillRect(92, GY - 13, PW - 92, 3.5);
+        g.fillRect(92, GY - 6, PW - 92, 3);
         // ground — shaded band + the shared ground texture
         var lgrad = g.createLinearGradient(0, GY, 0, PH);
         lgrad.addColorStop(0, "#96753e"); lgrad.addColorStop(1, "#6e5227");
@@ -5903,14 +6129,15 @@
           g.beginPath(); g.arc(x, y, r * 0.62, 0, Math.PI * 2); g.stroke();
           g.beginPath(); g.arc(x, y, r * 0.28, 0, Math.PI * 2); g.stroke();
         }
-        hayBale(PW - 52, GY - 13, 15);
-        hayBale(PW - 96, GY - 9, 10);
+        hayBale(PW - 44, GY - 12, 13);
+        hayBale(PW - 78, GY - 8, 9);
+        var pkx = PW - 108, pky = GY - 7;
         g.fillStyle = "#e8873a";
-        g.beginPath(); g.ellipse(PW - 132, GY - 8, 13, 10, 0, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.ellipse(pkx, pky, 11, 8.5, 0, 0, Math.PI * 2); g.fill();
         g.strokeStyle = "#c96a24"; g.lineWidth = 1.6;
-        g.beginPath(); g.moveTo(PW - 138, GY - 16); g.quadraticCurveTo(PW - 132, GY - 2, PW - 138, GY); g.stroke();
-        g.beginPath(); g.moveTo(PW - 126, GY - 16); g.quadraticCurveTo(PW - 132, GY - 2, PW - 126, GY); g.stroke();
-        g.fillStyle = "#4d7c3a"; g.fillRect(PW - 134, GY - 21, 4, 6);
+        g.beginPath(); g.moveTo(pkx - 5, pky - 7); g.quadraticCurveTo(pkx, pky + 1, pkx - 5, pky + 7); g.stroke();
+        g.beginPath(); g.moveTo(pkx + 5, pky - 7); g.quadraticCurveTo(pkx, pky + 1, pkx + 5, pky + 7); g.stroke();
+        g.fillStyle = "#4d7c3a"; g.fillRect(pkx - 2, pky - 13, 4, 6);
 
         /* ---- THE HERO STAGE — the canonical drawCannonOn, the
            exact function gameplay uses, presented big and centre
@@ -5927,11 +6154,11 @@
         var pg = g.createLinearGradient(0, pgy - 12, 0, pgy + 14);
         pg.addColorStop(0, "#f7dc7a"); pg.addColorStop(0.55, "#e8a94c"); pg.addColorStop(1, "#c97b24");
         g.fillStyle = pg;
-        g.beginPath(); g.ellipse(pcx, pgy, 128, 17, 0, 0, Math.PI * 2); g.fill();
+        g.beginPath(); g.ellipse(pcx, pgy, 116, 17, 0, 0, Math.PI * 2); g.fill();
         g.strokeStyle = "#8a5a10"; g.lineWidth = 3;
-        g.beginPath(); g.ellipse(pcx, pgy, 128, 17, 0, 0, Math.PI * 2); g.stroke();
+        g.beginPath(); g.ellipse(pcx, pgy, 116, 17, 0, 0, Math.PI * 2); g.stroke();
         g.strokeStyle = "rgba(255,246,214,.85)"; g.lineWidth = 2;
-        g.beginPath(); g.ellipse(pcx, pgy - 2, 108, 12.5, 0, 0, Math.PI * 2); g.stroke();
+        g.beginPath(); g.ellipse(pcx, pgy - 2, 98, 12.5, 0, 0, Math.PI * 2); g.stroke();
         // rising sparkles around the stage
         g.fillStyle = "#fff2cf";
         for (var sp2 = 0; sp2 < 9; sp2++) {
@@ -5943,8 +6170,8 @@
           g.restore();
         }
         g.globalAlpha = 1;
-        drawTurkeyOn(g, 66, GY - 66 + Math.sin(t * 1.7) * 4, 14, t * 9 + 1, { variant: "classic" });
-        drawTurkeyOn(g, PW - 62, GY - 54 + Math.cos(t * 1.5) * 4, 12, t * 9 + 3, { variant: "classic" });
+        drawTurkeyOn(g, 58, GY - 132 + Math.sin(t * 1.7) * 4, 15, t * 9 + 1, { variant: "classic" });
+        drawTurkeyOn(g, PW - 56, GY - 106 + Math.cos(t * 1.5) * 4, 13, t * 9 + 3, { variant: "classic" });
         drawCannonOn(g, pcx, GY - 24, 2.05, Math.sin(t * 0.9) * 0.05, { flash: (t % 1.8) < 0.09 });
       }
 
@@ -6247,7 +6474,7 @@
       var TRAILER_CAPS = [
         [0, "THIS THANKSGIVING", "They're coming for us.", "Wave after wave — straight for the farm."],
         [5, "THE GAMEPLAY", "Man the cranberry cannon!", "Fast fire. Feather bursts. Potatoes & gravy everywhere."],
-        [12, "TURN IT UP", "Dodge. Dash. GRAVY BOMB.", "New flocks, new colours — twelve levels deep."],
+        [12, "TURN IT UP", "Triple-shot. GRAVY BOMB.", "New flocks, new colours — twelve levels deep."],
         [18, "THE BOSS FIGHT", "BIG GOBBLER", "He dives all the way down to your row. Move."],
         [27, "INVASION OF THE TURKEYS", "12 levels. 12 bosses.", "Thanksgiving will never be the same."]
       ];
@@ -6542,8 +6769,7 @@
         lastTs = ts;
         try {
           if (state !== "paused") update(dt);
-          btnDodge.classList.toggle("cooling", player.dodgeCd > 0);
-          btnDodge.style.setProperty("--cd", player.dodgeCd > 0 ? (player.dodgeCd / dodgeCdFor(upgrades.boots)).toFixed(3) : "0");
+          else lastTs = ts; // paused: keep the clock honest so resume never jumps or double-steps
           draw();
           /* The cover poster stays gently alive while the menu is open
              (bobbing boss, turning windmill) — redrawn at ~30fps. */
@@ -6571,40 +6797,30 @@
         var r = canvas.getBoundingClientRect();
         return (clientX - r.left) * (W / r.width);
       }
-      var pDownX = null, pDownT = 0, lastCanvasTap = { side: 0, t: 0 };
       stage.addEventListener("pointerdown", function (ev) {
         if (ev.target !== canvas) return;
         ac();
         if (ceremony) { skipCeremonyOrCountUp(); return; } // tap skips the boss death ceremony
         pointerX = canvasX(ev.clientX);
-        pDownX = pointerX; pDownT = performance.now();
-        // double-tap a side of the field = dodge that way
-        var side = pointerX < player.x ? -1 : 1;
-        var now = performance.now();
-        if (lastCanvasTap.side === side && now - lastCanvasTap.t < 300) {
-          triggerDodge(side);
-          lastCanvasTap.t = 0;
-        } else {
-          lastCanvasTap.side = side; lastCanvasTap.t = now;
-        }
         stage.setPointerCapture && ev.pointerId !== undefined && canvas.setPointerCapture(ev.pointerId);
       });
       stage.addEventListener("pointermove", function (ev) {
         if (pointerX === null) return;
         pointerX = canvasX(ev.clientX);
-        // a fast sideways flick mid-drag = dodge
-        if (pDownX !== null && performance.now() - pDownT < 220 && Math.abs(pointerX - pDownX) > 62) {
-          triggerDodge(pointerX < pDownX ? -1 : 1);
-          pDownX = pointerX; pDownT = performance.now(); // one dash per flick
-        }
       });
-      function endPointer() { pointerX = null; pDownX = null; }
+      function endPointer() { pointerX = null; }
       stage.addEventListener("pointerup", endPointer);
       stage.addEventListener("pointercancel", endPointer);
       stage.addEventListener("touchmove", function (ev) {
         // the main menu is allowed to scroll on touch (Issue #5) —
         // drags on the field itself stay locked so aiming never scrolls
         if (!menuOverlay.hidden && menuOverlay.contains(ev.target)) return;
+        // the Lobby is a shell screen too: its drag-scroll must
+        // never be eaten by the gameplay lock, wherever the drag
+        // starts (the Lobby panel sits outside the stage, but the
+        // guard is explicit so no future nesting can freeze it)
+        if (!lobbyPanel.hidden && lobbyPanel.contains(ev.target)) return;
+        if (state === "lobby") return;
         ev.preventDefault();
       }, { passive: false });
 
@@ -6622,26 +6838,14 @@
          and the keyboard keeps ← → / A / D. Only the two on-field
          thumb pads remain: Dodge and Gravy Bomb. */
       btnBomb.addEventListener("click", function () { ac(); useBomb(); });
-      btnDodge.addEventListener("pointerdown", function (ev) {
-        ev.preventDefault(); ac();
-        triggerDodge(player.lastDir || 1);
-      });
 
-      var lastKeyTap = { dir: 0, t: 0 };
-      function keyDodgeCheck(dir, ev) {
-        if (ev.repeat) return;
-        var now = performance.now();
-        if (lastKeyTap.dir === dir && now - lastKeyTap.t < 300) { triggerDodge(dir); lastKeyTap.t = 0; }
-        else { lastKeyTap.dir = dir; lastKeyTap.t = now; }
-      }
       window.addEventListener("keydown", function (ev) {
         if ((ceremony || countUp) && skipCeremonyOrCountUp()) { ev.preventDefault(); return; } // any key skips the ceremony / count-up
-        if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") { keys.left = true; pointerX = null; keyDodgeCheck(-1, ev); ev.preventDefault(); }
-        if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { keys.right = true; pointerX = null; keyDodgeCheck(1, ev); ev.preventDefault(); }
+        if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") { keys.left = true; pointerX = null; ev.preventDefault(); }
+        if (ev.key === "ArrowRight" || ev.key === "d" || ev.key === "D") { keys.right = true; pointerX = null; ev.preventDefault(); }
         if (ev.key === "b" || ev.key === "B" || ev.key === "Shift") useBomb();
         if (ev.key === "p" || ev.key === "P") togglePause();
-        if (ev.key === " " && (state === "play" || state === "boss")) { ev.preventDefault(); ac(); triggerDodge(player.lastDir || 1); }
-        else if (ev.key === " " && state === "menu") { ev.preventDefault(); document.getElementById("btnStart").click(); }
+        if (ev.key === " " && state === "menu") { ev.preventDefault(); document.getElementById("btnStart").click(); }
       });
       window.addEventListener("keyup", function (ev) {
         if (ev.key === "ArrowLeft" || ev.key === "a" || ev.key === "A") keys.left = false;
@@ -6711,11 +6915,56 @@
 
       document.getElementById("btnLobbyGo").addEventListener("click", function () { ac(); startFromLobby(lobbyTarget); });
       document.getElementById("btnLobbyRestart").addEventListener("click", function () { ac(); lobbyFrom = "menu"; startFromLobby(0); });
-      document.getElementById("btnLobby").addEventListener("click", function () {
+      /* HOME button (🏠 on the field HUD): returns to the
+         Chapters / home screen from ANYWHERE — including mid-run.
+         The old handler only knew menu / intro / clear / victory /
+         over, so during actual play (play / boss / paused /
+         ceremony) a tap fell through every branch and did nothing
+         at all. Now a run in progress is exited cleanly — field
+         cleared, ceremony / count-up / pause state reset — and
+         every other state simply goes home. Coins already banked
+         stay banked; the abandoned run itself is not recorded,
+         exactly like leaving a run any other way. */
+      function exitRunToHome() {
+        ceremony = null; countUp = null; timeScale = 1; ceremonyFlash = 0;
+        enemies = []; bullets = []; enemyBombs = []; pickups = []; particles = [];
+        boss = null; spawnQueue = 0; pointerX = null;
+        keys.left = false; keys.right = false;
+        var pb = document.getElementById("btnPause");
+        if (pb) pb.textContent = "⏸";
+        goShellMenu();
+        syncShellChrome();
+      }
+      /* tapAction: the on-field HUD buttons (Home / Sound / Pause)
+         must fire on the FIRST touch, every time. They used to
+         listen for "click" only — and a click can be swallowed on
+         the drag surface (pointer capture on the canvas, the
+         stage's touch-action:none, a finger that drifts a pixel
+         mid-tap), which is exactly how the player got stuck in a
+         run with dead 🏠 / 🔊 / ⏸ buttons. The game's working
+         touch controls all fire on pointerdown, so these do too —
+         with the click kept as a fallback for mouse / keyboard /
+         programmatic activation, deduped so one tap = one action. */
+      function tapAction(el, fn) {
+        if (!el) return;
+        var lastTap = 0;
+        function handler(ev) {
+          var now = performance.now();
+          if (now - lastTap < 400) return; // the same tap's click echo
+          lastTap = now;
+          fn(ev);
+        }
+        el.addEventListener("pointerdown", handler);
+        el.addEventListener("click", handler);
+      }
+      tapAction(document.getElementById("btnLobby"), function () {
         ac();
-        if (state === "menu") { lobbyTarget = highestUnlocked; showLobby("menu"); }
-        else if (state === "intro") { lobbyTarget = levelIdx; showLobby("intro"); }
-        else if (state === "clear" || state === "victory" || state === "over") { showLobby(state); }
+        if (state === "play" || state === "boss" || state === "paused" || state === "ceremony") { exitRunToHome(); return; }
+        if (state === "lobby") { goShellMenu(); return; }
+        if (state === "menu") return; // already home
+        // intro / clear / victory / over: the message screen's own
+        // button goes to the Lobby; Home goes home.
+        goShellMenu();
       });
 
       var btnPause = document.getElementById("btnPause");
@@ -6729,15 +6978,25 @@
           btnPause.textContent = "⏸";
         }
       }
-      btnPause.addEventListener("click", function () { ac(); togglePause(); });
+      tapAction(btnPause, function () { ac(); togglePause(); });
 
-      var btnSound = document.getElementById("btnSound");
-      btnSound.addEventListener("click", function () {
-        muted = !muted;
-        btnSound.textContent = muted ? "🔇" : "🔊";
+      /* ONE mute state for the whole game: the HUD speaker, the
+         shell settings popover and the save all read and write
+         this. Muting also suspends the AudioContext itself, so
+         even a sound already ringing stops dead; unmuting resumes
+         it. Every SFX path (beep / noiseBurst) already checks
+         `muted` before making a sound. */
+      function setMuted(v) {
+        muted = !!v;
+        var bs = document.getElementById("btnSound");
+        if (bs) bs.textContent = muted ? "🔇" : "🔊";
+        refreshSettingsLabels();
         saveGame();
-        if (!muted) ac();
-      });
+        if (muted) { if (audioCtx && audioCtx.suspend) audioCtx.suspend(); }
+        else ac();
+      }
+      var btnSound = document.getElementById("btnSound");
+      tapAction(btnSound, function () { setMuted(!muted); });
       btnSound.textContent = muted ? "🔇" : "🔊";
 
       /* ============================================================
@@ -7084,6 +7343,7 @@
         var stEl = document.getElementById("shellTop");
         var tbEl = document.getElementById("tabBar");
         var hudEl = document.getElementById("gameHud");
+        var ctlEl = document.getElementById("controlsRow");
         /* Single-HUD guarantee (review fix): never trust the cache
            alone — if any element's actual visibility disagrees with
            the desired state (a transition frame, a direct hidden
@@ -7092,7 +7352,8 @@
            the gameplay HUD row on screen in menu / Lobby / chapters. */
         var domAgrees = (!stEl || stEl.hidden === !show) &&
           (!tbEl || tbEl.hidden === !show) &&
-          (!hudEl || hudEl.hidden === show);
+          (!hudEl || hudEl.hidden === show) &&
+          (!ctlEl || ctlEl.hidden === show);
         if (show === shellChromeShown && inLobby === shellLobbyShown && domAgrees) return;
         shellChromeShown = show;
         shellLobbyShown = inLobby;
@@ -7104,6 +7365,10 @@
            only, so hide it whenever the menu/Lobby shell is up and
            restore it the moment a run starts. */
         if (hudEl) hudEl.hidden = show;
+        /* The thumb pads follow the HUD: hidden with the shell up
+           (they are raised above the field, so they must never
+           float over the menu), shown the moment a run starts. */
+        if (ctlEl) ctlEl.hidden = show;
         if (!show) { var pop = document.getElementById("settingsPop"); if (pop) pop.hidden = true; }
         // keep the tab highlight honest however the Lobby was reached
         if (show && inLobby) setShellView("lobby");
@@ -7213,8 +7478,7 @@
         refreshSettingsLabels();
       });
       document.getElementById("btnSetSound").addEventListener("click", function () {
-        document.getElementById("btnSound").click();
-        refreshSettingsLabels();
+        setMuted(!muted);
       });
       document.getElementById("btnSetHow").addEventListener("click", function () {
         document.getElementById("settingsPop").hidden = true;
