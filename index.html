@@ -2638,6 +2638,59 @@
         body:not(.playing) .ach-toast { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
         body:not(.playing) .menu-scroll-cue { bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }
       }
+
+      /* ============================================================
+         SHELL CHROME REWORK (Q) — nothing outside the border.
+         1) The old outside top bar is gone: .shell-top is now a
+            header row INSIDE the bordered panel — in flow at the
+            top of the Chapters stage overlay, and (moved by
+            placeShellTop()) at the top of the Lobby / Trophy /
+            Skins panels. It is no longer sticky/floating, carries
+            no ⚙ and no ?, and spans the panel's inner width (the
+            Chapters column caps it at 520px like the rest of that
+            screen; the Lobby family lets it run full inner width).
+         2) ⚙ Settings + ? Help are splash corner buttons, with the
+            settings popover anchored under them on the title screen.
+         3) The tab bar is THREE tabs (LOBBY · BATTLE · RANKS).
+         The big top padding the shell screens used to reserve for
+         the floating outside bar is released — the header now
+         takes its own room in flow. Bottom padding (tab-bar
+         clearance) is untouched, as is all phone/PC framing.
+         ============================================================ */
+      .shell-top {
+        position: relative; top: auto; z-index: 30;
+        width: 100%; margin: 0 auto 10px;
+        flex: 0 0 auto; align-self: center;
+      }
+      #menuOverlay > .shell-top { max-width: 520px; }
+      .lobby > .shell-top { max-width: none; margin-left: 0; margin-right: 0; }
+      /* Splash corner buttons: same chunky shell-icon language */
+      .splash-corners {
+        position: absolute; z-index: 5;
+        top: calc(14px + env(safe-area-inset-top, 0px)); right: 14px;
+        display: flex; gap: 8px;
+      }
+      .splash-corner-btn {
+        width: 46px; height: 46px; border-radius: 14px;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 20px; font-weight: 800; color: #ffe9c2; cursor: pointer;
+        background: linear-gradient(180deg, rgba(165,105,47,.95), rgba(124,74,30,.95));
+        border: 2.5px solid #d9a83f;
+        box-shadow: 0 3px 0 rgba(43,20,4,.55), inset 0 2px 0 rgba(255,236,180,.35);
+        touch-action: manipulation; font-family: inherit;
+      }
+      .splash-corner-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(43,20,4,.55); }
+      .splash .splash-settings-pop {
+        top: calc(70px + env(safe-area-inset-top, 0px)); right: 14px; z-index: 6;
+      }
+      /* Three balanced tabs */
+      .tab-bar { grid-template-columns: repeat(3, 1fr); }
+      @media (max-width: 700px) {
+        /* The header is in flow now — the shell screens no longer
+           need the 70–76px top reserve the floating bar required. */
+        #menuOverlay, #menuOverlay.chapters-clean { padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
+        .lobby { padding-top: calc(12px + env(safe-area-inset-top, 0px)); }
+      }
     </style>
   </head>
   <body>
@@ -2647,6 +2700,21 @@
     <div class="splash" id="splashOverlay" role="dialog" aria-label="Invasion of the Turkeys — title screen">
       <canvas class="splash-art" id="splashCanvas" width="840" height="1180" aria-hidden="true"></canvas>
       <div class="splash-shade"></div>
+      <!-- Settings + Help live HERE now (Q's shell rework): the gear
+           and the ? are corner buttons on the title screen itself,
+           not on the shell top bar. The gear opens the same settings
+           popover the shell used to carry; the ? opens How to Play. -->
+      <div class="splash-corners">
+        <button class="splash-corner-btn" id="btnSplashHow" type="button" aria-label="How to play" title="How to Play">?</button>
+        <button class="splash-corner-btn" id="btnSplashGear" type="button" aria-label="Settings" title="Settings" aria-expanded="false">⚙</button>
+      </div>
+      <div class="settings-pop splash-settings-pop" id="splashSettingsPop" hidden>
+        <h4>⚙ Settings</h4>
+        <button type="button" id="btnSplashSetSound">🔊 Sound: On</button>
+        <button type="button" id="btnSplashSetHow">❓ How to Play</button>
+        <button type="button" id="btnSplashSetTrailer">▶ Watch the Trailer</button>
+        <button type="button" id="btnSplashSetCredits">🎬 Credits</button>
+      </div>
       <div class="splash-content">
         <div class="game-logo" aria-label="Invasion of the Turkeys">
           <span class="logo-top">INVASION</span>
@@ -2661,29 +2729,6 @@
       <p class="splash-ver">12 LEVELS · 12 BOSSES · ONE CRANBERRY CANNON</p>
     </div>
     <main class="wrap">
-      <!-- Shell top HUD bar (menu / lobby shell only): player badge,
-           coins pill and corner icons — hidden during gameplay. -->
-      <div class="shell-top" id="shellTop">
-        <div class="player-badge">
-          <span class="player-avatar" aria-hidden="true">🦃</span>
-          <span class="player-meta"><b>WarKing</b><small id="shellProgress">Chapter 1 of 12</small></span>
-        </div>
-        <div class="shell-right">
-          <button class="shell-icon chest-btn" id="btnShellChests" type="button" aria-label="Harvest Chests" title="Harvest Chests">🎁<span class="chest-count" id="chestCountBadge" hidden>0</span><span class="chest-dot" id="chestDot" hidden></span></button>
-          <span class="coins-pill" aria-label="Coins">🪙 <b id="shellCoins">0</b></span>
-          <button class="shell-icon" id="btnShellHow" type="button" aria-label="How to play" title="How to Play">?</button>
-          <button class="shell-icon" id="btnShellCredits" type="button" aria-label="Credits" title="Credits">🎬</button>
-          <button class="shell-icon" id="btnShellGear" type="button" aria-label="Settings" title="Settings" aria-expanded="false">⚙</button>
-        </div>
-        <div class="settings-pop" id="settingsPop" hidden>
-          <h4>⚙ Settings</h4>
-          <button type="button" id="btnSetSound">🔊 Sound: On</button>
-          <button type="button" id="btnSetHow">❓ How to Play</button>
-          <button type="button" id="btnSetTrailer">▶ Watch the Trailer</button>
-          <button type="button" id="btnSetCredits">🎬 Credits</button>
-        </div>
-      </div>
-
       <!-- Stage -->
       <div class="stage" id="stage">
         <!-- The play field: the canvas with the HUD and the thumb
@@ -2724,6 +2769,27 @@
              used to stack underneath lives parked, never rendered,
              in .legacy-park below. -->
         <div class="overlay chapters-clean" id="menuOverlay">
+          <!-- Shell header — INSIDE the bordered panel (Q's shell
+               rework): there is no outside top bar any more. This
+               one header row (avatar + name + progress on the left,
+               chests / coins / trailer-credits on the right) sits at
+               the top of the panel on EVERY shell screen — placeShellTop()
+               in the script moves this single node into the Lobby,
+               Trophy and Skins panels when one of those is showing,
+               and back here for Chapters / Ranks / menu panels.
+               Settings (⚙) and Help (?) are NOT here: they live on
+               the splash / title screen as corner buttons. -->
+          <div class="shell-top" id="shellTop">
+            <div class="player-badge">
+              <span class="player-avatar" aria-hidden="true">🦃</span>
+              <span class="player-meta"><b>WarKing</b><small id="shellProgress">Chapter 1 of 12</small></span>
+            </div>
+            <div class="shell-right">
+              <button class="shell-icon chest-btn" id="btnShellChests" type="button" aria-label="Harvest Chests" title="Harvest Chests">🎁<span class="chest-count" id="chestCountBadge" hidden>0</span><span class="chest-dot" id="chestDot" hidden></span></button>
+              <span class="coins-pill" aria-label="Coins">🪙 <b id="shellCoins">0</b></span>
+              <button class="shell-icon" id="btnShellCredits" type="button" aria-label="Credits" title="Credits">🎬</button>
+            </div>
+          </div>
           <div class="chapters-main" id="chaptersMain">
           <!-- Chapter heading ABOVE the diorama, Backpack-style:
                chapter name in chunky type, boss/waves line under it. -->
@@ -2994,13 +3060,15 @@
         </div>
       </section>
 
-      <!-- Bottom tab bar (menu / lobby shell): CHAPTERS · BATTLE ·
-           LOBBY · RANKS, with BATTLE raised in the middle. Switches
-           shell views; hidden during gameplay. -->
+      <!-- Bottom tab bar (menu / lobby shell): THREE tabs balanced
+           evenly — LOBBY · BATTLE · RANKS, with BATTLE raised in the
+           middle (Q's shell rework: the old CHAPTERS tab is gone —
+           BATTLE is the one door to chapter picking, and it opens
+           the featured-chapter page; it never starts a run itself).
+           Switches shell views; hidden during gameplay. -->
       <nav class="tab-bar" id="tabBar" aria-label="Main navigation">
-        <button class="tab active" type="button" data-tab="chapters"><span class="tab-ico">🗺️</span><span>CHAPTERS</span></button>
-        <button class="tab tab-battle" type="button" data-tab="battle" aria-label="Battle — start the next chapter"><span class="tab-ico">⚔️</span><span class="tab-label">BATTLE</span></button>
         <button class="tab" type="button" data-tab="lobby"><span class="tab-ico">🔧</span><span>LOBBY</span></button>
+        <button class="tab tab-battle active" type="button" data-tab="battle" aria-label="Battle — pick your chapter and see its board and boss"><span class="tab-ico">⚔️</span><span class="tab-label">BATTLE</span></button>
         <button class="tab" type="button" data-tab="ranks"><span class="tab-ico">🏆</span><span>RANKS</span></button>
       </nav>
 
@@ -7956,7 +8024,31 @@
       /* ---------- Shell chrome visibility + navigation ---------- */
       var shellChromeShown = null;
       var shellLobbyShown = null;
+      /* The header lives INSIDE the bordered panel (Q's rework):
+         one .shell-top node, moved into whichever shell panel is
+         on screen — the Chapters stage overlay (which also hosts
+         Ranks and the menu panels), the Lobby, the Trophy page or
+         the Skins page. Runs every frame via syncShellChrome, so
+         it tracks every navigation path without each one having
+         to know about it. Moving the node keeps its listeners and
+         the coin-flight target intact. */
+      function placeShellTop() {
+        var top = document.getElementById("shellTop");
+        if (!top) return;
+        var host = menuOverlay;
+        if (trophyPanel && !trophyPanel.hidden) host = trophyPanel;
+        else if (skinsPanel && !skinsPanel.hidden) host = skinsPanel;
+        else if (lobbyPanel && !lobbyPanel.hidden) host = lobbyPanel;
+        if (top.parentNode === host) return;
+        if (host === menuOverlay) host.insertBefore(top, host.firstChild);
+        else {
+          var anchor = host.querySelector(".lobby-head");
+          if (anchor) host.insertBefore(top, anchor);
+          else host.insertBefore(top, host.firstChild);
+        }
+      }
       function syncShellChrome() {
+        placeShellTop();
         var show = !menuOverlay.hidden || !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden) || (skinsPanel && !skinsPanel.hidden);
         var inLobby = !lobbyPanel.hidden || (trophyPanel && !trophyPanel.hidden) || (skinsPanel && !skinsPanel.hidden);
         /* Full-screen field: whenever the shell is down a run is
@@ -8034,6 +8126,10 @@
       window.addEventListener("resize", fitFieldToScreen);
       window.addEventListener("orientationchange", fitFieldToScreen);
       function setShellView(v) {
+        /* The CHAPTERS tab is gone (Q's rework): the featured-
+           chapter page IS the BATTLE tab's page now, so every
+           older "chapters" call lights BATTLE instead. */
+        if (v === "chapters") v = "battle";
         shellView = v;
         var tabs = document.querySelectorAll(".tab-bar .tab");
         for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle("active", tabs[i].getAttribute("data-tab") === v);
@@ -8075,7 +8171,11 @@
         var tab = btn.getAttribute("data-tab");
         var pop = document.getElementById("settingsPop");
         if (pop) pop.hidden = true;
-        if (tab === "battle") { startFromMenu(highestUnlocked); return; }
+        /* BATTLE never starts a run (Q's rework): it opens the
+           featured-chapter page — board description, boss, waves,
+           feather objectives, arrows, thumbnail strip — and the
+           run starts only from that page's START button. */
+        if (tab === "battle") { goShellMenu(); closeMenuPanels(); setShellView("battle"); return; }
         if (tab === "lobby") {
           lobbyTarget = featuredIdx <= highestUnlocked ? featuredIdx : highestUnlocked;
           showLobby("menu");
@@ -8083,47 +8183,29 @@
           return;
         }
         if (tab === "ranks") { goShellMenu(); showPanelForce("panelBoard"); setShellView("ranks"); return; }
-        // chapters
         goShellMenu();
         closeMenuPanels();
-        setShellView("chapters");
+        setShellView("battle");
       });
 
-      /* ---------- Top bar icons + settings ---------- */
+      /* ---------- Header icons + settings ----------
+         The header keeps only chests + credits; ⚙ Settings and
+         ? Help moved to the splash (see the splash wiring below).
+         refreshSettingsLabels keeps BOTH sound labels honest —
+         the splash popover is the live one now. */
       function refreshSettingsLabels() {
+        var label = muted ? "🔇 Sound: Off" : "🔊 Sound: On";
         var b = document.getElementById("btnSetSound");
-        if (b) b.textContent = muted ? "🔇 Sound: Off" : "🔊 Sound: On";
+        if (b) b.textContent = label;
+        var b2 = document.getElementById("btnSplashSetSound");
+        if (b2) b2.textContent = label;
       }
-      document.getElementById("btnShellHow").addEventListener("click", function () { ac(); goShellMenu(); showPanelForce("panelHow"); setShellView("chapters"); });
       document.getElementById("btnShellCredits").addEventListener("click", function () { ac(); goShellMenu(); showPanelForce("panelCredits"); setShellView("chapters"); });
-      document.getElementById("btnShellGear").addEventListener("click", function () {
-        ac();
-        var pop = document.getElementById("settingsPop");
-        var willShow = pop.hidden;
-        pop.hidden = !willShow;
-        this.setAttribute("aria-expanded", willShow ? "true" : "false");
-        refreshSettingsLabels();
-      });
-      document.getElementById("btnSetSound").addEventListener("click", function () {
-        setMuted(!muted);
-      });
-      document.getElementById("btnSetHow").addEventListener("click", function () {
-        document.getElementById("settingsPop").hidden = true;
-        goShellMenu(); showPanelForce("panelHow"); setShellView("chapters");
-      });
-      document.getElementById("btnSetCredits").addEventListener("click", function () {
-        document.getElementById("settingsPop").hidden = true;
-        goShellMenu(); showPanelForce("panelCredits"); setShellView("chapters");
-      });
-      document.getElementById("btnSetTrailer").addEventListener("click", function () {
-        document.getElementById("settingsPop").hidden = true;
-        openTrailer(0);
-      });
       document.addEventListener("pointerdown", function (ev) {
-        var pop = document.getElementById("settingsPop");
+        var pop = document.getElementById("splashSettingsPop");
         if (!pop || pop.hidden) return;
-        var top = document.getElementById("shellTop");
-        if (top && !top.contains(ev.target)) pop.hidden = true;
+        var sp = document.getElementById("splashOverlay");
+        if (sp && !sp.contains(ev.target)) pop.hidden = true;
       });
 
       /* ---------- Splash ---------- */
@@ -8255,6 +8337,53 @@
         syncShellChrome();
       }
       document.getElementById("btnSplashStart").addEventListener("click", function (ev) { ev.stopPropagation(); dismissSplash(); });
+      /* ---------- Splash corner buttons: ⚙ Settings + ? Help ----------
+         These live on the title screen ONLY (Q's rework — they left
+         the shell entirely). The gear toggles the settings popover
+         right there on the splash, with the same four actions the
+         old shell popover had; How / Credits / Trailer first step
+         through the splash into the shell, exactly where those
+         screens have always lived. Every handler stops propagation
+         so a corner tap never falls through to the splash's
+         tap-anywhere-to-start. */
+      document.getElementById("splashSettingsPop").addEventListener("click", function (ev) { ev.stopPropagation(); });
+      document.getElementById("btnSplashGear").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        ac();
+        var pop = document.getElementById("splashSettingsPop");
+        var willShow = pop.hidden;
+        pop.hidden = !willShow;
+        this.setAttribute("aria-expanded", willShow ? "true" : "false");
+        refreshSettingsLabels();
+      });
+      document.getElementById("btnSplashHow").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        ac();
+        dismissSplash();
+        goShellMenu(); showPanelForce("panelHow"); setShellView("chapters");
+      });
+      document.getElementById("btnSplashSetSound").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        setMuted(!muted);
+      });
+      document.getElementById("btnSplashSetHow").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        document.getElementById("splashSettingsPop").hidden = true;
+        dismissSplash();
+        goShellMenu(); showPanelForce("panelHow"); setShellView("chapters");
+      });
+      document.getElementById("btnSplashSetCredits").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        document.getElementById("splashSettingsPop").hidden = true;
+        dismissSplash();
+        goShellMenu(); showPanelForce("panelCredits"); setShellView("chapters");
+      });
+      document.getElementById("btnSplashSetTrailer").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        document.getElementById("splashSettingsPop").hidden = true;
+        dismissSplash();
+        openTrailer(0);
+      });
       document.getElementById("splashOverlay").addEventListener("click", function () { dismissSplash(); });
       window.addEventListener("keydown", function (ev) {
         if (!splashVisible) return;
