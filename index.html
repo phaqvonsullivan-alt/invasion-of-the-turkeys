@@ -2691,6 +2691,172 @@
         #menuOverlay, #menuOverlay.chapters-clean { padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
         .lobby { padding-top: calc(12px + env(safe-area-inset-top, 0px)); }
       }
+
+      /* ============================================================
+         CANNON CENTERPIECE PASS (Package 012 final clarification +
+         WarKing's cannon notes) — PORTRAIT LOBBY ONLY.
+         The hero cannon grows richer and comes alive in canvas
+         (see drawCannonOn's hero extras + drawLobbyPreview's flag,
+         muzzle smoke and fuse sparks). Around the stage edges sit
+         FOUR compact icon buttons for EXISTING systems only —
+         WORKSHOP + SKINS across the top corners, TROPHY + CHESTS
+         across the bottom corners (the Swift Boots slot stays
+         centred between them). These REPLACE the old hub rail —
+         nothing is duplicated. Extra pizzazz: a slow golden
+         breathing glow on the stage card, a shine sweep on the
+         edge buttons, and a focus flash when WORKSHOP is tapped.
+         ============================================================ */
+      .edge-row {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 10px; width: 100%;
+      }
+      .edge-row-top { margin: 2px 0 9px; }
+      .edge-row-bottom { margin: 11px 0 2px; }
+      .edge-row-bottom .slot-under { margin-top: 0; flex: 0 0 auto; }
+      .edge-btn {
+        position: relative; overflow: hidden; cursor: pointer; font-family: inherit;
+        flex: 0 0 auto; width: 118px; min-height: 62px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+        padding: 7px 6px 6px; border-radius: 16px; color: #fff3d6;
+        background: linear-gradient(180deg, rgba(96,58,24,.97), rgba(46,26,10,.98));
+        border: 3px solid #d9a83f;
+        box-shadow: 0 5px 0 rgba(20,6,2,.5), 0 10px 20px rgba(20,6,2,.3), inset 0 2px 0 rgba(255,217,138,.3);
+        touch-action: manipulation;
+      }
+      .edge-btn::after {
+        content: ""; position: absolute; top: 0; bottom: 0; left: -70%; width: 45%;
+        background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,246,214,.35), rgba(255,255,255,0));
+        transform: skewX(-18deg); pointer-events: none;
+        animation: edgeShine 3.8s ease-in-out infinite;
+      }
+      @keyframes edgeShine { 0%, 55% { left: -70%; } 85%, 100% { left: 130%; } }
+      .edge-btn:active { transform: translateY(3px) scale(.97); box-shadow: 0 2px 0 rgba(20,6,2,.5), inset 0 2px 0 rgba(255,217,138,.3); }
+      .edge-btn .edge-ico {
+        font-size: 23px; line-height: 1.1;
+        filter: drop-shadow(0 2px 3px rgba(20,6,2,.55));
+      }
+      .edge-btn .edge-label {
+        font-family: var(--font-display); font-weight: 400; font-size: 13px; letter-spacing: .07em;
+        color: #ffd968; text-shadow: 0 2px 0 rgba(90,20,8,.6); line-height: 1.1;
+      }
+      .edge-btn .edge-sub { font-size: 10px; font-weight: 700; color: #f3d9ae; line-height: 1.15; }
+      .edge-btn .hub-dot { top: -5px; right: -5px; }
+      .edge-btn .hub-count { top: -9px; right: -9px; }
+      @media (max-width: 400px) {
+        .edge-btn { width: 104px; min-height: 58px; }
+        .edge-btn .edge-ico { font-size: 20px; }
+        .edge-btn .edge-label { font-size: 12px; }
+      }
+      /* The stage card breathes gold while the Lobby is up. */
+      .hero-preview { animation: heroCardGlow 3.4s ease-in-out infinite alternate; }
+      @keyframes heroCardGlow {
+        from { box-shadow: 0 6px 0 rgba(20,6,2,.35), 0 14px 30px rgba(20,6,2,.35), 0 0 10px rgba(255,205,90,.25); }
+        to   { box-shadow: 0 6px 0 rgba(20,6,2,.35), 0 14px 30px rgba(20,6,2,.35), 0 0 26px rgba(255,205,90,.6); }
+      }
+      /* WORKSHOP tap feedback: the detail bar flashes its gold ring. */
+      .slot-detail.focus-flash { animation: focusFlash 1.15s ease; }
+      @keyframes focusFlash {
+        0%, 100% { box-shadow: 0 5px 0 rgba(20,6,2,.45), inset 0 2px 0 rgba(255,217,138,.22); }
+        30%, 65% { box-shadow: 0 5px 0 rgba(20,6,2,.45), 0 0 0 4px #ffd968, 0 0 24px rgba(255,217,104,.8), inset 0 2px 0 rgba(255,217,138,.4); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .edge-btn::after, .hero-preview, .slot-detail.focus-flash { animation: none; }
+      }
+      /* --- Rails, BATTLE pill, header deltas (Chat's directive) ---
+         The four (now five, with WEAPONS) tiles live in rail
+         columns flanking the stage, stacked around the slot
+         columns: LEFT = WORKSHOP / WEAPONS / SKINS, RIGHT =
+         CHESTS / TROPHY. Rail tiles are compact so the columns
+         stay level with the stage canvas; slots inside a rail
+         column flex to fill whatever height is left. Press
+         feedback: every tile and the BATTLE pill compress on
+         :active (pointerdown) and spring back on release. */
+      .rail-col { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+      .rail-col .slot-col { flex: 1 1 auto; min-height: 0; }
+      .rail-btn {
+        width: 100%; min-height: 52px; padding: 6px 2px 5px; border-radius: 14px;
+        transition: transform .08s ease, box-shadow .08s ease;
+      }
+      .rail-btn .edge-ico { font-size: 20px; }
+      .rail-btn .edge-ico svg { display: block; width: 23px; height: 23px; }
+      .rail-btn .edge-label { font-size: 8.5px; letter-spacing: 0; }
+      .rail-col .up-slot { min-height: 44px; padding: 4px 2px 3px; border-radius: 12px; }
+      .rail-col .up-slot .slot-ico { font-size: 19px; }
+      .rail-col .up-slot .slot-pips { font-size: 7.5px; letter-spacing: 1px; }
+      .edge-btn { transition: transform .08s ease, box-shadow .08s ease; }
+      /* Big golden BATTLE pill — under the stage, above the tab bar */
+      .battle-pill {
+        position: relative; overflow: hidden; cursor: pointer;
+        width: 100%; min-height: 62px; margin-top: 12px;
+        display: flex; align-items: center; justify-content: center; gap: 11px;
+        font-family: var(--font-display); font-weight: 400; font-size: 23px; letter-spacing: .05em;
+        color: #3a2002; text-shadow: 0 1px 0 rgba(255,246,214,.55);
+        background: linear-gradient(180deg, #ffd968 0%, #e8a94c 58%, #c97b24 100%);
+        border: 3px solid #8a5a10; border-radius: 999px;
+        box-shadow: 0 5px 0 #8a5a10, 0 12px 24px rgba(20,6,2,.35), inset 0 2px 0 rgba(255,255,255,.65);
+        touch-action: manipulation;
+        transition: transform .08s ease, box-shadow .08s ease;
+      }
+      .battle-pill span { font-family: var(--font-ui); font-size: 12.5px; font-weight: 800; letter-spacing: .02em; color: #6b3d08; text-shadow: none; }
+      .battle-pill::after {
+        content: ""; position: absolute; top: 0; bottom: 0; left: -70%; width: 45%;
+        background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,.5), rgba(255,255,255,0));
+        transform: skewX(-18deg); pointer-events: none;
+        animation: edgeShine 3.8s ease-in-out infinite;
+      }
+      .battle-pill:active { transform: translateY(3px) scale(.98); box-shadow: 0 2px 0 #8a5a10, 0 6px 14px rgba(20,6,2,.3), inset 0 2px 0 rgba(255,255,255,.65); }
+      /* Header feathers pill — crimson/gold, beside the coins pill */
+      .coins-pill.feathers-pill {
+        background: linear-gradient(180deg, #d95f4b, #b23a2e 60%, #7e2418);
+        border-color: #ffb52e; color: #fff3d6;
+        box-shadow: 0 3px 0 rgba(43,20,4,.5), inset 0 2px 0 rgba(255,217,138,.4);
+      }
+      /* Turkey player icon in its gold frame (SVG head, no emoji) */
+      .player-avatar { overflow: hidden; padding: 0; }
+      .player-avatar svg { display: block; width: 100%; height: 100%; }
+      @media (prefers-reduced-motion: reduce) { .battle-pill::after { animation: none; } }
+
+      /* ============================================================
+         LOBBY MATCH-THE-CONCEPT FIX (Jasmine's 390x844 capture)
+         1) Stage is WIDE + SHORT (640x400) at full panel width;
+            the cannon is drawn LARGE on a wide wooden platform
+            (see drawLobbyPreview) - no tall empty sky box.
+         2) Stage scene is the SUNSET farm (same golden-hour
+            palette as the lobby backdrop + the concept), not
+            daytime blue.
+         3) Rails are CLEAN: side columns carry ONLY system tiles
+            (LEFT WORKSHOP / WEAPONS / SKINS, RIGHT CHESTS /
+            TROPHY); ALL seven upgrade slots live in ONE tidy grid
+            below the stage, above the slot-detail bar. On phones
+            the stage goes full width and the five system tiles
+            form ONE clean row directly under it.
+         4) Lobby title + intro collapse to ONE compact line so
+            the stage + BATTLE pill sit high on the screen.
+         ============================================================ */
+      .lobby-head-compact { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 2px; }
+      .lobby-head-compact h2 { font-size: 23px; }
+      .lobby-head-compact .lobby-sub { font-size: 13px; font-weight: 700; color: #ffe9c2; text-shadow: 0 1px 5px rgba(20,6,2,.5); }
+      .hero-stage-wide { display: grid; grid-template-columns: 84px minmax(0, 1fr) 84px; gap: 10px; align-items: stretch; min-height: 0; position: relative; }
+      .hero-stage-wide .rail-col { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+      .hero-stage-wide .rail-btn { flex: 1 1 0; width: 100%; min-height: 52px; }
+      .hero-stage-wide .hero-preview { margin: 0; justify-self: stretch; width: auto; }
+      .hero-stage-wide .hero-preview canvas { aspect-ratio: 640 / 400; width: 100%; height: auto; }
+      .slots-kicker { text-align: center; margin: 12px 0 0; font-size: 10.5px; font-weight: 800; letter-spacing: .2em; color: #ffd968; text-shadow: 0 2px 0 rgba(90,20,8,.6); }
+      .slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+      .slots-grid .up-slot { min-height: 64px; }
+      @media (min-width: 700px) {
+        .slots-grid { grid-template-columns: repeat(7, 1fr); }
+        .slots-grid .up-slot { min-height: 70px; }
+      }
+      @media (max-width: 620px) {
+        .hero-stage-wide { grid-template-columns: repeat(5, 1fr); grid-template-rows: auto auto; gap: 8px; min-height: 0; }
+        .hero-stage-wide .hero-preview { grid-column: 1 / -1; grid-row: 1; }
+        .hero-stage-wide .rail-left { grid-column: 1 / 4; grid-row: 2; flex-direction: row; }
+        .hero-stage-wide .rail-right { grid-column: 4 / 6; grid-row: 2; flex-direction: row; }
+        .hero-stage-wide .rail-btn { flex: 1 1 0; min-height: 56px; }
+        .lobby-head-compact h2 { font-size: 21px; }
+        .slots-grid { grid-template-columns: repeat(4, 1fr); }
+      }
     </style>
   </head>
   <body>
@@ -2781,12 +2947,13 @@
                the splash / title screen as corner buttons. -->
           <div class="shell-top" id="shellTop">
             <div class="player-badge">
-              <span class="player-avatar" aria-hidden="true">🦃</span>
+              <span class="player-avatar" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><g><ellipse cx="24" cy="13" rx="4.6" ry="10.5" fill="#c98a3d"/><ellipse cx="24" cy="13" rx="4.6" ry="10.5" fill="#8a5a2a" transform="rotate(-38 24 24)"/><ellipse cx="24" cy="13" rx="4.6" ry="10.5" fill="#a5692f" transform="rotate(38 24 24)"/><ellipse cx="24" cy="13" rx="4.6" ry="10.5" fill="#6e4520" transform="rotate(-19 24 24)"/><ellipse cx="24" cy="13" rx="4.6" ry="10.5" fill="#a5692f" transform="rotate(19 24 24)"/><circle cx="17" cy="6.5" r="1.7" fill="#f7e3bd"/><circle cx="31" cy="6.5" r="1.7" fill="#f7e3bd"/><circle cx="24" cy="4.6" r="1.7" fill="#f7e3bd"/></g><circle cx="24" cy="29" r="10.5" fill="#b08954"/><path d="M14.1 25.2 Q24 17.6 33.9 25.2 L33.9 21.4 Q24 14.2 14.1 21.4 Z" fill="#b23a2e"/><circle cx="34.6" cy="21.8" r="2.1" fill="#93301f"/><path d="M35.8 23.2 L38.6 27.4 L34.9 26.6 Z" fill="#b23a2e"/><circle cx="20.1" cy="28.6" r="2.7" fill="#fff7e8"/><circle cx="27.9" cy="28.6" r="2.7" fill="#fff7e8"/><circle cx="20.4" cy="28.9" r="1.35" fill="#241408"/><circle cx="27.6" cy="28.9" r="1.35" fill="#241408"/><circle cx="20.9" cy="28.3" r="0.5" fill="#ffffff"/><circle cx="28.1" cy="28.3" r="0.5" fill="#ffffff"/><polygon points="24,31.2 20.6,33.8 27.4,33.8" fill="#e8a94c" stroke="#c97b24" stroke-width="0.7"/><ellipse cx="28.6" cy="35.6" rx="1.7" ry="2.9" fill="#c22f3d" transform="rotate(14 28.6 35.6)"/><circle cx="17.6" cy="32.6" r="1.6" fill="rgba(224,104,79,.45)"/><circle cx="30.4" cy="32.6" r="1.6" fill="rgba(224,104,79,.45)"/></svg></span>
               <span class="player-meta"><b>WarKing</b><small id="shellProgress">Chapter 1 of 12</small></span>
             </div>
             <div class="shell-right">
               <button class="shell-icon chest-btn" id="btnShellChests" type="button" aria-label="Harvest Chests" title="Harvest Chests">🎁<span class="chest-count" id="chestCountBadge" hidden>0</span><span class="chest-dot" id="chestDot" hidden></span></button>
               <span class="coins-pill" aria-label="Coins">🪙 <b id="shellCoins">0</b></span>
+              <span class="coins-pill feathers-pill" aria-label="Feathers">🪶 <b id="shellFeathers">0</b></span>
               <button class="shell-icon" id="btnShellCredits" type="button" aria-label="Credits" title="Credits">🎬</button>
             </div>
           </div>
@@ -2908,11 +3075,9 @@
       <!-- Lobby: spend collected coins on weapon upgrades between runs -->
       <section class="lobby" id="lobbyPanel" hidden aria-label="Lobby and weapon workshop">
         <canvas class="lobby-bg" id="lobbyBgCanvas" width="760" height="1150" aria-hidden="true"></canvas>
-        <div class="lobby-head">
-          <div>
-            <h2>The Lobby</h2>
-            <p>Home base between runs. Every coin your cannon collects out there lands here — spend them on the guns and watch the cannon itself change.</p>
-          </div>
+        <div class="lobby-head lobby-head-compact">
+          <h2>The Lobby</h2>
+          <span class="lobby-sub">Home base — spend coins on your cannon</span>
         </div>
         <div class="lobby-banner" id="lobbyBanner" hidden></div>
 
@@ -2923,15 +3088,52 @@
              left, three right, Swift Boots centred under the stats
              row. Tap a slot to select it; the detail bar under the
              stage carries its effect and the Upgrade button. -->
-        <p class="hero-kicker">⚙ WEAPON WORKSHOP — TAP A SLOT TO UPGRADE</p>
-        <div class="hero-stage">
-          <div class="slot-col" id="slotColLeft" aria-label="Upgrade slots, left"></div>
-          <div class="preview-card hero-preview">
-            <canvas id="lobbyCanvas" width="400" height="580" aria-label="Preview of your upgraded cranberry cannon in the barnyard"></canvas>
+        <p class="hero-kicker">✦ YOUR CRANBERRY CANNON ✦</p>
+        <!-- Icon rails flanking the stage (WarKing's concept +
+             Package 012 final): chunky illustrated tiles for
+             EXISTING systems only — LEFT rail: WORKSHOP, SKINS;
+             RIGHT rail: CHESTS, TROPHY — with the seven upgrade
+             slots staying around the cannon between them as the
+             working workshop, and Swift Boots centred under the
+             stage. No Store tile: no store system exists. -->
+        <div class="hero-stage hero-stage-wide">
+          <div class="rail-col rail-left" aria-label="Workshop, weapons and skins">
+            <button class="edge-btn rail-btn" id="btnEdgeWorkshop" type="button" aria-label="Workshop — bring the upgrade slots and detail into focus">
+              <span class="edge-ico" aria-hidden="true">🔧</span>
+              <span class="edge-label">WORKSHOP</span>
+            </button>
+            <button class="edge-btn rail-btn" id="btnEdgeWeapons" type="button" aria-label="Weapons — your cannon and its upgrades, in the Workshop">
+              <span class="edge-ico" aria-hidden="true"><svg viewBox="0 0 28 28" focusable="false"><rect x="12.2" y="4.6" width="4.6" height="12" rx="2" fill="#c22f6d" stroke="#5e1236" stroke-width="1"/><rect x="11.2" y="2.6" width="6.6" height="3.4" rx="1.6" fill="#ffd968" stroke="#8a5a10" stroke-width="0.9"/><path d="M9 16.6 L20 16.6 L22.4 21 L6.6 21 Z" fill="#7c4a1e" stroke="#4a2c10" stroke-width="1"/><circle cx="8.6" cy="22.6" r="3.9" fill="#6e4520" stroke="#3a2410" stroke-width="1.1"/><circle cx="20.4" cy="22.6" r="3.9" fill="#6e4520" stroke="#3a2410" stroke-width="1.1"/><circle cx="8.6" cy="22.6" r="1.4" fill="#c22f3d"/><circle cx="20.4" cy="22.6" r="1.4" fill="#d9a83f"/></svg></span>
+              <span class="edge-label">WEAPONS</span>
+            </button>
+            <button class="edge-btn rail-btn" id="btnEdgeSkins" type="button" aria-label="Skins — cannon looks bought with feathers">
+              <span class="edge-ico" aria-hidden="true">🎨</span>
+              <span class="edge-label">SKINS</span>
+            </button>
           </div>
-          <div class="slot-col" id="slotColRight" aria-label="Upgrade slots, right"></div>
+          <div class="preview-card hero-preview">
+            <canvas id="lobbyCanvas" width="640" height="400" aria-label="Your cranberry cannon, big and alive on its farm stage — flag fluttering, smoke curling from the muzzle, sparks at the fuse"></canvas>
+          </div>
+          <div class="rail-col rail-right" aria-label="Chests and trophy">
+            <button class="edge-btn rail-btn" id="btnEdgeChests" type="button" aria-label="Chests — open your Harvest Chests">
+              <span class="edge-ico" aria-hidden="true">🎁</span>
+              <span class="edge-label">CHESTS</span>
+              <span class="hub-count" id="hubChestCount" hidden>0</span>
+            </button>
+            <button class="edge-btn rail-btn" id="btnEdgeTrophy" type="button" aria-label="Trophy Room — progress, achievements and chapter bests">
+              <span class="edge-ico" aria-hidden="true">🏆</span>
+              <span class="edge-label">TROPHY</span>
+              <span class="hub-dot" id="trophyDot" hidden></span>
+            </button>
+          </div>
         </div>
-        <div class="slot-under" id="slotUnder" aria-label="Upgrade slot, bottom"></div>
+        <!-- Big golden BATTLE pill (WarKing's concept): directly
+             under the stage, above the tab bar. It opens the
+             chapter-selection page — the same page as the BATTLE
+             tab — and never starts a fight directly. -->
+        <button class="battle-pill" id="btnLobbyBattle" type="button" aria-label="Battle — pick your chapter">⚔️ BATTLE<span>Pick your chapter ▸</span></button>
+        <p class="slots-kicker">✦ UPGRADES — TAP A SLOT ✦</p>
+        <div class="slots-grid" id="slotGridAll" aria-label="Upgrade slots"></div>
         <div class="slot-detail" id="slotDetail">
           <div class="slot-detail-main">
             <h4 id="slotDetailName">Cranberry Damage</h4><span class="pips" id="slotDetailPips"></span>
@@ -2950,33 +3152,8 @@
           </div>
         </div>
 
-        <!-- Icon rail (hub-and-spoke): progress lives behind the
-             Trophy, chests behind the gift. The workshop needs no
-             icon — the stage above IS the workshop. The Trophy
-             dot appears while earned achievements are unseen; the
-             Chests badge counts unopened chests. -->
-        <div class="icon-rail" aria-label="Lobby pages">
-          <button class="hub-btn" id="btnHubTrophy" type="button" aria-label="Trophy — progress, achievements and chapter bests">
-            <span class="hub-ico" aria-hidden="true">🏆</span>
-            <span class="hub-label">TROPHY</span>
-            <span class="hub-sub">Stars · Achievements · Bests</span>
-            <span class="hub-dot" id="trophyDot" hidden></span>
-          </button>
-          <button class="hub-btn" id="btnHubChests" type="button" aria-label="Chests — open your Harvest Chests">
-            <span class="hub-ico" aria-hidden="true">🎁</span>
-            <span class="hub-label">CHESTS</span>
-            <span class="hub-sub">Open Harvest Chests</span>
-            <span class="hub-count" id="hubChestCount" hidden>0</span>
-          </button>
-          <button class="hub-btn" id="btnHubSkins" type="button" aria-label="Skins — cannon looks bought with feathers">
-            <span class="hub-ico" aria-hidden="true">🎨</span>
-            <span class="hub-label">SKINS</span>
-            <span class="hub-sub">Cannon Looks</span>
-          </button>
-        </div>
-
         <!-- Next-Level card lives INSIDE the scroller, right after
-             the icon rail (see the LOBBY SCROLL-CHAIN FIX in the
+             the bank bar (see the LOBBY SCROLL-CHAIN FIX in the
              stylesheet). Everything that used to stack below it —
              chests, leaderboard, chapter bests, achievements — now
              lives on its own page behind the icon rail / tab bar. -->
@@ -5156,6 +5333,27 @@
           for (var sp = 0; sp < 3; sp++) { var sa = sp * Math.PI / 3 + 0.4; c.beginPath(); c.moveTo(w[0] - Math.cos(sa) * (w[2] - 1.5), w[1] - Math.sin(sa) * (w[2] - 1.5)); c.lineTo(w[0] + Math.cos(sa) * (w[2] - 1.5), w[1] + Math.sin(sa) * (w[2] - 1.5)); c.stroke(); }
           c.fillStyle = A.hub; c.beginPath(); c.arc(w[0], w[1], 2.6, 0, Math.PI * 2); c.fill();
         });
+        if (o.hero) {
+          // HERO WHEELS (Lobby stage only): brass-rimmed, riveted,
+          // with a polished gold hub cap — the same wheels, dressed.
+          [[-19, 13], [19, 13]].forEach(function (w) {
+            c.strokeStyle = "#8a5a10"; c.lineWidth = 2.1;
+            c.beginPath(); c.arc(w[0], w[1], 8, 0, Math.PI * 2); c.stroke();
+            c.strokeStyle = "rgba(255,217,104,.75)"; c.lineWidth = 0.9;
+            c.beginPath(); c.arc(w[0], w[1], 8, -2.4, -0.7); c.stroke();
+            c.fillStyle = "#3a2a16";
+            for (var rv = 0; rv < 6; rv++) { var ra = rv * Math.PI / 3 + 0.3; c.beginPath(); c.arc(w[0] + Math.cos(ra) * 6.4, w[1] + Math.sin(ra) * 6.4, 0.85, 0, Math.PI * 2); c.fill(); }
+            c.fillStyle = "#d9a83f"; c.beginPath(); c.arc(w[0], w[1], 3.4, 0, Math.PI * 2); c.fill();
+            c.strokeStyle = "#8a5a10"; c.lineWidth = 1; c.beginPath(); c.arc(w[0], w[1], 3.4, 0, Math.PI * 2); c.stroke();
+            // cranberry cluster at the hub (the concept's mark)
+            [[-1.7, -0.4], [1.7, -0.9], [0.1, 1.7]].forEach(function (cb) {
+              c.fillStyle = "#b23a2e";
+              c.beginPath(); c.arc(w[0] + cb[0], w[1] + cb[1], 1.45, 0, Math.PI * 2); c.fill();
+              c.fillStyle = "rgba(255,255,255,.6)";
+              c.beginPath(); c.arc(w[0] + cb[0] - 0.5, w[1] + cb[1] - 0.5, 0.45, 0, Math.PI * 2); c.fill();
+            });
+          });
+        }
         // wooden carriage (+ a trim line in the skin's metal)
         c.fillStyle = A.carriage;
         c.beginPath(); c.moveTo(-15, 14); c.lineTo(-10, -8); c.lineTo(10, -8); c.lineTo(15, 14); c.closePath(); c.fill();
@@ -5170,6 +5368,38 @@
           c.fillStyle = A.gem; c.fillRect(-2.6, -2.6, 5.2, 5.2);
           c.fillStyle = "rgba(255,255,255,.55)"; c.fillRect(-2.6, -2.6, 2.4, 2.4);
           c.restore();
+        }
+        if (o.hero) {
+          // HERO CARRIAGE (Lobby stage only): layered walnut —
+          // wood grain, iron corner brackets with bolts, a gold
+          // trim line for every skin, and the carved
+          // leaf-and-cranberry motif on the front (the reservoir
+          // itself is the glass sphere up on the barrel).
+          c.strokeStyle = "rgba(40,22,8,.35)"; c.lineWidth = 0.9;
+          c.beginPath(); c.moveTo(-11, 10.5); c.quadraticCurveTo(0, 8.6, 11, 10.5); c.stroke();
+          c.beginPath(); c.moveTo(-12, 4.5); c.quadraticCurveTo(0, 2.8, 12, 4.5); c.stroke();
+          c.beginPath(); c.moveTo(-10.5, -1.5); c.quadraticCurveTo(0, -3, 10.5, -1.5); c.stroke();
+          c.fillStyle = "#33333a";
+          c.fillRect(-14.6, -8.4, 3.4, 3.4); c.fillRect(11.2, -8.4, 3.4, 3.4);
+          c.fillStyle = "rgba(255,255,255,.5)";
+          c.beginPath(); c.arc(-12.9, -6.7, 0.8, 0, Math.PI * 2); c.fill();
+          c.beginPath(); c.arc(12.9, -6.7, 0.8, 0, Math.PI * 2); c.fill();
+          if (skin.id === "farmhand") { c.fillStyle = A.trim; c.fillRect(-11.5, 9.5, 23, 1.8); }
+          // carved motif: a cranberry cluster with two leaves
+          c.fillStyle = "#a11f2c";
+          [[-3.4, 7.4], [3.4, 7.4], [0, 10.2]].forEach(function (cb) {
+            c.fillStyle = "#a11f2c";
+            c.beginPath(); c.arc(cb[0], cb[1], 1.9, 0, Math.PI * 2); c.fill();
+            c.fillStyle = "rgba(255,255,255,.5)";
+            c.beginPath(); c.arc(cb[0] - 0.6, cb[1] - 0.6, 0.55, 0, Math.PI * 2); c.fill();
+          });
+          c.strokeStyle = "rgba(46,84,30,.9)"; c.lineWidth = 1.1;
+          c.save(); c.translate(-4.8, 5); c.rotate(-0.6);
+          c.beginPath(); c.ellipse(0, 0, 2.7, 1.1, 0, 0, Math.PI * 2); c.stroke(); c.restore();
+          c.save(); c.translate(4.8, 5); c.rotate(0.6);
+          c.beginPath(); c.ellipse(0, 0, 2.7, 1.1, 0, 0, Math.PI * 2); c.stroke(); c.restore();
+          c.strokeStyle = "rgba(30,16,6,.4)"; c.lineWidth = 0.8;
+          c.beginPath(); c.arc(0, 7.6, 6.4, 0.35, Math.PI - 0.35); c.stroke();
         }
         // Golden Gobbler's tail-feather fan crest — five turkey
         // feathers fanning up behind the barrel, gold bodies with
@@ -5195,9 +5425,111 @@
         c.fillStyle = A.barrel; c.fillRect(-bw / 2, -26 + kick, bw, 20);
         c.fillStyle = A.barrelHi; c.fillRect(-bw / 2 + 1.5, -26 + kick, Math.max(2, bw * 0.26), 20);
         if (rap > 0) { c.fillStyle = A.trim; for (var band = 0; band < rap; band++) c.fillRect(-bw / 2 - 1, -22 + kick + band * 4, bw + 2, 1.8); }
+        if (o.hero) {
+          // HERO BARREL (Lobby stage only): the concept's glossy
+          // deep cranberry-magenta barrel — a layered gradient
+          // (dark edge, rich magenta heart, bright polished face,
+          // dark edge) so it reads round and lacquered. The Golden
+          // Gobbler skin keeps its identity: same treatment in
+          // polished golds. Two brass bands with rivets follow.
+          var bgx = c.createLinearGradient(-bw / 2, 0, bw / 2, 0);
+          if (skin.id === "golden") {
+            bgx.addColorStop(0, "#8a5f16"); bgx.addColorStop(0.35, "#d9a41f"); bgx.addColorStop(0.55, "#ffd968"); bgx.addColorStop(1, "#8a5f16");
+          } else {
+            bgx.addColorStop(0, "#5e1236"); bgx.addColorStop(0.35, "#a12352"); bgx.addColorStop(0.55, "#e0447c"); bgx.addColorStop(0.78, "#b02a5e"); bgx.addColorStop(1, "#5e1236");
+          }
+          c.fillStyle = bgx; c.fillRect(-bw / 2, -26 + kick, bw, 20);
+          var bgr = c.createLinearGradient(-bw / 2, 0, bw / 2, 0);
+          bgr.addColorStop(0, "#8a5a10"); bgr.addColorStop(0.45, "#ffd968"); bgr.addColorStop(1, "#b4832a");
+          c.fillStyle = bgr;
+          c.fillRect(-bw / 2 - 1.2, -19 + kick, bw + 2.4, 2.6);
+          c.fillRect(-bw / 2 - 1.2, -11.5 + kick, bw + 2.4, 2.6);
+          c.fillStyle = "#6e4408";
+          [-bw / 2 + 2, 0, bw / 2 - 2].forEach(function (rx) {
+            c.beginPath(); c.arc(rx, -17.7 + kick, 0.9, 0, Math.PI * 2); c.fill();
+            c.beginPath(); c.arc(rx, -10.2 + kick, 0.9, 0, Math.PI * 2); c.fill();
+          });
+        }
         // cranberry muzzle ring — its colour IS the current berry colour
         c.fillStyle = BULLET_COLORS[dmg]; c.fillRect(-bw / 2 - 1.5, -28 + kick, bw + 3, 5);
         c.fillStyle = "#1c1410"; c.fillRect(-bw * 0.22, -28.6 + kick, bw * 0.44, 2.2);
+        if (o.hero) {
+          // GOLD MUZZLE RING (the concept): a thick polished gold
+          // ring with rivets caps the barrel — the berry colour
+          // survives as a thin stripe on its very top (damage
+          // readability), and the dark bore is redrawn inside it.
+          var mring = c.createLinearGradient(-bw / 2, 0, bw / 2, 0);
+          mring.addColorStop(0, "#8a5a10"); mring.addColorStop(0.45, "#ffd968"); mring.addColorStop(1, "#b4832a");
+          c.fillStyle = mring; c.fillRect(-bw / 2 - 2.4, -29.6 + kick, bw + 4.8, 6.4);
+          c.fillStyle = BULLET_COLORS[dmg]; c.fillRect(-bw / 2 - 2.4, -29.6 + kick, bw + 4.8, 1.8);
+          c.fillStyle = "#1c1410"; c.fillRect(-bw * 0.22, -29.9 + kick, bw * 0.44, 2.1);
+          c.fillStyle = "#6e4408";
+          [-bw / 2 + 1.6, 0, bw / 2 - 1.6].forEach(function (mrx) {
+            c.beginPath(); c.arc(mrx, -25.9 + kick, 0.95, 0, Math.PI * 2); c.fill();
+          });
+          // brass trim under the muzzle ring + the glossy sheen:
+          // a bright polished stripe down the barrel's face, a
+          // softer second light, and a shaded right edge so the
+          // barrel reads round and premium, not flat.
+          var mgr = c.createLinearGradient(-bw / 2, 0, bw / 2, 0);
+          mgr.addColorStop(0, "#8a5a10"); mgr.addColorStop(0.45, "#ffd968"); mgr.addColorStop(1, "#b4832a");
+          c.fillStyle = mgr; c.fillRect(-bw / 2 - 2.2, -24.4 + kick, bw + 4.4, 2.3);
+          c.fillStyle = "rgba(255,255,255,.34)"; c.fillRect(-bw * 0.18, -26 + kick, bw * 0.16, 20);
+          c.fillStyle = "rgba(255,255,255,.15)"; c.fillRect(bw * 0.13, -26 + kick, bw * 0.10, 20);
+          c.fillStyle = "rgba(0,0,0,.22)"; c.fillRect(bw / 2 - 2.2, -26 + kick, 2.2, 20);
+        }
+        if (o.hero) {
+          // GLASS RESERVOIR SPHERE (the concept): a round glass
+          // globe mounted high on the barrel, filled with sparkling
+          // cranberry-red liquid and whole berries, gold cap on
+          // top, a curved gold pipe feeding down into the barrel.
+          // It bobs a breath and glows softly off o.t.
+          var st2 = o.t || 0;
+          var sbob = reducedMotion ? 0 : Math.sin(st2 * 1.7) * 0.8;
+          var scx = 15.5, scy = -35 + sbob + kick, srad = 7.6;
+          var sglow = c.createRadialGradient(scx, scy, 1, scx, scy, 13.5);
+          var sga = 0.20 + 0.09 * Math.sin(st2 * 2.3);
+          sglow.addColorStop(0, "rgba(255,90,150," + sga + ")"); sglow.addColorStop(1, "rgba(255,90,150,0)");
+          c.fillStyle = sglow; c.beginPath(); c.arc(scx, scy, 13.5, 0, Math.PI * 2); c.fill();
+          // curved gold pipe: sphere's base → the barrel's side
+          c.strokeStyle = "#c9973a"; c.lineWidth = 2.1; c.lineCap = "round";
+          c.beginPath(); c.moveTo(scx - 2, scy + srad - 1.4);
+          c.quadraticCurveTo(scx + 4.5, scy + srad + 2.6, bw / 2 + 0.6, -19 + kick); c.stroke();
+          c.strokeStyle = "rgba(255,236,180,.7)"; c.lineWidth = 0.8;
+          c.beginPath(); c.moveTo(scx - 2.4, scy + srad - 1.8);
+          c.quadraticCurveTo(scx + 3.8, scy + srad + 1.8, bw / 2 + 0.2, -19.4 + kick); c.stroke();
+          // the liquid + whole berries, clipped inside the glass
+          c.save();
+          c.beginPath(); c.arc(scx, scy, srad, 0, Math.PI * 2); c.clip();
+          var liq = c.createLinearGradient(0, scy - srad, 0, scy + srad);
+          liq.addColorStop(0, "#e85d8a"); liq.addColorStop(0.45, "#c22f5e"); liq.addColorStop(1, "#8e1236");
+          c.fillStyle = liq; c.fillRect(scx - srad, scy - srad, srad * 2, srad * 2);
+          [[-3.4, 2.6, "#d93a5e"], [2.8, 3.6, "#a11f42"], [0.4, -0.6, "#e0447c"], [4.4, -1.8, "#b02a52"], [-4.6, -1.2, "#c22f5e"]].forEach(function (bb) {
+            c.fillStyle = bb[2]; c.beginPath(); c.arc(scx + bb[0], scy + bb[1], 1.95, 0, Math.PI * 2); c.fill();
+            c.fillStyle = "rgba(255,255,255,.75)"; c.beginPath(); c.arc(scx + bb[0] - 0.65, scy + bb[1] - 0.65, 0.55, 0, Math.PI * 2); c.fill();
+          });
+          // sparkle bubbles rising in the liquid
+          c.fillStyle = "rgba(255,255,255,.8)";
+          for (var bub = 0; bub < 3; bub++) {
+            var bph = reducedMotion ? 0.4 : ((st2 * 0.35 + bub * 0.37) % 1);
+            c.globalAlpha = 0.75 * (1 - bph);
+            c.beginPath(); c.arc(scx + Math.sin(bub * 4.1) * 3.4, scy + 4.6 - bph * 8.6, 0.85, 0, Math.PI * 2); c.fill();
+          }
+          c.globalAlpha = 1;
+          c.restore();
+          // glass shell: rim light + the shine streak
+          c.strokeStyle = "rgba(255,255,255,.9)"; c.lineWidth = 1.2;
+          c.beginPath(); c.arc(scx, scy, srad, 0, Math.PI * 2); c.stroke();
+          c.save(); c.translate(scx, scy); c.rotate(-0.5);
+          c.fillStyle = "rgba(255,255,255,.55)";
+          c.beginPath(); c.ellipse(-3, -2.2, 1.6, 3.8, 0, 0, Math.PI * 2); c.fill();
+          c.restore();
+          // gold cap + knob
+          var capg = c.createLinearGradient(scx - 3, 0, scx + 3, 0);
+          capg.addColorStop(0, "#8a5a10"); capg.addColorStop(0.5, "#ffd968"); capg.addColorStop(1, "#b4832a");
+          c.fillStyle = capg; c.fillRect(scx - 2.8, scy - srad - 2.4, 5.6, 2.8);
+          c.beginPath(); c.arc(scx, scy - srad - 3.4, 1.5, 0, Math.PI * 2); c.fill();
+        }
         // muzzle flash
         if (o.flash) {
           c.fillStyle = "rgba(255,190,60,.95)"; c.beginPath(); c.ellipse(0, -36 + kick, 7, 11, 0, 0, Math.PI * 2); c.fill();
@@ -6357,8 +6689,31 @@
         if (bg) drawLobbyBackdrop(0, bg);
         trophyPanel.scrollIntoView({ block: "start" });
       }
-      document.getElementById("btnHubTrophy").addEventListener("click", function () { ac(); showTrophy(); });
-      document.getElementById("btnHubChests").addEventListener("click", function () { ac(); openChestsPage(); });
+      /* Edge icons around the hero stage (Package 012 final) —
+         these replaced the old hub rail; same pages, same badges.
+         WORKSHOP brings the upgrade slots + detail bar into focus
+         (the slots already flank the cannon — this flashes the
+         detail bar and scrolls it into view inside the Lobby). */
+      function focusWorkshop() {
+        var d = document.getElementById("slotDetail");
+        if (d) {
+          try { d.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest" }); } catch (e) { d.scrollIntoView(); }
+          d.classList.remove("focus-flash");
+          void d.offsetWidth; // restart the flash animation
+          d.classList.add("focus-flash");
+          setTimeout(function () { d.classList.remove("focus-flash"); }, 1300);
+        }
+      }
+      document.getElementById("btnEdgeWorkshop").addEventListener("click", function () { ac(); focusWorkshop(); });
+      /* WEAPONS is the same Workshop interface (Chat's directive:
+         no duplicate weapons system) — it focuses the upgrade
+         detail exactly like the WORKSHOP tile. */
+      document.getElementById("btnEdgeWeapons").addEventListener("click", function () { ac(); focusWorkshop(); });
+      /* Big golden BATTLE pill: the chapter-selection page, same
+         as the BATTLE tab — it never starts a fight directly. */
+      document.getElementById("btnLobbyBattle").addEventListener("click", function () { ac(); goShellMenu(); closeMenuPanels(); setShellView("battle"); });
+      document.getElementById("btnEdgeTrophy").addEventListener("click", function () { ac(); showTrophy(); });
+      document.getElementById("btnEdgeChests").addEventListener("click", function () { ac(); openChestsPage(); });
       document.getElementById("btnTrophyBack").addEventListener("click", function () { ac(); showLobby("menu"); });
       document.getElementById("collectChestsRow").addEventListener("click", function () { ac(); openChestsPage(); });
 
@@ -6503,7 +6858,7 @@
         if (bg) drawLobbyBackdrop(0, bg);
         skinsPanel.scrollIntoView({ block: "start" });
       }
-      document.getElementById("btnHubSkins").addEventListener("click", function () { ac(); showSkins(); });
+      document.getElementById("btnEdgeSkins").addEventListener("click", function () { ac(); showSkins(); });
       document.getElementById("btnSkinsBack").addEventListener("click", function () { ac(); showLobby("menu"); });
 
       function startFromLobby(idx) {
@@ -6549,10 +6904,8 @@
         // and its Upgrade button buys through the same buyUpgrade()
         // the cards used — same costs, same effects, and the cannon
         // on the stage changes exactly as before.
-        var colL = document.getElementById("slotColLeft");
-        var colR = document.getElementById("slotColRight");
-        var colU = document.getElementById("slotUnder");
-        colL.textContent = ""; colR.textContent = ""; colU.textContent = "";
+        var slotGrid = document.getElementById("slotGridAll");
+        if (slotGrid) slotGrid.textContent = "";
         var selU = UPGRADES[0];
         UPGRADES.forEach(function (u, ui) {
           if (u.id === selectedUpgradeId) selU = u;
@@ -6574,9 +6927,7 @@
           var lvB = document.createElement("span"); lvB.className = "slot-lv"; lvB.textContent = "Lv " + lv;
           slot.appendChild(ico); slot.appendChild(pips); slot.appendChild(lvB);
           slot.addEventListener("click", function () { ac(); selectedUpgradeId = u.id; renderLobby(); });
-          if (ui < 3) colL.appendChild(slot);
-          else if (ui < 6) colR.appendChild(slot);
-          else colU.appendChild(slot);
+          if (slotGrid) slotGrid.appendChild(slot);
         });
         // Detail bar for the selected slot
         var slv = upgrades[selU.id];
@@ -6689,6 +7040,18 @@
         drawBarnShape(g, 26, GY, 1.6);
         drawSiloShape(g, BW * 0.24, GY, 1.35);
         drawWindmillShape(g, BW - 52, GY, 1.6, t * 0.7);
+        // environment life: two round trees swaying gently on the
+        // hill, and a couple of small distant turkeys bobbing and
+        // pecking at the fence line — all off the same clock.
+        var sway1 = reducedMotion ? 0 : Math.sin(t * 0.9) * 2.6;
+        var sway2 = reducedMotion ? 0 : Math.sin(t * 0.9 + 1.4) * 2.2;
+        drawRoundTreeOn(g, BW * 0.60 + sway1, GY - 6, 30, "#5d7d35", "#5d4020");
+        drawRoundTreeOn(g, BW * 0.36 + sway2, GY - 2, 22, "#6e8f3e", "#54371a");
+        for (var dti = 0; dti < 2; dti++) {
+          var dtBob = reducedMotion ? 0 : Math.sin(t * 2.1 + dti * 1.9) * 1.8;
+          var dtPeck = (!reducedMotion && Math.sin(t * 0.8 + dti * 2.4) > 0.72) ? 3.2 : 0;
+          drawTurkeyOn(g, BW * (0.52 + dti * 0.13), GY - 34 + dtBob + dtPeck, 7.5, t * 7 + dti * 2, { variant: "classic" });
+        }
         // fence line along the horizon — two rails, like the preview
         g.fillStyle = "rgba(93,58,26,.8)";
         for (var fx = BW * 0.42; fx < BW - 120; fx += 48) g.fillRect(fx, GY - 19, 5, 19);
@@ -6723,98 +7086,238 @@
          while the Lobby is open (redrawn from the main loop). */
       function drawLobbyPreview(t) {
         var c = document.getElementById("lobbyCanvas");
+        if (!c) return;
         var g = c.getContext("2d");
-        var PW = c.width, PH = c.height, GY = PH - 46; // ground line
+        var PW = c.width, PH = c.height, GY = Math.round(PH * 0.82); // horizon / ground line
         t = t || 0;
         g.clearRect(0, 0, PW, PH);
-        // harvest sky
-        var grad = g.createLinearGradient(0, 0, 0, PH);
-        grad.addColorStop(0, "#7fb6de"); grad.addColorStop(0.62, "#cfe3ee"); grad.addColorStop(0.8, "#f7dfae"); grad.addColorStop(1, "#f2c98a");
-        g.fillStyle = grad; g.fillRect(0, 0, PW, PH);
-        // sun
-        g.fillStyle = "rgba(255,236,180,.95)";
-        g.beginPath(); g.arc(PW - 64, 40, 24, 0, Math.PI * 2); g.fill();
-        g.fillStyle = "rgba(255,246,214,.95)";
-        g.beginPath(); g.arc(PW - 64, 40, 17, 0, Math.PI * 2); g.fill();
-        // far + near hills
+        /* ---- SUNSET SKY — the same golden-hour palette as the
+           lobby backdrop and WarKing's concept: deep plum up top
+           melting through cranberry and ember orange to gold at
+           the horizon. (This stage used to paint a plain light-
+           blue daytime sky — that was the mismatch.) ---- */
+        var grad = g.createLinearGradient(0, 0, 0, GY);
+        grad.addColorStop(0, "#2b1030"); grad.addColorStop(0.28, "#6e2430");
+        grad.addColorStop(0.52, "#b23a2e"); grad.addColorStop(0.76, "#e8873a");
+        grad.addColorStop(1, "#f7b955");
+        g.fillStyle = grad; g.fillRect(0, 0, PW, GY + 2);
+        // low sun + glow, right of centre like the concept
+        var sx = PW * 0.80, sy = GY * 0.36;
+        var glow = g.createRadialGradient(sx, sy, 8, sx, sy, 250);
+        glow.addColorStop(0, "rgba(255,214,120,.55)"); glow.addColorStop(0.4, "rgba(255,160,60,.20)"); glow.addColorStop(1, "rgba(255,160,60,0)");
+        g.fillStyle = glow; g.fillRect(0, 0, PW, GY);
+        g.fillStyle = "rgba(255,236,180,.92)";
+        g.beginPath(); g.arc(sx, sy, 25, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(255,248,220,.95)";
+        g.beginPath(); g.arc(sx, sy, 18, 0, Math.PI * 2); g.fill();
+        // warm sunset clouds drifting slowly + one plum bank up top
+        g.fillStyle = "rgba(43,16,48,.32)";
+        g.beginPath(); g.ellipse(PW * 0.22, 26, 92, 11, 0, 0, Math.PI * 2); g.ellipse(PW * 0.22 + 44, 31, 60, 8, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "rgba(255,183,120,.40)";
+        for (var cci = 0; cci < 2; cci++) {
+          var ccx = ((cci * 340 + t * (5 + cci * 2.5)) % (PW + 200)) - 100, ccy = 52 + cci * 40;
+          g.beginPath(); g.ellipse(ccx, ccy, 52, 8, 0, 0, Math.PI * 2); g.ellipse(ccx + 30, ccy + 3, 34, 6, 0, 0, Math.PI * 2); g.fill();
+        }
+        drawBirdsOn(g, t, PW, 40, 3, "rgba(30,14,10,.50)", 1.3);
+        // layered hills — Level 1's own greens warmed by the hour
         g.fillStyle = "#a8bf74";
         g.beginPath(); g.moveTo(0, GY);
-        g.quadraticCurveTo(PW * 0.28, GY - 62, PW * 0.55, GY - 26);
-        g.quadraticCurveTo(PW * 0.8, GY + 2, PW, GY - 40);
+        g.quadraticCurveTo(PW * 0.28, GY - 44, PW * 0.55, GY - 18);
+        g.quadraticCurveTo(PW * 0.8, GY + 2, PW, GY - 30);
         g.lineTo(PW, GY); g.closePath(); g.fill();
         g.fillStyle = "#7d9b4e";
         g.beginPath(); g.moveTo(0, GY);
-        g.quadraticCurveTo(PW * 0.32, GY - 30, PW * 0.64, GY - 10);
-        g.quadraticCurveTo(PW * 0.86, GY + 2, PW, GY - 16);
+        g.quadraticCurveTo(PW * 0.32, GY - 22, PW * 0.64, GY - 7);
+        g.quadraticCurveTo(PW * 0.86, GY + 2, PW, GY - 12);
         g.lineTo(PW, GY); g.closePath(); g.fill();
-        // the shared painted scene — treeline + farm landmarks, the
-        // same layer the game field paints for the home farm
-        drawSceneLayer(g, 0, t, PW, GY, 1.1);
-        // the barn — the shared shape, identical to gameplay & trailer
-        drawBarnShape(g, 14, GY, 1.02);
-        drawWindmillShape(g, PW - 26, GY, 0.8, t * 0.7);
-        // fence line along the horizon
-        g.fillStyle = "rgba(93,58,26,.8)";
-        for (var fx = 98; fx < PW - 8; fx += 44) g.fillRect(fx, GY - 17, 5, 17);
-        g.fillRect(92, GY - 13, PW - 92, 3.5);
-        g.fillRect(92, GY - 6, PW - 92, 3);
-        // ground — shaded band + the shared ground texture
-        var lgrad = g.createLinearGradient(0, GY, 0, PH);
-        lgrad.addColorStop(0, "#96753e"); lgrad.addColorStop(1, "#6e5227");
-        g.fillStyle = lgrad; g.fillRect(0, GY, PW, PH - GY);
-        drawGroundDetail(g, 0, t, PW, PH, GY, 1.1);
-        // hay bales + a pumpkin, right of the cannon
-        function hayBale(x, y, r) {
-          g.fillStyle = "#d9a83f";
-          g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
-          g.strokeStyle = "#b4832a"; g.lineWidth = 2;
-          g.beginPath(); g.arc(x, y, r * 0.62, 0, Math.PI * 2); g.stroke();
-          g.beginPath(); g.arc(x, y, r * 0.28, 0, Math.PI * 2); g.stroke();
+        // the shared painted scene — treeline + farm landmarks
+        drawSceneLayer(g, 0, t, PW, GY, 1.35);
+        // red barn + silo on the left, windmill on the right — the
+        // shared shapes, identical to gameplay, the cover & trailer
+        drawBarnShape(g, 16, GY, 1.12);
+        drawSiloShape(g, PW * 0.155, GY, 0.88);
+        drawWindmillShape(g, PW - 34, GY, 1.05, t * 0.7);
+        // round trees swaying gently on the hill line
+        var sway1 = reducedMotion ? 0 : Math.sin(t * 0.9) * 2.4;
+        var sway2 = reducedMotion ? 0 : Math.sin(t * 0.9 + 1.4) * 2;
+        drawRoundTreeOn(g, PW * 0.66 + sway1, GY - 3, 26, "#5d7d35", "#5d4020");
+        drawRoundTreeOn(g, PW * 0.36 + sway2, GY - 1, 19, "#6e8f3e", "#54371a");
+        // small distant turkeys pecking along the fence line
+        for (var dti = 0; dti < 2; dti++) {
+          var dtBob = reducedMotion ? 0 : Math.sin(t * 2.1 + dti * 1.9) * 1.6;
+          var dtPeck = (!reducedMotion && Math.sin(t * 0.8 + dti * 2.4) > 0.72) ? 2.6 : 0;
+          drawTurkeyOn(g, PW * (0.30 + dti * 0.36), GY - 14 + dtBob + dtPeck, 7, t * 7 + dti * 2, { variant: "classic" });
         }
-        hayBale(PW - 44, GY - 12, 13);
-        hayBale(PW - 78, GY - 8, 9);
-        var pkx = PW - 108, pky = GY - 7;
-        g.fillStyle = "#e8873a";
-        g.beginPath(); g.ellipse(pkx, pky, 11, 8.5, 0, 0, Math.PI * 2); g.fill();
-        g.strokeStyle = "#c96a24"; g.lineWidth = 1.6;
-        g.beginPath(); g.moveTo(pkx - 5, pky - 7); g.quadraticCurveTo(pkx, pky + 1, pkx - 5, pky + 7); g.stroke();
-        g.beginPath(); g.moveTo(pkx + 5, pky - 7); g.quadraticCurveTo(pkx, pky + 1, pkx + 5, pky + 7); g.stroke();
-        g.fillStyle = "#4d7c3a"; g.fillRect(pkx - 2, pky - 13, 4, 6);
+        // fence line along the horizon
+        g.fillStyle = "rgba(93,58,26,.85)";
+        for (var fx = 168; fx < PW - 52; fx += 46) g.fillRect(fx, GY - 15, 5, 15);
+        g.fillRect(162, GY - 11, PW - 200, 3.2);
+        g.fillRect(162, GY - 5, PW - 200, 2.8);
+        // golden field / ground band + shared ground texture
+        var lgrad = g.createLinearGradient(0, GY, 0, PH);
+        lgrad.addColorStop(0, "#b98a3e"); lgrad.addColorStop(0.45, "#96753e"); lgrad.addColorStop(1, "#6e5227");
+        g.fillStyle = lgrad; g.fillRect(0, GY, PW, PH - GY);
+        drawGroundDetail(g, 0, t, PW, PH, GY, 1.35);
+        // hay bales at the field edges
+        drawHayBaleOn(g, 40, GY - 8, 10);
+        drawHayBaleOn(g, PW - 40, GY - 6, 9);
 
-        /* ---- THE HERO STAGE — the canonical drawCannonOn, the
-           exact function gameplay uses, presented big and centre
-           on a glowing golden pedestal, equip-screen style: this
-           is YOUR cannon, shown off. Two of Level 1's classic
-           turkeys — the same canonical drawTurkeyOn — drift in at
-           the edges of the yard it defends. */
-        var pcx = PW / 2, pgy = GY + 10;
+        /* ---- THE STAGE — a big round WOODEN barrel-top platform
+           spanning ~83% of the stage width, and the cannon LARGE
+           on top of it: at scale 4.3 the cannon stands ~300px of
+           the 400px stage height, centred on the platform, so it
+           is unmistakably the biggest thing on the screen. ---- */
+        var pcx = PW / 2, pgy = GY + 26, prx = Math.round(PW * 0.415);
         var pulse = 0.72 + Math.sin(t * 2.3) * 0.16;
-        var glow2 = g.createRadialGradient(pcx, pgy - 16, 12, pcx, pgy - 16, 168);
+        var glow2 = g.createRadialGradient(pcx, pgy - 60, 12, pcx, pgy - 60, 300);
         glow2.addColorStop(0, "rgba(255,205,90," + (0.5 * pulse) + ")"); glow2.addColorStop(1, "rgba(255,205,90,0)");
-        g.fillStyle = glow2; g.fillRect(pcx - 180, pgy - 190, 360, 210);
-        // the pedestal: a golden display disc with a bright rim
-        var pg = g.createLinearGradient(0, pgy - 12, 0, pgy + 14);
-        pg.addColorStop(0, "#f7dc7a"); pg.addColorStop(0.55, "#e8a94c"); pg.addColorStop(1, "#c97b24");
+        g.fillStyle = glow2; g.fillRect(pcx - 310, pgy - 330, 620, 340);
+        // platform side face + iron rim
+        g.fillStyle = "#5d3a1a";
+        g.beginPath(); g.ellipse(pcx, pgy + 9, prx, 23, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#6e4520";
+        g.fillRect(pcx - prx, pgy, prx * 2, 9);
+        g.fillStyle = "#4a2c10";
+        g.fillRect(pcx - prx, pgy + 6, prx * 2, 2.4);
+        // platform top: walnut gradient, plank seams, grain arcs
+        var pg = g.createLinearGradient(0, pgy - 22, 0, pgy + 22);
+        pg.addColorStop(0, "#c98a4a"); pg.addColorStop(0.5, "#a5692f"); pg.addColorStop(1, "#7c4a1e");
         g.fillStyle = pg;
-        g.beginPath(); g.ellipse(pcx, pgy, 116, 17, 0, 0, Math.PI * 2); g.fill();
-        g.strokeStyle = "#8a5a10"; g.lineWidth = 3;
-        g.beginPath(); g.ellipse(pcx, pgy, 116, 17, 0, 0, Math.PI * 2); g.stroke();
-        g.strokeStyle = "rgba(255,246,214,.85)"; g.lineWidth = 2;
-        g.beginPath(); g.ellipse(pcx, pgy - 2, 98, 12.5, 0, 0, Math.PI * 2); g.stroke();
+        g.beginPath(); g.ellipse(pcx, pgy, prx, 23, 0, 0, Math.PI * 2); g.fill();
+        g.save();
+        g.beginPath(); g.ellipse(pcx, pgy, prx, 23, 0, 0, Math.PI * 2); g.clip();
+        g.strokeStyle = "rgba(70,42,16,.55)"; g.lineWidth = 2;
+        [-176, -88, 0, 88, 176].forEach(function (pxo) {
+          g.beginPath(); g.moveTo(pcx + pxo, pgy - 23); g.lineTo(pcx + pxo, pgy + 23); g.stroke();
+        });
+        g.strokeStyle = "rgba(70,42,16,.30)"; g.lineWidth = 1.2;
+        [130, 195].forEach(function (gr2) {
+          g.beginPath(); g.ellipse(pcx, pgy, gr2, gr2 * 0.088, 0, 0, Math.PI * 2); g.stroke();
+        });
+        g.fillStyle = "rgba(255,236,180,.20)";
+        g.beginPath(); g.ellipse(pcx, pgy - 4, prx - 14, 15, 0, 0, Math.PI * 2); g.fill();
+        g.restore();
+        g.strokeStyle = "#3a3230"; g.lineWidth = 4.5;
+        g.beginPath(); g.ellipse(pcx, pgy, prx, 23, 0, 0, Math.PI * 2); g.stroke();
+        g.strokeStyle = "rgba(255,217,104,.55)"; g.lineWidth = 1.6;
+        g.beginPath(); g.ellipse(pcx, pgy - 1.5, prx - 6, 20.5, 0, Math.PI * 1.05, Math.PI * 1.95); g.stroke();
+        // cranberry crates flanking the platform (the concept's corners)
+        [[14, PH - 34], [PW - 54, PH - 34]].forEach(function (cr) {
+          g.fillStyle = "#8a5a28"; g.fillRect(cr[0], cr[1], 40, 28);
+          g.strokeStyle = "#5d3a1a"; g.lineWidth = 2.4; g.strokeRect(cr[0], cr[1], 40, 28);
+          g.beginPath(); g.moveTo(cr[0], cr[1] + 14); g.lineTo(cr[0] + 40, cr[1] + 14); g.stroke();
+          g.fillStyle = "#b23a2e";
+          [[9, -3], [20, -5], [31, -3]].forEach(function (cb) {
+            g.beginPath(); g.arc(cr[0] + cb[0], cr[1] + cb[1], 5, 0, Math.PI * 2); g.fill();
+            g.fillStyle = "rgba(255,255,255,.55)";
+            g.beginPath(); g.arc(cr[0] + cb[0] - 1.6, cr[1] + cb[1] - 1.6, 1.4, 0, Math.PI * 2); g.fill();
+            g.fillStyle = "#b23a2e";
+          });
+        });
         // rising sparkles around the stage
         g.fillStyle = "#fff2cf";
         for (var sp2 = 0; sp2 < 9; sp2++) {
-          var sxp = pcx + Math.sin(sp2 * 2.39) * (58 + (sp2 % 3) * 26);
-          var syp = pgy - 8 - ((t * 22 + sp2 * 29) % 120);
+          var sxp = pcx + Math.sin(sp2 * 2.39) * (90 + (sp2 % 3) * 52);
+          var syp = pgy - 8 - ((t * 22 + sp2 * 29) % 190);
           g.save();
-          g.globalAlpha = clamp(1 - (pgy - 8 - syp) / 130, 0, 1) * 0.85;
+          g.globalAlpha = clamp(1 - (pgy - 8 - syp) / 200, 0, 1) * 0.85;
           g.beginPath(); g.arc(sxp, syp, 2.1 + (sp2 % 3) * 0.7, 0, Math.PI * 2); g.fill();
           g.restore();
         }
         g.globalAlpha = 1;
-        drawTurkeyOn(g, 58, GY - 132 + Math.sin(t * 1.7) * 4, 15, t * 9 + 1, { variant: "classic" });
-        drawTurkeyOn(g, PW - 56, GY - 106 + Math.cos(t * 1.5) * 4, 13, t * 9 + 3, { variant: "classic" });
-        drawCannonOn(g, pcx, GY - 24, 2.05, Math.sin(t * 0.9) * 0.05, { flash: (t % 1.8) < 0.09 });
+        /* ---- THE FLAG: cranberry banner on a pole at the
+           carriage's back, fluttering in the wind (phase off the
+           shell clock; reduced motion parks it mid-wave). ---- */
+        var originY = GY - 56, HSC = 4.7;
+        var flagX = pcx + 136, flagBase = pgy - 4, flagTop = originY - 116;
+        var wph = reducedMotion ? 0.6 : t * 6;
+        g.strokeStyle = "#6e4520"; g.lineWidth = 4.5; g.lineCap = "round";
+        g.beginPath(); g.moveTo(flagX, flagBase); g.lineTo(flagX, flagTop); g.stroke();
+        g.fillStyle = "#d9a83f";
+        g.beginPath(); g.arc(flagX, flagTop - 3, 4, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = "#8a5a10"; g.lineWidth = 1;
+        g.beginPath(); g.arc(flagX, flagTop - 3, 4, 0, Math.PI * 2); g.stroke();
+        var fw1 = Math.sin(wph) * 2, fw2 = Math.sin(wph + 1.2) * 3.5, fw3 = Math.sin(wph + 0.6) * 2.5;
+        var fgr = g.createLinearGradient(flagX, flagTop, flagX + 40, flagTop);
+        fgr.addColorStop(0, "#c93a2c"); fgr.addColorStop(1, "#93301f");
+        g.fillStyle = fgr;
+        g.beginPath();
+        g.moveTo(flagX, flagTop);
+        g.quadraticCurveTo(flagX + 20, flagTop - 3 + fw1, flagX + 40, flagTop + 2 + fw2);
+        g.quadraticCurveTo(flagX + 41, flagTop + 9 + fw2, flagX + 40, flagTop + 17 + fw2);
+        g.quadraticCurveTo(flagX + 20, flagTop + 15 + fw3, flagX, flagTop + 17);
+        g.closePath(); g.fill();
+        g.strokeStyle = "#7e2418"; g.lineWidth = 1.5; g.stroke();
+        g.fillStyle = "#ffd968";
+        g.beginPath(); g.arc(flagX + 13, flagTop + 8 + fw1 * 0.6, 3.8, 0, Math.PI * 2); g.fill();
+        g.fillStyle = "#b23a2e";
+        g.beginPath(); g.arc(flagX + 13, flagTop + 8 + fw1 * 0.6, 1.8, 0, Math.PI * 2); g.fill();
+        /* ---- THE HERO CANNON — LARGE (4.3) with its hero extras:
+           cranberry-magenta barrel, brass bands + rivets, gold
+           muzzle ring, glossy sheen, rimmed wheels with cranberry
+           hubs, carved carriage and the glass cranberry reservoir
+           (drawCannonOn, o.hero). Equipped skin resolves as
+           everywhere else. Vertically centred on the platform. ---- */
+        var mzL = drawCannonOn(g, pcx, originY, HSC, Math.sin(t * 0.9) * 0.04, { hero: true, t: t, flash: (t % 1.8) < 0.09 });
+        /* ---- MUZZLE SMOKE: soft wisps curl out, rise, swell,
+           drift and fade — five staggered puffs off the clock. ---- */
+        var nSmoke = reducedMotion ? 2 : 5;
+        for (var smi = 0; smi < nSmoke; smi++) {
+          var sph = reducedMotion ? 0.22 + smi * 0.2 : ((t * 0.12 + smi / nSmoke) % 1);
+          var smx = mzL.x + Math.sin(sph * 4.6 + smi * 1.7) * 9 * sph + sph * 15;
+          var smy = mzL.y - 6 - sph * 78;
+          var smr = 5 + sph * 17;
+          var sma = 0.34 * (1 - sph) * (0.55 + 0.45 * Math.sin(sph * Math.PI));
+          if (sma <= 0.01) continue;
+          var smg = g.createRadialGradient(smx, smy, 1, smx, smy, smr);
+          smg.addColorStop(0, "rgba(255,250,244," + (0.9 * sma / 0.34) * 0.34 + ")");
+          smg.addColorStop(0.55, "rgba(235,230,224," + sma * 0.6 + ")");
+          smg.addColorStop(1, "rgba(235,230,224,0)");
+          g.fillStyle = smg;
+          g.beginPath(); g.arc(smx, smy, smr, 0, Math.PI * 2); g.fill();
+        }
+        /* ---- PINK SPARKLE WISPS around the muzzle (the concept) ---- */
+        if (!reducedMotion) {
+          for (var pki = 0; pki < 6; pki++) {
+            var pkx2 = mzL.x + Math.sin(pki * 2.4 + t * 1.3) * 11 + (pki % 3 - 1) * 5;
+            var pky2 = mzL.y - 3 - (pki % 3) * 8 - Math.sin(t * 2 + pki * 1.1) * 2.5;
+            var pka = 0.45 + 0.4 * Math.sin(t * 4 + pki * 1.35);
+            if (pka <= 0.08) continue;
+            var pkr = 2.6 + (pki % 3) * 0.8;
+            g.strokeStyle = "rgba(255,158,203," + pka + ")"; g.lineWidth = 1.4; g.lineCap = "round";
+            g.beginPath();
+            g.moveTo(pkx2 - pkr, pky2); g.lineTo(pkx2 + pkr, pky2);
+            g.moveTo(pkx2, pky2 - pkr); g.lineTo(pkx2, pky2 + pkr);
+            g.stroke();
+            g.fillStyle = "rgba(255,214,232," + pka + ")";
+            g.beginPath(); g.arc(pkx2, pky2, 0.9, 0, Math.PI * 2); g.fill();
+          }
+        }
+        /* ---- FUSE SPARKS: a small gold burst at the wick every
+           ~2.6s, then rest. The wick stub always shows. ---- */
+        var fuseX = pcx + 32, fuseY = originY - 2;
+        g.strokeStyle = "#2b1c10"; g.lineWidth = 2.6; g.lineCap = "round";
+        g.beginPath(); g.moveTo(fuseX - 3, fuseY + 6); g.quadraticCurveTo(fuseX, fuseY + 1, fuseX + 2, fuseY - 2); g.stroke();
+        var cyc = t % 2.6;
+        if (reducedMotion) {
+          g.fillStyle = "rgba(255,181,46,.35)";
+          g.beginPath(); g.arc(fuseX + 2, fuseY - 3, 3.2, 0, Math.PI * 2); g.fill();
+        } else if (cyc < 1.0) {
+          var gga = 0.5 * (1 - cyc);
+          var gg = g.createRadialGradient(fuseX + 2, fuseY - 3, 0.5, fuseX + 2, fuseY - 3, 10);
+          gg.addColorStop(0, "rgba(255,190,60," + gga + ")"); gg.addColorStop(1, "rgba(255,190,60,0)");
+          g.fillStyle = gg; g.beginPath(); g.arc(fuseX + 2, fuseY - 3, 10, 0, Math.PI * 2); g.fill();
+          for (var ski = 0; ski < 6; ski++) {
+            var slp = (cyc * 1.5 + ski * 0.14) % 1;
+            var skx = fuseX + 2 + (ski % 3 - 1) * slp * 9 + slp * 5 + Math.sin(ski * 7.3) * 2;
+            var sky2 = fuseY - 3 - slp * 12 - (ski % 2) * 3;
+            var ska = 1 - slp;
+            g.fillStyle = "rgba(255,181,46," + ska + ")";
+            g.beginPath(); g.arc(skx, sky2, 1.7, 0, Math.PI * 2); g.fill();
+            g.fillStyle = "rgba(255,246,214," + ska + ")";
+            g.beginPath(); g.arc(skx, sky2, 0.75, 0, Math.PI * 2); g.fill();
+          }
+        }
       }
 
       /* ---------------- Main menu, level select & leaderboard ---------------- */
@@ -6939,6 +7442,8 @@
         if (ts) ts.textContent = "⭐ " + totalStars() + " / " + (LEVELS.length * 3) + " stars · 🪶 " + totalFeathers() + " / " + (LEVELS.length * 3) + " chapter feathers · 🏅 " + earnedAchievementCount() + " / " + ACHIEVEMENTS.length + " achievements";
         var lf = document.getElementById("lobbyFeathers");
         if (lf) lf.textContent = featherBalance.toLocaleString();
+        var sf = document.getElementById("shellFeathers");
+        if (sf) sf.textContent = featherBalance.toLocaleString();
         var ls2 = document.getElementById("lobbyStars");
         if (ls2) ls2.textContent = totalStars() + " / " + (LEVELS.length * 3);
         renderCollectStrip();
@@ -7960,6 +8465,8 @@
       function syncShellTop() {
         var c = document.getElementById("shellCoins");
         if (c) c.textContent = coins.toLocaleString();
+        var f = document.getElementById("shellFeathers");
+        if (f) f.textContent = featherBalance.toLocaleString();
         var p = document.getElementById("shellProgress");
         if (!p) return;
         var cleared = 0;
