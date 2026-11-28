@@ -2081,6 +2081,16 @@
         border: 2px solid rgba(255,217,138,.4);
       }
       .feat-obj.earned { color: #33200a; background: linear-gradient(180deg,#ffd968,#e8a94c); border-color: #ffe9a8; }
+      .feat-diff { position: relative; z-index: 6; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; margin: 9px 0 2px; }
+      .feat-diff-label { font-size: 11px; font-weight: 900; letter-spacing: .14em; color: #ffd968; text-shadow: 0 1px 0 rgba(90,20,8,.6); }
+      .feat-diff button {
+        font: inherit; font-size: 12.5px; font-weight: 800; letter-spacing: .02em; cursor: pointer;
+        padding: 5px 14px; border-radius: 999px;
+        color: #f3d9ae; background: rgba(38,20,8,.72);
+        border: 2px solid rgba(255,217,138,.4);
+      }
+      .feat-diff button.on { color: #33200a; background: linear-gradient(180deg,#ffd968,#e8a94c); border-color: #ffe9a8; }
+      .feat-diff-note { font-size: 11.5px; font-weight: 800; color: #f3d9ae; text-shadow: 0 1px 0 rgba(90,20,8,.6); }
       .chapter-best {
         font-size: 12.5px; font-weight: 800; letter-spacing: .01em;
         color: #ffd968; font-variant-numeric: tabular-nums; line-height: 1.35;
@@ -4215,7 +4225,7 @@
         <h2>The game didn't finish loading</h2>
         <p>Something on this device stopped the first screen from appearing. Your saved progress is still on this device — a reload usually clears it.</p>
         <p class="boot-note" id="bootCrumbLine" hidden></p>
-        <p class="boot-build" id="bootBuildStamp">BUILD v83 · NOV 27, 2026 · 9:52 PM EST</p>
+        <p class="boot-build" id="bootBuildStamp">BUILD v84 · NOV 27, 2026 · 10:02 PM EST</p>
         <button class="boot-btn" id="bootReloadBtn" type="button">↻ Reload Game</button>
         <button class="boot-btn danger" id="bootResetBtn" type="button">Erase save &amp; reload (last resort)</button>
         <p class="boot-note">Only erase the save if reloading doesn't help — erasing can't be undone.</p>
@@ -4274,7 +4284,7 @@
       <div class="splash-loading" aria-hidden="true"><i></i></div>
       <button class="splash-start" id="btnSplashStart" type="button">▶ TAP TO START</button>
       <p class="splash-ver">12 LEVELS · 12 BOSSES · ONE CRANBERRY CANNON</p>
-      <p class="splash-build" id="splashBuildStamp">BUILD v83 · NOV 27, 2026 · 9:52 PM EST</p>
+      <p class="splash-build" id="splashBuildStamp">BUILD v84 · NOV 27, 2026 · 10:02 PM EST</p>
       <!-- Transition breadcrumb readout: filled by the main script
            ONLY when the previous START never reached running
            gameplay — the surviving diagnostic from a dead start. -->
@@ -4381,6 +4391,13 @@
             <button class="feat-chest" id="btnHeroChests" type="button" aria-label="Open your Harvest Chests">🎁<span class="feat-chest-n" id="heroChestCount">0</span></button>
           </div>
           <div class="thumb-strip" id="thumbStrip" aria-label="Choose a chapter — swipe for all 12 chapters"></div>
+          <div class="feat-diff" id="featDiff" aria-label="Difficulty — harder flocks pay more coins">
+            <span class="feat-diff-label">DIFFICULTY</span>
+            <button type="button" data-diff="0">Easy</button>
+            <button type="button" data-diff="1">Normal</button>
+            <button type="button" data-diff="2">Hard</button>
+            <span class="feat-diff-note" id="featDiffNote"></span>
+          </div>
           <div class="feat-start-row">
             <button class="feat-nav-btn" id="btnFeatPrev" type="button" aria-label="Previous chapter">◀</button>
             <button class="big-btn" id="btnStart" type="button">▶ Start — Chapter 1</button>
@@ -5053,6 +5070,17 @@
          same clock `levelTime` already runs). Generous early, tighter
          late; shown in the UI so the feather target is always fair. */
       var PAR_TIMES = [265, 285, 330, 365, 395, 430, 460, 505, 550, 595, 640, 725];
+      /* Difficulty ladder (v84): Easy IS the v83 balance pass. Normal
+         and Hard scale the flock's toughness, speed and shot rate,
+         stretch par times to match, and pay bonus coins for the
+         trouble. The cannon is never touched by difficulty. */
+      var DIFFICULTIES = [
+        { name: "Easy", hp: 1, bossHp: 1, speed: 1, fire: 1, coins: 1, par: 1, mut: 0 },
+        { name: "Normal", hp: 1.5, bossHp: 1.6, speed: 1.12, fire: 0.85, coins: 1.3, par: 1.35, mut: 0.04 },
+        { name: "Hard", hp: 2.2, bossHp: 2.5, speed: 1.25, fire: 0.7, coins: 1.75, par: 1.8, mut: 0.08 }
+      ];
+      function diffNow() { return DIFFICULTIES[Math.max(0, Math.min(2, difficulty))]; }
+      function parTimeFor(idx) { return Math.round(PAR_TIMES[idx] * diffNow().par); }
       var chapterBests = LEVELS.map(function () { return { score: 0, time: 0 }; }); // best clear score + fastest clear time (s) per chapter; 0 = no clear yet
       var chapterFeathers = LEVELS.map(function () { return { nd: false, par: false, nb: false }; }); // nd = no damage · par = under par time · nb = no Gravy Bombs
       var chapterStars = LEVELS.map(function () { return 0; }); // best star rating per chapter: 1 per clear + 1 no-damage + 1 under-par (max 3)
@@ -5411,7 +5439,7 @@
         stats.clears++;
         if (chapterScore > best.score) { best.score = Math.floor(chapterScore); res.newBestScore = true; }
         if (clearTime > 0 && (best.time <= 0 || clearTime < best.time)) { best.time = clearTime; res.newBestTime = true; }
-        var underPar = clearTime > 0 && clearTime <= PAR_TIMES[idx];
+        var underPar = clearTime > 0 && clearTime <= parTimeFor(idx);
         /* Star rating for THIS clear: 1 for clearing, +1 for no damage,
            +1 for under par. The chapter keeps the best rating ever. */
         res.stars = 1 + (!levelDamageTaken ? 1 : 0) + (underPar ? 1 : 0);
@@ -5423,7 +5451,7 @@
           stats.untouchableClears++;
           if (!f.nd) { f.nd = true; res.newFeathers.push("No Damage"); }
         }
-        if (underPar && !f.par) { f.par = true; res.newFeathers.push("Under Par " + fmtTime(PAR_TIMES[idx])); }
+        if (underPar && !f.par) { f.par = true; res.newFeathers.push("Under Par " + fmtTime(parTimeFor(idx))); }
         if (levelBombsUsed === 0 && !f.nb) { f.nb = true; res.newFeathers.push("No Gravy Bombs"); }
         if (res.newFeathers.length) { featherBalance += res.newFeathers.length; res.feathersPaid = res.newFeathers.length; }
         saveGame();
@@ -5431,6 +5459,7 @@
         renderRecords();
         return res;
       }
+      var difficulty = 0; // v84 difficulty ladder: 0 Easy · 1 Normal · 2 Hard — Easy is the v83 tuning
       var leaderboard = []; // [{score, level, result, date}] best first, top 10
       var clearedLevels = LEVELS.map(function () { return false; }); // chapters beaten — drives the ✓ CLEARED chapter badges
       /* Rarity tiers — defined up here because loadSave() validates
@@ -5453,7 +5482,7 @@
           localStorage.setItem(SAVE_KEY, JSON.stringify({
             coins: coins, totalCoinsEarned: totalCoinsEarned,
             highestUnlocked: highestUnlocked, clearedLevels: clearedLevels, upgrades: upgrades,
-            bestScore: bestScore, leaderboard: leaderboard, muted: muted,
+            bestScore: bestScore, leaderboard: leaderboard, muted: muted, difficulty: difficulty,
             chests: chests, bonusBombs: bonusBombs, chestSeq: chestSeq,
             saveVersion: SAVE_VERSION,
             chapterBests: chapterBests, chapterFeathers: chapterFeathers, chapterStars: chapterStars,
@@ -5493,6 +5522,7 @@
           leaderboard = data.leaderboard.filter(function (en) { return en && typeof en.score === "number"; }).slice(0, 10);
         }
         if (typeof data.muted === "boolean") muted = data.muted;
+        if (typeof data.difficulty === "number") difficulty = Math.max(0, Math.min(2, Math.floor(data.difficulty)));
         /* Harvest Chests (migration: saves written before chests
            existed simply have no `chests` field — they start empty,
            and everything else in the save is untouched). */
@@ -5595,7 +5625,7 @@
         renderMenu();
       }
       function earnCoins(n, x, y) {
-        coins += n; coinsThisRun += n; totalCoinsEarned += n;
+        n = Math.round(n * diffNow().coins); coins += n; coinsThisRun += n; totalCoinsEarned += n;
         if (x !== undefined) floaters.push({ x: x, y: y, text: "+" + n + " 🪙", t: 1.1 });
         updateHUD();
         saveGame();
@@ -5639,9 +5669,9 @@
         var pd = e.pendingDive; e.pendingDive = null;
         var heat = state === "boss" ? bossHeat() : waveHeat();
         e.state = "dive";
-        var flightTime = Math.max(0.45, (player.y - e.y) / ((L.enemySpeed * 3.4 + 60) * (pd ? pd.vyMul : 1) * (1 + heat * 0.22)));
+        var flightTime = Math.max(0.45, (player.y - e.y) / ((L.enemySpeed * diffNow().speed * 3.4 + 60) * (pd ? pd.vyMul : 1) * (1 + heat * 0.22)));
         e.vx = clamp(((pd ? pd.targetX : player.x) - e.x) / flightTime, -260, 260);
-        e.vy = (L.enemySpeed * 3.4 + 60) * (pd ? pd.vyMul : 1) * (1 + heat * 0.22);
+        e.vy = (L.enemySpeed * diffNow().speed * 3.4 + 60) * (pd ? pd.vyMul : 1) * (1 + heat * 0.22);
       }
       /* A coordinated pincer: turkeys dive together at the player's lane
          AND both flanks, so standing still — or dodging the obvious way —
@@ -6074,7 +6104,7 @@
         msgBody.textContent = "Survive " + L.waves.length + " wave" + (L.waves.length > 1 ? "s" : "") +
           " of invading turkeys — then face " + L.boss.name + ". Boss fight: " + bossKit(levelIdx).kit + " — " + bossKit(levelIdx).desc +
           (levelIdx >= 3 ? " Mutated turkeys stalk this level — extra heads, glowing spots, extra tough, bonus coins." : "") +
-          " 🪶 Feathers: no damage · under " + fmtTime(PAR_TIMES[levelIdx]) + " · no Gravy Bombs." +
+          " 🪶 Feathers: no damage · under " + fmtTime(parTimeFor(levelIdx)) + " · no Gravy Bombs." +
           (chapterBests[levelIdx].score > 0 ? " Your best: " + chapterBests[levelIdx].score.toLocaleString() + " · " + fmtTime(chapterBests[levelIdx].time) + " · " + starStr(chapterStars[levelIdx]) + " · 🪶 " + featherCount(levelIdx) + "/3." : "");
         if (degradedArtRun) msgBody.textContent += " ⚠ This chapter's artwork couldn't load — you're playing with backup visuals while it keeps retrying in the background.";
         msgBestBanner.hidden = true;
@@ -6101,7 +6131,7 @@
          share of every flock the deeper the invasion gets. */
       function mutationChance(idx) {
         if (idx < 3) return 0;
-        return Math.min(0.45, 0.08 + (idx - 3) * 0.045);
+        return Math.min(0.55, 0.08 + (idx - 3) * 0.045 + diffNow().mut);
       }
 
       var enemyUid = 0;
@@ -6114,10 +6144,10 @@
         enemies.push({
           uid: ++enemyUid,
           x: x, y: -40 - row * 10, baseX: x, targetY: targetY,
-          r: mut ? 23 : 20, hp: L.enemyHp + (mut ? 2 : 0), maxHp: L.enemyHp + (mut ? 2 : 0),
+          r: mut ? 23 : 20, hp: Math.max(1, Math.round(L.enemyHp * diffNow().hp)) + (mut ? 2 : 0), maxHp: Math.max(1, Math.round(L.enemyHp * diffNow().hp)) + (mut ? 2 : 0),
           mutated: mut,
           phase: rand(0, 6.28), state: "enter",
-          shootTimer: rand(1.2, L.fireEvery + 1.5), dodgeCd: rand(1, 3), weave: rand(0.85, 1.45),
+          shootTimer: rand(1.2, L.fireEvery * diffNow().fire + 1.5), dodgeCd: rand(1, 3), weave: rand(0.85, 1.45),
           diveTimer: rand(4, 11), flap: rand(0, 6.28),
           wobble: rand(14, 26), flash: 0, knock: 0,
           pendingDive: null
@@ -6128,7 +6158,7 @@
         var L = LEVELS[levelIdx];
         boss = {
           x: W / 2, y: -70, targetY: 108, r: 46,
-          hp: L.boss.hp, maxHp: L.boss.hp,
+          hp: Math.round(L.boss.hp * diffNow().bossHp), maxHp: Math.round(L.boss.hp * diffNow().bossHp),
           phase: 0, shootTimer: 1.4, spawnTimer: 5,
           state: "enter", diveTimer: 7, diving: false, diveVx: 0,
           /* Full-depth dive state machine: "warn" (telegraph, lane locked
@@ -6689,7 +6719,7 @@
               if (e.shootTimer <= 0) {
                 // shots come faster as the match heats up (Luna's base
                 // fireEvery values unchanged — heat only tightens the gap)
-                e.shootTimer = rand(L.fireEvery * 0.7, L.fireEvery * 1.4) / (1 + heat * 0.45);
+                e.shootTimer = rand(L.fireEvery * diffNow().fire * 0.7, L.fireEvery * diffNow().fire * 1.4) / (1 + heat * 0.45);
                 if (e.y > 0 && e.y < H * 0.62 && Math.random() < 0.85) enemyShoot(e);
               }
               e.diveTimer -= dt;
@@ -13345,7 +13375,7 @@
           var bd = document.createElement("span"); bd.className = "cb-best";
           if (st === "locked") bd.textContent = "Beat Chapter " + idx + " to unlock";
           else if (best.score > 0) bd.textContent = starStr(chapterStars[idx]) + " · 🏆 " + best.score.toLocaleString() + " · ⏱ " + fmtTime(best.time) + " · 🪶 " + featherCount(idx) + "/3";
-          else bd.textContent = "No clear yet · ☆☆☆ · 🪶 0/3 · Par " + fmtTime(PAR_TIMES[idx]);
+          else bd.textContent = "No clear yet · ☆☆☆ · 🪶 0/3 · Par " + fmtTime(parTimeFor(idx));
           row.appendChild(rank); row.appendChild(nm); row.appendChild(bd);
           el.appendChild(row);
         });
@@ -13720,7 +13750,7 @@
         var bestLine = document.createElement("span"); bestLine.className = "chapter-best";
         if (st === "locked") bestLine.textContent = "☆☆☆ · 🪶 —/3";
         else if (chapterBests[idx].score > 0) bestLine.textContent = starStr(chapterStars[idx]) + " · 🏆 Best " + chapterBests[idx].score.toLocaleString() + " · " + fmtTime(chapterBests[idx].time) + " · 🪶 " + featherCount(idx) + "/3";
-        else bestLine.textContent = "☆☆☆ · 🪶 0/3 · Par " + fmtTime(PAR_TIMES[idx]);
+        else bestLine.textContent = "☆☆☆ · 🪶 0/3 · Par " + fmtTime(parTimeFor(idx));
         info.appendChild(bestLine);
         var go = document.createElement("span"); go.className = "chapter-go";
         go.textContent = st === "locked" ? "🔒" : st === "cleared" ? "↻" : "▶";
@@ -15025,7 +15055,7 @@
             var fobj = chapterFeathers[featuredIdx];
             [
               ["🪶 No damage", fobj.nd],
-              ["🪶 Under " + fmtTime(PAR_TIMES[featuredIdx]), fobj.par],
+              ["🪶 Under " + fmtTime(parTimeFor(featuredIdx)), fobj.par],
               ["🪶 No Gravy Bombs", fobj.nb]
             ].forEach(function (pair) {
               var chip2 = document.createElement("span");
@@ -15043,6 +15073,13 @@
           sb.disabled = st === "locked";
           sb.textContent = st === "locked" ? "🔒 Locked — Beat Chapter " + featuredIdx : "▶ START CHAPTER " + (featuredIdx + 1);
         }
+        var fdEl = document.getElementById("featDiff");
+        if (fdEl) {
+          var fdBtns = fdEl.querySelectorAll("button[data-diff]");
+          for (var fdi = 0; fdi < fdBtns.length; fdi++) fdBtns[fdi].classList.toggle("on", Number(fdBtns[fdi].getAttribute("data-diff")) === difficulty);
+          var fdNote = document.getElementById("featDiffNote");
+          if (fdNote) fdNote.textContent = difficulty === 0 ? "the classic run" : difficulty === 1 ? "tougher flock · +30% coins" : "brutal flock · +75% coins";
+        }
         document.getElementById("btnFeatPrev").disabled = featuredIdx <= 0;
         document.getElementById("btnFeatNext").disabled = featuredIdx >= LEVELS.length - 1;
         buildThumbStrip();
@@ -15050,6 +15087,14 @@
         paintMenuBackdrop(); // synchronous: the full-screen backdrop matches the newly featured chapter in THIS frame, never a beat later
         syncShellTop();
       }
+      document.querySelectorAll("#featDiff button[data-diff]").forEach(function (db) {
+        db.addEventListener("click", function () {
+          ac();
+          difficulty = Number(db.getAttribute("data-diff"));
+          saveGame();
+          renderFeatured();
+        });
+      });
       document.getElementById("btnFeatPrev").addEventListener("click", function () { ac(); if (featuredIdx > 0) { featuredIdx--; renderFeatured(); } });
       document.getElementById("btnFeatNext").addEventListener("click", function () { ac(); if (featuredIdx < LEVELS.length - 1) { featuredIdx++; renderFeatured(); } });
       document.getElementById("btnAllChapters").addEventListener("click", function () { ac(); showMenuPanel("panelLevels"); });
